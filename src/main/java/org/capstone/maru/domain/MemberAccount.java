@@ -46,6 +46,7 @@ public class MemberAccount extends AuditingFields {
         this.email = email;
         this.nickname = nickname;
         this.createdBy = createdBy;
+        this.modifiedBy = createdBy;
     }
 
     public static MemberAccount of(
