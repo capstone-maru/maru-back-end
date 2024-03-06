@@ -48,7 +48,7 @@ public class MemberAccount extends AuditingFields {
         this.createdBy = createdBy;
     }
 
-    public MemberAccount of(
+    public static MemberAccount of(
         String memberId,
         String email,
         String nickname
@@ -56,7 +56,7 @@ public class MemberAccount extends AuditingFields {
         return new MemberAccount(memberId, email, nickname, null);
     }
 
-    public MemberAccount of(
+    public static MemberAccount of(
         String memberId,
         String email,
         String nickname,
