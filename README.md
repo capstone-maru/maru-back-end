@@ -38,8 +38,7 @@
 - Github, Github Issues, Github Project, GitKraken  
   Notion, Github Wiki, Slack
 - [Figma](https://www.figma.com/file/7kNRrVNUAK9KZdMAPVBPgU/wire-frame?type=design&node-id=0-1&mode=design&t=oZJiMTmm1bsBSgXw-0)
-- [커밋 컨벤션]()
-- [코드 컨벤션]()
+- [컨벤션]()
   <br>
 
 ## 2. 채택한 프레임워크, 인프라, 브랜치 전략
