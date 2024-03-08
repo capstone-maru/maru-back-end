@@ -1,6 +1,7 @@
 package org.capstone.maru.config;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.dto.security.KakaoOAuth2Response;
 import org.capstone.maru.dto.security.SharedPostPrincipal;
 import org.capstone.maru.service.MemberAccountService;
@@ -19,6 +20,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 
+@Slf4j
 @Configuration
 public class SecurityConfig {
 
@@ -26,7 +28,7 @@ public class SecurityConfig {
     @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
     public WebSecurityCustomizer configureH2ConsoleEnable() {
         return web -> web.ignoring()
-                         .requestMatchers(PathRequest.toH2Console());
+            .requestMatchers(PathRequest.toH2Console());
     }
 
     @Bean
@@ -34,6 +36,7 @@ public class SecurityConfig {
         HttpSecurity httpSecurity,
         OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService
     ) throws Exception {
+        log.info("SecurityFilterChain 빈 등록 완료");
         return httpSecurity
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
@@ -45,11 +48,13 @@ public class SecurityConfig {
             )
             .oauth2Login(oAuth -> oAuth
                 .userInfoEndpoint(userInfo -> userInfo
-                    .userService(oAuth2UserService))
+                    .userService(oAuth2UserService)
+                )
             )
             .csrf(
                 csrf -> csrf
                     .ignoringRequestMatchers("/api/**")
+                    .disable()
             )
             .build();
     }
@@ -67,18 +72,20 @@ public class SecurityConfig {
 
             KakaoOAuth2Response kakaoOAuthResponse = KakaoOAuth2Response.from(
                 oAuth2User.getAttributes());
+
             String registrationId = userRequest.getClientRegistration()
-                                               .getRegistrationId(); // "kakao"
+                .getRegistrationId(); // "kakao"
+
             String providerId = String.valueOf(kakaoOAuthResponse.id());
-            String userId = registrationId + "_" + providerId;
+            String memberId = registrationId + "_" + providerId;
 
             return memberAccountService
-                .searchMember(userId)
+                .searchMember(memberId)
                 .map(SharedPostPrincipal::from)
                 .orElseGet(() ->
                     SharedPostPrincipal.from(
                         memberAccountService.saveUser(
-                            userId,
+                            memberId,
                             kakaoOAuthResponse.email(),
                             kakaoOAuthResponse.nickname()
                         )

@@ -17,4 +17,5 @@ public class MainController {
     public String test(@AuthenticationPrincipal SharedPostPrincipal sharedPostPrincipal) {
         return sharedPostPrincipal.getName();
     }
+    
 }

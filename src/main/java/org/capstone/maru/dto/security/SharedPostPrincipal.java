@@ -19,6 +19,14 @@ public record SharedPostPrincipal(
     Map<String, Object> oAuth2Attributes
 ) implements UserDetails, OAuth2User {
 
+    /**
+     * of 파라미터를 받아서 현제 객체를 리턴합니다.
+     *
+     * @param memberId
+     * @param email
+     * @param nickname
+     * @return
+     */
     public static SharedPostPrincipal of(
         String memberId,
         String email,
@@ -48,6 +56,12 @@ public record SharedPostPrincipal(
         );
     }
 
+    /**
+     * MemberAccountDto를 받아서 현재 객체를 리턴합니다.
+     *
+     * @param dto
+     * @return
+     */
     public static SharedPostPrincipal from(MemberAccountDto dto) {
         return SharedPostPrincipal.of(
             dto.memberId(),
@@ -56,6 +70,11 @@ public record SharedPostPrincipal(
         );
     }
 
+    /**
+     * 현재 객체를 dto로 바꿔줍니다
+     *
+     * @return
+     */
     public MemberAccountDto toDto() {
         return MemberAccountDto.of(
             memberId,
