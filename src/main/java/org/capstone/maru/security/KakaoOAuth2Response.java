@@ -1,21 +1,23 @@
-package org.capstone.maru.dto.security;
+package org.capstone.maru.security;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import lombok.Getter;
 
 /**
  * https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info 카카오로부터 사용자 정보를 불러올
  * 때 카카오에서 응답 메시지 형식을 맞춘 것이다. 자세한 내용은 위 링크를 참조
  */
 @SuppressWarnings("unchecked")
-public record KakaoOAuth2Response(
-    Long id,
-    LocalDateTime connectedAt,
-    Map<String, Object> properties,
-    KakaoAccount kakaoAccount
-) {
+@Getter
+public class KakaoOAuth2Response extends OAuth2Response {
+
+    private final Long id;
+    private final LocalDateTime connectedAt;
+    private final Map<String, Object> properties;
+    private final KakaoAccount kakaoAccount;
 
     public record KakaoAccount(
         Boolean profileNicknameNeedsAgreement,
@@ -51,6 +53,14 @@ public record KakaoOAuth2Response(
         }
     }
 
+    private KakaoOAuth2Response(Long id, LocalDateTime connectedAt, Map<String, Object> properties,
+        KakaoAccount kakaoAccount) {
+        this.id = id;
+        this.connectedAt = connectedAt;
+        this.properties = properties;
+        this.kakaoAccount = kakaoAccount;
+    }
+
     public static KakaoOAuth2Response from(Map<String, Object> attributes) {
         return new KakaoOAuth2Response(
             Long.valueOf(String.valueOf(attributes.get("id"))),
@@ -63,11 +73,21 @@ public record KakaoOAuth2Response(
         );
     }
 
-    public String email() {
-        return this.kakaoAccount().email();
+    // -- OAuth2Response abstract method 구현 -- //
+
+
+    @Override
+    public String id() {
+        return String.valueOf(this.id);
     }
 
+    @Override
+    public String email() {
+        return this.getKakaoAccount().email();
+    }
+
+    @Override
     public String nickname() {
-        return this.kakaoAccount().nickname();
+        return this.getKakaoAccount().nickname();
     }
 }
