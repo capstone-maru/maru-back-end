@@ -34,7 +34,7 @@ public abstract class OAuth2Response {
     }
 
     public static OAuth2Response ofNaver(Map<String, Object> attributes) {
-        return null;
+        return NaverOAuth2Response.from(attributes);
     }
 
     public abstract String id();
