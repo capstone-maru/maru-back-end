@@ -47,7 +47,7 @@ spring:
             client-id: OvLyXvoT1NlEr8Wfiu2u
             client-secret: U6Or_rMFOQ
             authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/login/auth
+            redirect-uri: "{baseUrl}/login/oauth2/code/naver"
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
