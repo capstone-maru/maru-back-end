@@ -7,13 +7,10 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.util.Objects;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.capstone.maru.dto.Role;
-import org.capstone.maru.dto.SocialType;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,24 +36,17 @@ public class MemberAccount extends AuditingFields {
     @Column(length = 100)
     private String nickname;
 
-    private SocialType socialType;
-
-    private Role role;
-
-    @Builder
     private MemberAccount(
         String memberId,
         String email,
         String nickname,
-        String createdBy,
-        SocialType socialType
+        String createdBy
     ) {
         this.memberId = memberId;
         this.email = email;
         this.nickname = nickname;
         this.createdBy = createdBy;
         this.modifiedBy = createdBy;
-        this.socialType = socialType;
     }
 
     public static MemberAccount of(
@@ -64,7 +54,7 @@ public class MemberAccount extends AuditingFields {
         String email,
         String nickname
     ) {
-        return new MemberAccount(memberId, email, nickname, null, null);
+        return new MemberAccount(memberId, email, nickname, null);
     }
 
     public static MemberAccount of(
@@ -73,7 +63,7 @@ public class MemberAccount extends AuditingFields {
         String nickname,
         String createdBy
     ) {
-        return new MemberAccount(memberId, email, nickname, createdBy, null);
+        return new MemberAccount(memberId, email, nickname, createdBy);
     }
 
     @Override
