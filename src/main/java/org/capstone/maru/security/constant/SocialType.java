@@ -12,14 +12,11 @@ public enum SocialType {
     private final String key;
 
     public static SocialType of(String registrationId) {
-        switch (registrationId) {
-            case "kakao":
-                return SocialType.KAKAO;
-            case "naver":
-                return SocialType.NAVER;
-            default:
-                throw new IllegalArgumentException(
-                    "Unsupported social registrationId: " + registrationId);
-        }
+        return switch (registrationId) {
+            case "kakao" -> SocialType.KAKAO;
+            case "naver" -> SocialType.NAVER;
+            default -> throw new IllegalArgumentException(
+                "Unsupported social registrationId: " + registrationId);
+        };
     }
 }

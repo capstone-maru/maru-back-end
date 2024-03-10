@@ -1,4 +1,4 @@
-package org.capstone.maru.security;
+package org.capstone.maru.security.principal;
 
 import java.util.Collection;
 import java.util.Map;

@@ -1,6 +1,8 @@
-package org.capstone.maru.security;
+package org.capstone.maru.security.service;
 
 import lombok.RequiredArgsConstructor;
+import org.capstone.maru.security.response.OAuth2Response;
+import org.capstone.maru.security.principal.SharedPostPrincipal;
 import org.capstone.maru.security.constant.SocialType;
 import org.capstone.maru.service.MemberAccountService;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

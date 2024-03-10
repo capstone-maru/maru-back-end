@@ -1,4 +1,4 @@
-package org.capstone.maru.security;
+package org.capstone.maru.security.response;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
