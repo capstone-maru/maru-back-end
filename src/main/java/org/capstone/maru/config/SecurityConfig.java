@@ -2,8 +2,9 @@ package org.capstone.maru.config;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.capstone.maru.dto.security.KakaoOAuth2Response;
-import org.capstone.maru.dto.security.SharedPostPrincipal;
+import org.capstone.maru.security.CustomOAuth2UserService;
+import org.capstone.maru.security.KakaoOAuth2Response;
+import org.capstone.maru.security.SharedPostPrincipal;
 import org.capstone.maru.service.MemberAccountService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -28,15 +29,14 @@ public class SecurityConfig {
     @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
     public WebSecurityCustomizer configureH2ConsoleEnable() {
         return web -> web.ignoring()
-            .requestMatchers(PathRequest.toH2Console());
+                         .requestMatchers(PathRequest.toH2Console());
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(
         HttpSecurity httpSecurity,
-        OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService
+        CustomOAuth2UserService customOAuth2UserService
     ) throws Exception {
-        log.info("SecurityFilterChain 빈 등록 완료");
         return httpSecurity
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
@@ -48,7 +48,7 @@ public class SecurityConfig {
             )
             .oauth2Login(oAuth -> oAuth
                 .userInfoEndpoint(userInfo -> userInfo
-                    .userService(oAuth2UserService)
+                    .userService(customOAuth2UserService)
                 )
             )
             .csrf(
@@ -58,7 +58,6 @@ public class SecurityConfig {
             )
             .build();
     }
-
 
     @Bean
     public OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService(
@@ -74,7 +73,7 @@ public class SecurityConfig {
                 oAuth2User.getAttributes());
 
             String registrationId = userRequest.getClientRegistration()
-                .getRegistrationId(); // "kakao"
+                                               .getRegistrationId(); // "kakao"
 
             String providerId = String.valueOf(kakaoOAuthResponse.id());
             String memberId = registrationId + "_" + providerId;
