@@ -1,6 +1,7 @@
 package org.capstone.maru.security.response;
 
 import java.util.Map;
+import lombok.Builder;
 import lombok.Getter;
 
 @SuppressWarnings("unchecked")
@@ -15,12 +16,16 @@ public class NaverOAuth2Response extends OAuth2Response {
         String name
     ) {
 
+        @Builder
+        private Response {
+        }
+
         public static Response from(Map<String, Object> attributes) {
-            return new Response(
-                String.valueOf(attributes.get("id")),
-                String.valueOf(attributes.get("email")),
-                String.valueOf(attributes.get("name"))
-            );
+            return Response.builder()
+                           .id(String.valueOf(attributes.get("id")))
+                           .email(String.valueOf(attributes.get("email")))
+                           .name(String.valueOf(attributes.get("name")))
+                           .build();
         }
     }
 
