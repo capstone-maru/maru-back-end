@@ -38,14 +38,14 @@ spring:
       client:
         registration:
           kakao:
-            client-id: 0d7c948d8eaadc0e08f3e42636bba3bd
-            clientSecret: bIH2tF6jMbrRsdAp9DPL7yh97LP8pPXk
+            client-id: ${KAKAO_OAUTH_CLIENT_ID}
+            client-secret: ${KAKAO_OAUTH_CLIENT_SECRET}
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/kakao"
             client-authentication-method: client_secret_post
           naver:
-            client-id: OvLyXvoT1NlEr8Wfiu2u
-            client-secret: U6Or_rMFOQ
+            client-id: ${NAVER_OAUTH_CLIENT_ID}
+            client-secret: ${NAVER_OAUTH_CLIENT_SECRET}
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/naver"
         provider:
