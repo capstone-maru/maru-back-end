@@ -20,6 +20,7 @@ public class KakaoOAuth2Response extends OAuth2Response {
     private final Map<String, Object> properties;
     private final KakaoAccount kakaoAccount;
 
+    @Builder
     public record KakaoAccount(
         Boolean profileNicknameNeedsAgreement,
         Profile profile,
@@ -29,10 +30,6 @@ public class KakaoOAuth2Response extends OAuth2Response {
         Boolean isEmailVerified,
         String email
     ) {
-
-        @Builder
-        public KakaoAccount {
-        }
 
         public record Profile(String nickname) {
 

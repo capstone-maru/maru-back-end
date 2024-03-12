@@ -10,15 +10,12 @@ public class NaverOAuth2Response extends OAuth2Response {
 
     private final Response response;
 
+    @Builder
     private record Response(
         String id,
         String email,
         String name
     ) {
-
-        @Builder
-        private Response {
-        }
 
         public static Response from(Map<String, Object> attributes) {
             return Response.builder()

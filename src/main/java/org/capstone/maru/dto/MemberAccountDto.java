@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import org.capstone.maru.domain.MemberAccount;
 
+@Builder
 public record MemberAccountDto(
     String memberId,
     String email,
@@ -13,10 +14,6 @@ public record MemberAccountDto(
     LocalDateTime modifiedAt,
     String modifiedBy
 ) {
-
-    @Builder
-    public MemberAccountDto {
-    }
 
     public static MemberAccountDto from(MemberAccount entity) {
         return MemberAccountDto.builder()
