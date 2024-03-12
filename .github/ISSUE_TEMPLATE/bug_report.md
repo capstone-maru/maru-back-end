@@ -7,15 +7,15 @@ assignees: ''
 
 ---
 
-## **Describe the bug**
+## Describe the bug
 
 <!-- A clear and concise description of what the bug is. -->
 
-## **Expected behavior**
+## Expected behavior
 
 <!-- A clear and concise description of what you expected to happen. -->
 
-## **To Reproduce**
+## To Reproduce
 
 <!--
   Minimal reproducible code
@@ -23,10 +23,10 @@ assignees: ''
   Optional, but recommended.
 -->
 
-## **Possible Solution**
+## Possible Solution
 
 <!-- If you have suggestions on a fix for the bug  -->
 
-## **Additional context**
+## Additional context
 
 <!-- Add any other context about the problem here. -->
