@@ -6,26 +6,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-@RestControllerAdvice
 @Slf4j
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
-        IllegalArgumentException e) {
-        log.error("IllegalArgumentException: {}", e.getMessage());
+    @ExceptionHandler({NoResourceFoundException.class})
+    public ResponseEntity<RestErrorResponse> handleNoResourceFoundException(
+        NoResourceFoundException ex
+    ) {
+        log.error("NoResourceFoundException occur!: {}", ex.getMessage());
 
-        final ErrorResponse response = ErrorResponse.of(ErrorCode.DUPLICATE_VALUE, e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(OAuth2AuthenticationException.class)
-    public ResponseEntity<ErrorResponse> handleOAuth2AuthenticationException(
-        OAuth2AuthenticationException e) {
-        log.error("OAuth2AuthenticationException: {}", e.getMessage());
-        
-        final ErrorResponse response = ErrorResponse.of(ErrorCode.DUPLICATE_VALUE, e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                             .body(RestErrorResponse.of(RestErrorCode.NOT_FOUND));
     }
 }
