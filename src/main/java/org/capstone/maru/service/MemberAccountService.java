@@ -1,19 +1,14 @@
 package org.capstone.maru.service;
 
-import jakarta.annotation.Resource;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.dto.MemberAccountDto;
-import org.capstone.maru.exception.ErrorCode;
-import org.capstone.maru.exception.ErrorResponse;
+import org.capstone.maru.exception.MemberException;
 import org.capstone.maru.repository.MemberAccountRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @RequiredArgsConstructor
 @Transactional
@@ -37,8 +32,7 @@ public class MemberAccountService {
     ) {
 
         if (memberAccountRepository.findByEmail(email).isPresent()) {
-            log.error("IllegalArgumentException: {}", "이미 가입된 이메일입니다.");
-            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+            throw new MemberException("이미 가입된 이메일입니다.");
         }
 
         return MemberAccountDto.from(
@@ -51,6 +45,10 @@ public class MemberAccountService {
                 )
             )
         );
+    }
+
+    public void error() {
+        throw new IllegalArgumentException("에러 테스트");
     }
 
 }

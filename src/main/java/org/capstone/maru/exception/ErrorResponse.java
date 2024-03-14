@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 public class ErrorResponse {
 
-    private int status;                 // 에러 상태 코드
-    private String code;        // 에러 구분 코드
-    private String errorMsg;           // 에러 메시지
-    private String reason;              // 에러 이유
+    private final int status;                 // 에러 상태 코드
+    private final String code;                // 에러 구분 코드
+    private final String errorMsg;            // 에러 메시지
+    private final String reason;              // 에러 이유
 
     /**
      * ErrorResponse 생성자
