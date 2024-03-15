@@ -162,4 +162,8 @@
 
 프로젝트를 진행하면서 서비스의 성능을 향상시킬 수 있는 부분에 대해서 고민하고 테스팅한 후 성능 향상 전/후의 측정값들을 기록하고 성능 향상 원인에 대해 공부한 것을
 정리하였습니다.
+
+## 9. 설계 다이어그램
+
+### [시퀀스 다이어그램] (https://viewer.diagrams.net/?tags=%7B%7D&highlight=0000ff&edit=_blank&layers=1&nav=1#G1BFeex-2cN2aTEROFH5kdMMmAsgxf-xuQ)
 <br>
