@@ -54,4 +54,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private String getMemberId(String registrationId, OAuth2Response oAuth2Response) {
         return registrationId + "_" + oAuth2Response.id();
     }
+
+
 }
