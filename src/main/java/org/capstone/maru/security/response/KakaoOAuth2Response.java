@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import lombok.Builder;
 import lombok.Getter;
 
 /**
@@ -19,6 +20,7 @@ public class KakaoOAuth2Response extends OAuth2Response {
     private final Map<String, Object> properties;
     private final KakaoAccount kakaoAccount;
 
+    @Builder
     public record KakaoAccount(
         Boolean profileNicknameNeedsAgreement,
         Profile profile,
@@ -37,15 +39,28 @@ public class KakaoOAuth2Response extends OAuth2Response {
         }
 
         public static KakaoAccount from(Map<String, Object> attributes) {
-            return new KakaoAccount(
-                Boolean.valueOf(String.valueOf(attributes.get("profile_nickname_needs_agreement"))),
-                Profile.from((Map<String, Object>) attributes.get("profile")),
-                Boolean.valueOf(String.valueOf(attributes.get("has_email"))),
-                Boolean.valueOf(String.valueOf(attributes.get("email_needs_agreement"))),
-                Boolean.valueOf(String.valueOf(attributes.get("is_email_valid"))),
-                Boolean.valueOf(String.valueOf(attributes.get("is_email_verified"))),
-                String.valueOf(attributes.get("email"))
-            );
+            return KakaoAccount.builder()
+                               .profileNicknameNeedsAgreement(
+                                   Boolean.valueOf(String.valueOf(
+                                       attributes.get("profile_nickname_needs_agreement")))
+                               )
+                               .profile(
+                                   Profile.from((Map<String, Object>) attributes.get("profile"))
+                               )
+                               .hasEmail(
+                                   Boolean.valueOf(String.valueOf(attributes.get("has_email")))
+                               )
+                               .emailNeedsAgreement(Boolean.valueOf(
+                                   String.valueOf(attributes.get("email_needs_agreement")))
+                               )
+                               .isEmailValid(Boolean.valueOf(
+                                   String.valueOf(attributes.get("is_email_valid")))
+                               )
+                               .isEmailVerified(Boolean.valueOf(
+                                   String.valueOf(attributes.get("is_email_verified")))
+                               )
+                               .email(String.valueOf(attributes.get("email")))
+                               .build();
         }
 
         public String nickname() {

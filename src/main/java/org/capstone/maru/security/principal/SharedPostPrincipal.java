@@ -76,11 +76,11 @@ public record SharedPostPrincipal(
      * @return
      */
     public MemberAccountDto toDto() {
-        return MemberAccountDto.of(
-            memberId,
-            email,
-            nickname
-        );
+        return MemberAccountDto.builder()
+                               .memberId(memberId)
+                               .email(email)
+                               .nickname(nickname)
+                               .build();
     }
 
     // -- OAuth2User -- //
