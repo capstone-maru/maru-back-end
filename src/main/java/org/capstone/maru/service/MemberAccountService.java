@@ -25,7 +25,6 @@ public class MemberAccountService {
                                       .map(MemberAccountDto::from);
     }
 
-    @Transactional
     public MemberAccountDto saveUser(
         String memberId,
         String email,
@@ -47,5 +46,10 @@ public class MemberAccountService {
                 )
             )
         );
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existsMember(String email) {
+        return memberAccountRepository.existsByEmail(email);
     }
 }
