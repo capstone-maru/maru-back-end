@@ -1,7 +1,6 @@
 package org.capstone.maru.security.service;
 
 import lombok.RequiredArgsConstructor;
-import org.capstone.maru.dto.MemberAccountDto;
 import org.capstone.maru.security.response.OAuth2Response;
 import org.capstone.maru.security.principal.SharedPostPrincipal;
 import org.capstone.maru.security.constant.SocialType;
@@ -32,7 +31,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             oAuth2User.getAttributes()
         );
 
-        return handleMemberProcess(registrationId, extractAttributes);
+        return createSharedPostPrincipal(registrationId, extractAttributes);
     }
 
     private SocialType getSocialType(String registrationId) {
@@ -43,51 +42,18 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         return registrationId + "_" + oAuth2Response.id();
     }
 
-    private MemberAccountDto saveMemberAccount(
-        String memberId,
-        String email,
-        String nickname
-    ) {
-        return memberAccountService.saveUser(memberId, email, nickname);
-    }
-
-    private SharedPostPrincipal createPrincipal(MemberAccountDto memberAccountDto) {
-        return SharedPostPrincipal.from(memberAccountDto);
-    }
-
-    private SharedPostPrincipal createPrincipal(String memberId, String email, String nickname) {
-        return SharedPostPrincipal.of(memberId, email, nickname);
-    }
-
-    private SharedPostPrincipal handleExistingMember(
-        String memberId,
-        OAuth2Response extractAttributes
-    ) {
-        return createPrincipal(memberId, extractAttributes.email(), extractAttributes.nickname());
-    }
-
-    private SharedPostPrincipal handleNonExistingMember(
-        String memberId,
-        OAuth2Response extractAttributes
-    ) {
-        return createPrincipal(
-            saveMemberAccount(
-                memberId,
-                extractAttributes.email(),
-                extractAttributes.nickname()
-            )
-        );
-    }
-
-    private SharedPostPrincipal handleMemberProcess(
+    private SharedPostPrincipal createSharedPostPrincipal(
         String registrationId,
         OAuth2Response extractAttributes
     ) {
         String memberId = getMemberId(registrationId, extractAttributes);
 
-        if (memberAccountService.existsMember(extractAttributes.email())) {
-            return handleExistingMember(memberId, extractAttributes);
-        }
-        return handleNonExistingMember(memberId, extractAttributes);
+        return SharedPostPrincipal.from(
+            memberAccountService.login(
+                memberId,
+                extractAttributes.email(),
+                extractAttributes.nickname()
+            )
+        );
     }
 }

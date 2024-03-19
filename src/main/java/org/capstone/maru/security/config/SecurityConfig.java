@@ -56,7 +56,6 @@ public class SecurityConfig {
                 ).permitAll()
                 .anyRequest().authenticated()
             )
-            .logout(logout -> logout.logoutSuccessUrl("/").permitAll())
             .oauth2Login(oAuth -> oAuth
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
@@ -65,6 +64,10 @@ public class SecurityConfig {
             )
             .exceptionHandling(hc -> hc
                 .authenticationEntryPoint(authEntryPoint)
+            )
+            .logout(logout -> logout
+                .deleteCookies("JSESSIONID")
+                .logoutSuccessUrl("/").permitAll()
             )
             .csrf(
                 csrf -> csrf
