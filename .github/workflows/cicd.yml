@@ -38,10 +38,10 @@ jobs:
           docker build -t app .
           docker tag app ${{ secrets.DOCKER_USERNAME }}/maru:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/maru:latest
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
+      #  deploy:
+      #    needs: build
+      #    runs-on: ubuntu-latest
+      #    steps:
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
