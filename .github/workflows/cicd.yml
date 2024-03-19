@@ -51,9 +51,12 @@ jobs:
           # 도커 작업
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/maru:latest
-            docker stop $(docker ps -q)
+            
+            CONTAINERS=$(docker ps -q)
+            for CONTAINER in $CONTAINERS; do
+              docker stop $CONTAINER
+            done
+            
             docker rm $(docker ps -aq)
             docker run -d --log-driver=syslog -p 8080:8080 -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/maru:latest
             docker image prune -a -f
-
-  
