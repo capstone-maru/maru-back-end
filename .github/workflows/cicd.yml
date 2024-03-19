@@ -48,7 +48,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.AWS_HOST }} # EC2 인스턴스 퍼블릭 DNS
-          username: ubuntu
+          username: root
           key: ${{ secrets.AWS_ACCESS_SECRET_KEY }} # pem 키
           # 도커 작업
           script: |
