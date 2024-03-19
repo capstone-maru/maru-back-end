@@ -20,7 +20,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: make application-prod.yml
+      - name: make application-oauth.yml
         run: |
           cd ./src/main/resources
           touch ./application-prod.yml
