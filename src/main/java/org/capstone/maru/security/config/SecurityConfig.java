@@ -1,6 +1,7 @@
 package org.capstone.maru.security.config;
 
 
+import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.security.service.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Slf4j
 @Configuration
@@ -24,6 +27,18 @@ public class SecurityConfig {
     private final AuthenticationEntryPoint authEntryPoint;
 
     private final AuthenticationFailureHandler authFailureHandler;
+
+    CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedHeaders(Collections.singletonList("*"));
+            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowedOriginPatterns(
+                Collections.singletonList("http://localhost:3000")); // ⭐️ 허용할 origin
+            config.setAllowCredentials(true);
+            return config;
+        };
+    }
 
     public SecurityConfig(
         @Qualifier("customAuthenticationEntryPoint") AuthenticationEntryPoint authEntryPoint,
@@ -37,7 +52,7 @@ public class SecurityConfig {
     @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
     public WebSecurityCustomizer configureH2ConsoleEnable() {
         return web -> web.ignoring()
-                         .requestMatchers(PathRequest.toH2Console());
+            .requestMatchers(PathRequest.toH2Console());
     }
 
     @Bean
