@@ -52,8 +52,8 @@ jobs:
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/maru:latest
             docker stop $(docker ps -q)
-            docker run -d --log-driver=syslog -p 8080:8080 -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/maru:latest
             docker rm $(docker ps -aq)
+            docker run -d --log-driver=syslog -p 8080:8080 -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/maru:latest
             docker image prune -a -f
 
   
