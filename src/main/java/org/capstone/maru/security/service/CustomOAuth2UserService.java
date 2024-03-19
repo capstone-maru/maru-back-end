@@ -31,20 +31,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             oAuth2User.getAttributes()
         );
 
-        String memberId = getMemberId(registrationId, extractAttributes);
-
-        return memberAccountService
-            .searchMember(memberId)
-            .map(SharedPostPrincipal::from)
-            .orElseGet(() ->
-                SharedPostPrincipal.from(
-                    memberAccountService.saveUser(
-                        memberId,
-                        extractAttributes.email(),
-                        extractAttributes.nickname()
-                    )
-                )
-            );
+        return createSharedPostPrincipal(registrationId, extractAttributes);
     }
 
     private SocialType getSocialType(String registrationId) {
@@ -55,5 +42,18 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         return registrationId + "_" + oAuth2Response.id();
     }
 
+    private SharedPostPrincipal createSharedPostPrincipal(
+        String registrationId,
+        OAuth2Response extractAttributes
+    ) {
+        String memberId = getMemberId(registrationId, extractAttributes);
 
+        return SharedPostPrincipal.from(
+            memberAccountService.login(
+                memberId,
+                extractAttributes.email(),
+                extractAttributes.nickname()
+            )
+        );
+    }
 }

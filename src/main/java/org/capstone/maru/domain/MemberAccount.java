@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.domain.Persistable;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,17 +23,15 @@ import lombok.ToString;
     @Index(columnList = "createdBy")
 })
 @Entity
-public class MemberAccount extends AuditingFields {
+public class MemberAccount extends AuditingFields implements Persistable<String> {
 
     @Id
     @Column(nullable = false, length = 50)
     private String memberId;
 
-    @Setter
     @Column(length = 100)
     private String email;
 
-    @Setter
     @Column(length = 100)
     private String nickname;
 
@@ -80,5 +79,15 @@ public class MemberAccount extends AuditingFields {
     @Override
     public int hashCode() {
         return Objects.hash(this.getMemberId());
+    }
+
+    @Override
+    public String getId() {
+        return memberId;
+    }
+
+    @Override
+    public boolean isNew() {
+        return getCreatedAt() == null;
     }
 }

@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,7 +17,6 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 
 @Slf4j
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
 
     private final AuthenticationEntryPoint authEntryPoint;
@@ -50,8 +48,7 @@ public class SecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers(
                     HttpMethod.GET,
-                    "/", "/login", "login-kakao", "login-naver", "/oauth2/**", "/login/oauth2/**",
-                    "/errorTest"
+                    "/"
                 ).permitAll()
                 .requestMatchers(
                     HttpMethod.POST,
@@ -67,6 +64,10 @@ public class SecurityConfig {
             )
             .exceptionHandling(hc -> hc
                 .authenticationEntryPoint(authEntryPoint)
+            )
+            .logout(logout -> logout
+                .deleteCookies("JSESSIONID")
+                .logoutSuccessUrl("/").permitAll()
             )
             .csrf(
                 csrf -> csrf

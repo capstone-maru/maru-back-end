@@ -25,18 +25,25 @@ public class MemberAccountService {
                                       .map(MemberAccountDto::from);
     }
 
-    @Transactional
-    public MemberAccountDto saveUser(
+    public MemberAccountDto login(String memberId, String email, String nickname) {
+        Optional<MemberAccount> memberAccount = memberAccountRepository.findByEmail(email);
+
+        if (memberAccount.isEmpty()) {
+            return saveMember(memberId, email, nickname);
+        }
+
+        if (memberAccount.get().getMemberId().equals(memberId)) {
+            return MemberAccountDto.from(memberAccount.get());
+        }
+
+        throw new MemberAccountExistentException(RestErrorCode.DUPLICATE_VALUE);
+    }
+
+    private MemberAccountDto saveMember(
         String memberId,
         String email,
         String nickname
     ) {
-        if (memberAccountRepository.findByEmail(email).isPresent()) {
-            throw new MemberAccountExistentException(
-                RestErrorCode.DUPLICATE_VALUE
-            );
-        }
-
         return MemberAccountDto.from(
             memberAccountRepository.save(
                 MemberAccount.of(
