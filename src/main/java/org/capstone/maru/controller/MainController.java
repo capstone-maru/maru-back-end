@@ -16,7 +16,7 @@ public class MainController {
 
     @GetMapping("/")
     public String root() {
-        return "health check";
+        return "health check!";
     }
 
     @GetMapping("/test")
