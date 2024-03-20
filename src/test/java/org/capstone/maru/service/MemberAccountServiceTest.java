@@ -66,7 +66,7 @@ class MemberAccountServiceTest {
         given(memberAccountRepository.save(memberAccount)).willReturn(savedMemberAccount);
 
         // when
-        MemberAccountDto result = sut.saveUser(
+        MemberAccountDto result = sut.saveMember(
             memberAccount.getMemberId(),
             memberAccount.getEmail(),
             memberAccount.getNickname()

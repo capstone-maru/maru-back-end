@@ -39,7 +39,7 @@ public class MemberAccountService {
         throw new MemberAccountExistentException(RestErrorCode.DUPLICATE_VALUE);
     }
 
-    private MemberAccountDto saveMember(
+    protected MemberAccountDto saveMember(
         String memberId,
         String email,
         String nickname

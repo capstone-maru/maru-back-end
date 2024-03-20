@@ -1,9 +1,12 @@
 package org.capstone.maru.security.service;
 
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.security.response.OAuth2Response;
 import org.capstone.maru.security.principal.SharedPostPrincipal;
 import org.capstone.maru.security.constant.SocialType;
+import org.capstone.maru.security.response.OAuth2ResponseFactory;
 import org.capstone.maru.service.MemberAccountService;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -12,6 +15,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -20,22 +24,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        log.info("[Debug] OAuth2UserService loadUser!");
+
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        SocialType socialType = getSocialType(registrationId);
 
-        OAuth2Response extractAttributes = OAuth2Response.of(
-            socialType,
+        OAuth2Response extractAttributes = OAuth2ResponseFactory.getOAuth2Response(
+            registrationId,
             oAuth2User.getAttributes()
         );
 
-        return createSharedPostPrincipal(registrationId, extractAttributes);
-    }
-
-    private SocialType getSocialType(String registrationId) {
-        return SocialType.of(registrationId);
+        return createSharedPostPrincipal(registrationId, extractAttributes,
+            oAuth2User.getAttributes());
     }
 
     private String getMemberId(String registrationId, OAuth2Response oAuth2Response) {
@@ -44,7 +46,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private SharedPostPrincipal createSharedPostPrincipal(
         String registrationId,
-        OAuth2Response extractAttributes
+        OAuth2Response extractAttributes,
+        Map<String, Object> oauth2Attributes
     ) {
         String memberId = getMemberId(registrationId, extractAttributes);
 
@@ -53,7 +56,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 memberId,
                 extractAttributes.email(),
                 extractAttributes.nickname()
-            )
+            ),
+            oauth2Attributes
         );
     }
 }
