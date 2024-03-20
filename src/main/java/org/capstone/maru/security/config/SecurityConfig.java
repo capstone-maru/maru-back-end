@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,6 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 @Slf4j
 @Order(0)
@@ -31,17 +33,20 @@ public class SecurityConfig {
     private final AuthenticationEntryPoint authEntryPoint;
     private final AuthenticationFailureHandler authFailureHandler;
     private final AuthenticationSuccessHandler authSuccessHandler;
+    private final LogoutHandler logoutHandler;
     private final TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter;
 
     public SecurityConfig(
         @Qualifier("customAuthenticationEntryPoint") AuthenticationEntryPoint authEntryPoint,
         @Qualifier("customAuthenticationFailureHandler") AuthenticationFailureHandler authFailureHandler,
         @Qualifier("customAuthenticationSuccessHandler") AuthenticationSuccessHandler authenticationSuccessHandler,
+        @Qualifier("customLogoutHandler") LogoutHandler logoutHandler,
         @Autowired TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter
     ) {
         this.authEntryPoint = authEntryPoint;
         this.authFailureHandler = authFailureHandler;
         this.authSuccessHandler = authenticationSuccessHandler;
+        this.logoutHandler = logoutHandler;
         this.tokenAuthenticationProcessingFilter = tokenAuthenticationProcessingFilter;
     }
 
@@ -66,7 +71,7 @@ public class SecurityConfig {
                 ).permitAll()
                 .requestMatchers(
                     HttpMethod.POST,
-                    "/login", "/token/logout", "/token/refresh"
+                    "/auth/token/refresh"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
@@ -74,6 +79,9 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .oauth2Login(oAuth -> oAuth
+                .authorizationEndpoint(authorization -> authorization
+                    .baseUri("/auth/login")
+                )
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
                 )
@@ -84,6 +92,8 @@ public class SecurityConfig {
                 .authenticationEntryPoint(authEntryPoint)
             )
             .logout(logout -> logout
+                .logoutUrl("/auth/logout")
+                .addLogoutHandler(logoutHandler)
                 .deleteCookies("JSESSIONID")
                 .logoutSuccessUrl("/").permitAll()
             )

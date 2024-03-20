@@ -16,11 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping
 public class AuthController {
-
-    private final RefreshTokenService refreshTokenService;
+    
     private final TokenReIssuer tokenReIssuer;
 
-    @PostMapping("/token/refresh")
+    @PostMapping("/auth/token/refresh")
     public ResponseEntity<TokenDto> refreshToken(HttpServletRequest request) {
         TokenDto newAccessToken = tokenReIssuer.reissueAccessToken(request);
 
