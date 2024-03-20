@@ -1,0 +1,171 @@
+package org.capstone.maru.security.token.jwt;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
+import io.jsonwebtoken.security.SignatureException;
+import java.security.Key;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import javax.crypto.SecretKey;
+import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.security.principal.SharedPostPrincipal;
+import org.capstone.maru.security.response.OAuth2Response;
+import org.capstone.maru.security.response.OAuth2ResponseFactory;
+import org.capstone.maru.security.token.TokenDto;
+import org.capstone.maru.security.token.TokenProvider;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.stereotype.Component;
+
+@Slf4j
+@Component("jwtTokenProvider")
+public class JwtTokenProvider implements TokenProvider, InitializingBean {
+
+    private final String SECRET_KEY_STRING;
+    private Key SECRET_KEY;
+    private final Long ACCESS_TOKEN_VALID_MILLI_SECOND = 60 * 60 * 1000L;
+    private final Long REFRESH_TOKEN_VALID_MILLI_SECOND = 7 * 24 * 60 * 60 * 1000L; // 7 days
+    private static final String AUTHORITY = "authorities";
+    private static final String EMAIL = "email";
+    private static final String NICKNAME = "nickname";
+
+    public JwtTokenProvider(
+        @Value("${jwt.secret}") String SECRET_KEY_STRING
+    ) {
+        this.SECRET_KEY_STRING = SECRET_KEY_STRING;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY_STRING);
+        this.SECRET_KEY = Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    @Override
+    public boolean validate(String token) {
+        try {
+            Jwts.parser().verifyWith((SecretKey) SECRET_KEY).build().parseSignedClaims(token);
+            return true;
+        } catch (SignatureException ex) {
+            log.error("JWT signature does not match");
+        } catch (SecurityException ex) {
+            log.error("Invalid JWT signature");
+        } catch (MalformedJwtException ex) {
+            log.error("Invalid JWT token");
+        } catch (ExpiredJwtException ex) {
+            log.error("Expired JWT token");
+        } catch (UnsupportedJwtException ex) {
+            log.error("Unsupported JWT token");
+        } catch (IllegalArgumentException ex) {
+            log.error("JWT claims string is empty.");
+        }
+        return false;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public OAuth2AuthenticationToken decode(String token) {
+        Claims claims = this.parseClaims(token);
+        String memberId = claims.getSubject();
+        String email = claims.get(EMAIL, String.class);
+        String nickname = claims.get(NICKNAME, String.class);
+        List<? extends GrantedAuthority> grantedAuthorities = claims
+            .get(AUTHORITY, List.class)
+            .stream()
+            .map(auth -> new SimpleGrantedAuthority((String) auth))
+            .toList();
+
+        SharedPostPrincipal principal = SharedPostPrincipal.of(memberId, email, nickname,
+            grantedAuthorities, Map.of());
+
+        return new OAuth2AuthenticationToken(principal, grantedAuthorities, "maru");
+    }
+
+    @Override
+    public String createAccessToken(Authentication authentication) {
+        return createToken(authentication, ACCESS_TOKEN_VALID_MILLI_SECOND);
+    }
+
+    @Override
+    public TokenDto reissueAccessTokenUsing(String refreshToken) throws JwtException {
+        return null;
+    }
+
+    @Override
+    public String createRefreshToken(Authentication authentication) {
+        return null;
+    }
+
+    @Override
+    public Long getExpiration() {
+        return this.ACCESS_TOKEN_VALID_MILLI_SECOND / 1000;
+    }
+
+    // -- JWT 생성, 리프레쉬, 파싱 로직 -- //
+    private String createToken(Authentication authentication, Long expiration) {
+        log.info("[Debug] creating token!");
+
+        assert authentication != null;
+
+        OAuth2Response oAuth2Response = OAuth2ResponseFactory.getOAuth2Response(
+            (OAuth2AuthenticationToken) authentication
+        );
+
+        List<String> authorities = authentication.getAuthorities()
+                                                 .stream()
+                                                 .map(GrantedAuthority::getAuthority)
+                                                 .toList();
+
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + expiration);
+
+        return Jwts.builder()
+                   .subject(oAuth2Response.id())
+                   .claim(EMAIL, oAuth2Response.email())
+                   .claim(NICKNAME, oAuth2Response.nickname())
+                   .claim(AUTHORITY, authorities)
+                   .issuedAt(now)
+                   .expiration(expiryDate)
+                   .signWith(SECRET_KEY)
+                   .compact();
+    }
+
+    private Claims parseClaims(String token) throws JwtException {
+        return Jwts.parser()
+                   .verifyWith((SecretKey) SECRET_KEY)
+                   .build()
+                   .parseSignedClaims(token)
+                   .getPayload();
+    }
+
+    private TokenDto createAccessTokenOnly(Claims claims) {
+        Date now = new Date();
+
+        String accessToken = Jwts.builder()
+                                 .claims(claims)
+                                 .issuedAt(now)
+                                 .expiration(
+                                     new Date(now.getTime() + ACCESS_TOKEN_VALID_MILLI_SECOND))
+                                 .signWith(SECRET_KEY)
+                                 .compact();
+
+        return TokenDto.builder()
+                       .grantType("Bearer")
+                       .accessToken(accessToken)
+                       .refreshToken("")
+                       .accessTokenExpireDate(ACCESS_TOKEN_VALID_MILLI_SECOND)
+                       .build();
+    }
+}
