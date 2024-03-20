@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.exception.RestErrorCode;
 import org.capstone.maru.security.exception.InvalidTokenException;
 import org.capstone.maru.security.handler.TokenAuthenticationFailureHandler;
-import org.capstone.maru.security.principal.SharedPostPrincipal;
 import org.capstone.maru.security.token.TokenProvider;
 import org.capstone.maru.security.token.TokenResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +66,11 @@ public class TokenAuthenticationProcessingFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return request.getRequestURI().contains("token/");
     }
 
     protected void unsuccessfulAuthentication(HttpServletRequest request,

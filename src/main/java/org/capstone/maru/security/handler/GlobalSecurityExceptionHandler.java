@@ -3,7 +3,9 @@ package org.capstone.maru.security.handler;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.exception.RestErrorCode;
 import org.capstone.maru.exception.RestErrorResponse;
+import org.capstone.maru.security.exception.InvalidTokenException;
 import org.capstone.maru.security.exception.MemberAccountExistentException;
+import org.capstone.maru.security.exception.RefreshTokenNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -20,7 +22,7 @@ public class GlobalSecurityExceptionHandler {
     public ResponseEntity<RestErrorResponse> handleAuthenticationException(
         AuthenticationException ex
     ) {
-        log.error("AuthenticationException occur!: {}", ex.getMessage());
+        log.error("[Error] AuthenticationException occur!: {}", ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                              .body(RestErrorResponse.of(RestErrorCode.UNAUTHORIZED));
@@ -31,11 +33,31 @@ public class GlobalSecurityExceptionHandler {
     public ResponseEntity<RestErrorResponse> handleAlreadyHaveMemberAccountException(
         MemberAccountExistentException ex
     ) {
-        log.error("MemberAccountExistentException occur!: {}", ex.getMessage());
+        log.error("[Error] MemberAccountExistentException occur!: {}", ex.getMessage());
 
         return ResponseEntity.status(ex.getErrorCode().getStatus())
                              .body(RestErrorResponse.of(ex.getErrorCode(), ex.getReason()));
     }
 
-    // TODO: 토큰 예외 처리하기
+    @ExceptionHandler({InvalidTokenException.class})
+    @ResponseBody
+    public ResponseEntity<RestErrorResponse> handleInvalidTokenException(
+        InvalidTokenException ex
+    ) {
+        log.error("[Error] InvalidTokenException occur!: {}", ex.getMessage());
+
+        return ResponseEntity.status(ex.getErrorCode().getStatus())
+                             .body(RestErrorResponse.of(ex.getErrorCode(), ex.getReason()));
+    }
+
+    @ExceptionHandler({RefreshTokenNotFoundException.class})
+    @ResponseBody
+    public ResponseEntity<RestErrorResponse> handleRefreshTokenNotFoundException(
+        RefreshTokenNotFoundException ex
+    ) {
+        log.error("[Error] InvalidTokenException occur!: {}", ex.getMessage());
+
+        return ResponseEntity.status(ex.getErrorCode().getStatus())
+                             .body(RestErrorResponse.of(ex.getErrorCode(), ex.getReason()));
+    }
 }

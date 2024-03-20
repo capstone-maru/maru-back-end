@@ -1,15 +1,31 @@
 package org.capstone.maru.security.exception;
 
+import lombok.Getter;
+import org.capstone.maru.exception.RestErrorCode;
+
+@Getter
 public class RefreshTokenNotFoundException extends RuntimeException {
 
-    // TODO: 다른 예외 처럼 리팩토링 하기
-    private static final String defaultMessage = "리프레시 토큰을 찾을 수 없습니다.";
+    private final RestErrorCode errorCode;
+    private final String reason;
 
     public RefreshTokenNotFoundException() {
-        super(defaultMessage);
+        this(RestErrorCode.REFRESH_TOKEN_NOTFOUND);
     }
 
     public RefreshTokenNotFoundException(String message) {
-        super(message);
+        this(RestErrorCode.REFRESH_TOKEN_NOTFOUND, message);
+    }
+
+    public RefreshTokenNotFoundException(RestErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
+        this.reason = "존재하지 않는 리프레시 토큰입니다.";
+    }
+
+    public RefreshTokenNotFoundException(RestErrorCode errorCode, String reason) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
+        this.reason = reason;
     }
 }
