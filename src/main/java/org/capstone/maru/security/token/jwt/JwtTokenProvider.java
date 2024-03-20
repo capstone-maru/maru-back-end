@@ -16,12 +16,16 @@ import java.util.List;
 import java.util.Map;
 import javax.crypto.SecretKey;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.exception.RestErrorCode;
+import org.capstone.maru.security.exception.InvalidTokenException;
 import org.capstone.maru.security.principal.SharedPostPrincipal;
 import org.capstone.maru.security.response.OAuth2Response;
 import org.capstone.maru.security.response.OAuth2ResponseFactory;
+import org.capstone.maru.security.token.RefreshTokenService;
 import org.capstone.maru.security.token.TokenDto;
 import org.capstone.maru.security.token.TokenProvider;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,6 +37,8 @@ import org.springframework.stereotype.Component;
 @Component("jwtTokenProvider")
 public class JwtTokenProvider implements TokenProvider, InitializingBean {
 
+    private final RefreshTokenService refreshTokenService;
+
     private final String SECRET_KEY_STRING;
     private Key SECRET_KEY;
     private final Long ACCESS_TOKEN_VALID_MILLI_SECOND = 60 * 60 * 1000L;
@@ -40,11 +46,14 @@ public class JwtTokenProvider implements TokenProvider, InitializingBean {
     private static final String AUTHORITY = "authorities";
     private static final String EMAIL = "email";
     private static final String NICKNAME = "nickname";
+    private static final String ATTRIBUTE = "attributes";
 
     public JwtTokenProvider(
-        @Value("${jwt.secret}") String SECRET_KEY_STRING
+        @Value("${jwt.secret}") String SECRET_KEY_STRING,
+        @Autowired RefreshTokenService refreshTokenService
     ) {
         this.SECRET_KEY_STRING = SECRET_KEY_STRING;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -87,8 +96,13 @@ public class JwtTokenProvider implements TokenProvider, InitializingBean {
             .map(auth -> new SimpleGrantedAuthority((String) auth))
             .toList();
 
-        SharedPostPrincipal principal = SharedPostPrincipal.of(memberId, email, nickname,
-            grantedAuthorities, Map.of());
+        SharedPostPrincipal principal = SharedPostPrincipal.of(
+            memberId,
+            email,
+            nickname,
+            grantedAuthorities,
+            Map.of()
+        );
 
         return new OAuth2AuthenticationToken(principal, grantedAuthorities, "maru");
     }
@@ -99,13 +113,20 @@ public class JwtTokenProvider implements TokenProvider, InitializingBean {
     }
 
     @Override
-    public TokenDto reissueAccessTokenUsing(String refreshToken) throws JwtException {
-        return null;
+    public String createRefreshToken(Authentication authentication) {
+        String token = this.createToken(authentication, REFRESH_TOKEN_VALID_MILLI_SECOND);
+        refreshTokenService.saveRefreshToken(token);
+        return token;
     }
 
     @Override
-    public String createRefreshToken(Authentication authentication) {
-        return null;
+    public TokenDto reissueAccessTokenUsing(String refreshToken) throws InvalidTokenException {
+        try {
+            Claims claims = this.parseClaims(refreshToken);
+            return this.createAccessTokenOnly(claims);
+        } catch (JwtException e) {
+            throw new InvalidTokenException(RestErrorCode.INVALID_TOKEN_VALUE, "리프레쉬 토큰이 만료되었습니다.");
+        }
     }
 
     @Override
@@ -132,7 +153,10 @@ public class JwtTokenProvider implements TokenProvider, InitializingBean {
         Date expiryDate = new Date(now.getTime() + expiration);
 
         return Jwts.builder()
-                   .subject(oAuth2Response.id())
+                   .subject(
+                       ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId()
+                           + "_" + oAuth2Response.id()
+                   )
                    .claim(EMAIL, oAuth2Response.email())
                    .claim(NICKNAME, oAuth2Response.nickname())
                    .claim(AUTHORITY, authorities)
@@ -140,14 +164,6 @@ public class JwtTokenProvider implements TokenProvider, InitializingBean {
                    .expiration(expiryDate)
                    .signWith(SECRET_KEY)
                    .compact();
-    }
-
-    private Claims parseClaims(String token) throws JwtException {
-        return Jwts.parser()
-                   .verifyWith((SecretKey) SECRET_KEY)
-                   .build()
-                   .parseSignedClaims(token)
-                   .getPayload();
     }
 
     private TokenDto createAccessTokenOnly(Claims claims) {
@@ -167,5 +183,13 @@ public class JwtTokenProvider implements TokenProvider, InitializingBean {
                        .refreshToken("")
                        .accessTokenExpireDate(ACCESS_TOKEN_VALID_MILLI_SECOND)
                        .build();
+    }
+
+    private Claims parseClaims(String token) throws JwtException {
+        return Jwts.parser()
+                   .verifyWith((SecretKey) SECRET_KEY)
+                   .build()
+                   .parseSignedClaims(token)
+                   .getPayload();
     }
 }

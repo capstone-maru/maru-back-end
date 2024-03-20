@@ -5,6 +5,7 @@ import org.capstone.maru.exception.RestErrorCode;
 import org.capstone.maru.security.exception.InvalidTokenException;
 import org.capstone.maru.security.exception.RefreshTokenNotFoundException;
 import org.capstone.maru.security.token.RefreshTokenRepository;
+import org.capstone.maru.security.token.RefreshTokenService;
 import org.capstone.maru.security.token.TokenDto;
 import org.capstone.maru.security.token.TokenProvider;
 import org.capstone.maru.security.token.TokenReIssuer;
@@ -19,16 +20,16 @@ public class JwtTokenReIssuer implements TokenReIssuer {
     private final TokenProvider tokenProvider;
     private final TokenResolver tokenResolver;
 
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenService refreshTokenService;
 
     public JwtTokenReIssuer(
         @Qualifier("jwtTokenProvider") TokenProvider tokenProvider,
         @Qualifier("jwtTokenResolver") TokenResolver tokenResolver,
-        @Autowired RefreshTokenRepository refreshTokenRepository
+        @Autowired RefreshTokenService refreshTokenService
     ) {
         this.tokenProvider = tokenProvider;
         this.tokenResolver = tokenResolver;
-        this.refreshTokenRepository = refreshTokenRepository;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -39,8 +40,8 @@ public class JwtTokenReIssuer implements TokenReIssuer {
             throw new InvalidTokenException(RestErrorCode.INVALID_TOKEN_VALUE, "유효하지 않은 토큰입니다.");
         }
 
-        if (!refreshTokenRepository.existsByRefreshToken(refreshToken)) {
-            throw new RefreshTokenNotFoundException();
+        if (!refreshTokenService.hasRefreshToken(refreshToken)) {
+            throw new RefreshTokenNotFoundException(RestErrorCode.NOT_FOUND);
         }
 
         return tokenProvider.reissueAccessTokenUsing(refreshToken);
