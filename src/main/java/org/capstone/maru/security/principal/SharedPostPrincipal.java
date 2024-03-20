@@ -1,11 +1,14 @@
 package org.capstone.maru.security.principal;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import org.capstone.maru.dto.MemberAccountDto;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,20 +33,11 @@ public record SharedPostPrincipal(
     public static SharedPostPrincipal of(
         String memberId,
         String email,
-        String nickname
-    ) {
-        return of(memberId, email, nickname, Map.of());
-    }
-
-    public static SharedPostPrincipal of(
-        String memberId,
-        String email,
         String nickname,
         Map<String, Object> oAuth2Attributes
     ) {
         Set<RoleType> roleTypes = Set.of(RoleType.MEMBER);
-
-        return new SharedPostPrincipal(
+        return of(
             memberId,
             email,
             nickname,
@@ -56,17 +50,35 @@ public record SharedPostPrincipal(
         );
     }
 
+    public static SharedPostPrincipal of(
+        String memberId,
+        String email,
+        String nickname,
+        Collection<? extends GrantedAuthority> authorities,
+        Map<String, Object> oAuth2Attributes
+    ) {
+        return new SharedPostPrincipal(
+            memberId,
+            email,
+            nickname,
+            authorities,
+            oAuth2Attributes
+        );
+    }
+
     /**
      * MemberAccountDto를 받아서 현재 객체를 리턴합니다.
      *
      * @param dto
      * @return
      */
-    public static SharedPostPrincipal from(MemberAccountDto dto) {
+    public static SharedPostPrincipal from(MemberAccountDto dto,
+        Map<String, Object> oAuth2Attributes) {
         return SharedPostPrincipal.of(
             dto.memberId(),
             dto.email(),
-            dto.nickname()
+            dto.nickname(),
+            oAuth2Attributes
         );
     }
 

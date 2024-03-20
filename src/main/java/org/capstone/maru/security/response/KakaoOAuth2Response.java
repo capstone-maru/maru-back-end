@@ -89,8 +89,6 @@ public class KakaoOAuth2Response extends OAuth2Response {
     }
 
     // -- OAuth2Response abstract method 구현 -- //
-
-
     @Override
     public String id() {
         return String.valueOf(this.id);
