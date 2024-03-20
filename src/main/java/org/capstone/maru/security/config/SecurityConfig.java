@@ -66,7 +66,7 @@ public class SecurityConfig {
                 ).permitAll()
                 .requestMatchers(
                     HttpMethod.POST,
-                    "/login"
+                    "/login", "/token/logout", "/token/refresh"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
