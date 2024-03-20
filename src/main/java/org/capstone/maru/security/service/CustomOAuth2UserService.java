@@ -4,8 +4,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.security.response.OAuth2Response;
-import org.capstone.maru.security.principal.SharedPostPrincipal;
-import org.capstone.maru.security.constant.SocialType;
+import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.security.response.OAuth2ResponseFactory;
 import org.capstone.maru.service.MemberAccountService;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -36,7 +35,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             oAuth2User.getAttributes()
         );
 
-        return createSharedPostPrincipal(registrationId, extractAttributes,
+        return createMemberPrincipal(registrationId, extractAttributes,
             oAuth2User.getAttributes());
     }
 
@@ -44,18 +43,21 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         return registrationId + "_" + oAuth2Response.id();
     }
 
-    private SharedPostPrincipal createSharedPostPrincipal(
+    private MemberPrincipal createMemberPrincipal(
         String registrationId,
         OAuth2Response extractAttributes,
         Map<String, Object> oauth2Attributes
     ) {
         String memberId = getMemberId(registrationId, extractAttributes);
 
-        return SharedPostPrincipal.from(
+        return MemberPrincipal.from(
             memberAccountService.login(
                 memberId,
                 extractAttributes.email(),
-                extractAttributes.nickname()
+                extractAttributes.nickname(),
+                extractAttributes.birthYear(),
+                extractAttributes.gender().name(),
+                extractAttributes.phoneNumber()
             ),
             oauth2Attributes
         );

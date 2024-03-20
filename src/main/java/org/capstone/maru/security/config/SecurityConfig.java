@@ -38,8 +38,8 @@ public class SecurityConfig {
 
     public SecurityConfig(
         @Qualifier("customAuthenticationEntryPoint") AuthenticationEntryPoint authEntryPoint,
-        @Qualifier("customAuthenticationFailureHandler") AuthenticationFailureHandler authFailureHandler,
-        @Qualifier("customAuthenticationSuccessHandler") AuthenticationSuccessHandler authenticationSuccessHandler,
+        @Qualifier("customOAuth2AuthenticationFailureHandler") AuthenticationFailureHandler authFailureHandler,
+        @Qualifier("customOAuth2AuthenticationSuccessHandler") AuthenticationSuccessHandler authenticationSuccessHandler,
         @Qualifier("customLogoutHandler") LogoutHandler logoutHandler,
         @Autowired TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter
     ) {
@@ -78,6 +78,15 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
+            .csrf(
+                csrf -> csrf
+                    .ignoringRequestMatchers("/api/**")
+                    .disable()
+            )
+            .addFilterBefore(
+                tokenAuthenticationProcessingFilter,
+                UsernamePasswordAuthenticationFilter.class
+            )
             .oauth2Login(oAuth -> oAuth
                 .authorizationEndpoint(authorization -> authorization
                     .baseUri("/auth/login")
@@ -88,23 +97,14 @@ public class SecurityConfig {
                 .failureHandler(authFailureHandler)
                 .successHandler(authSuccessHandler)
             )
-            .exceptionHandling(hc -> hc
-                .authenticationEntryPoint(authEntryPoint)
-            )
             .logout(logout -> logout
                 .logoutUrl("/auth/logout")
                 .addLogoutHandler(logoutHandler)
                 .deleteCookies("JSESSIONID")
                 .logoutSuccessUrl("/").permitAll()
             )
-            .csrf(
-                csrf -> csrf
-                    .ignoringRequestMatchers("/api/**")
-                    .disable()
-            )
-            .addFilterBefore(
-                tokenAuthenticationProcessingFilter,
-                UsernamePasswordAuthenticationFilter.class
+            .exceptionHandling(hc -> hc
+                .authenticationEntryPoint(authEntryPoint)
             )
             .build();
     }

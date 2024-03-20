@@ -3,6 +3,7 @@ package org.capstone.maru.security.response;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
+import org.capstone.maru.domain.constant.Gender;
 
 @SuppressWarnings("unchecked")
 @Getter
@@ -48,5 +49,20 @@ public class NaverOAuth2Response extends OAuth2Response {
     @Override
     public String nickname() {
         return response.name();
+    }
+
+    @Override
+    public String birthYear() {
+        return null;
+    }
+
+    @Override
+    public Gender gender() {
+        return null;
+    }
+
+    @Override
+    public String phoneNumber() {
+        return null;
     }
 }

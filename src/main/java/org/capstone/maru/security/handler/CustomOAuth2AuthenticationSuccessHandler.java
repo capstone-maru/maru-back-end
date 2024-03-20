@@ -19,13 +19,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
-@Component("customAuthenticationSuccessHandler")
-public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+@Component("customOAuth2AuthenticationSuccessHandler")
+public class CustomOAuth2AuthenticationSuccessHandler extends
+    SimpleUrlAuthenticationSuccessHandler {
 
     private final TokenProvider tokenProvider;
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
-    public CustomAuthenticationSuccessHandler(
+    public CustomOAuth2AuthenticationSuccessHandler(
         @Qualifier("jwtTokenProvider") TokenProvider tokenProvider,
         @Autowired HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository
     ) {
@@ -54,6 +55,8 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) {
+        // TODO: cookie에 access_token, refresh_token 넣어 보내기
+        
         log.info("[Debug] DetermineTargetUrl!");
 
         String targetUrl = CookieUtils.resolveCookie(request, REDIRECT_URL_PARAM_COOKIE_NAME)

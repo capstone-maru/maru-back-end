@@ -69,7 +69,10 @@ class MemberAccountServiceTest {
         MemberAccountDto result = sut.saveMember(
             memberAccount.getMemberId(),
             memberAccount.getEmail(),
-            memberAccount.getNickname()
+            memberAccount.getNickname(),
+            memberAccount.getBirthYear(),
+            memberAccount.getGender(),
+            memberAccount.getPhoneNumber()
         );
 
         // then
@@ -95,6 +98,9 @@ class MemberAccountServiceTest {
             memberId,
             "test@mail.com",
             "nickname",
+            "2024",
+            "MALE",
+            "010-1234-5678",
             createdBy
         );
     }

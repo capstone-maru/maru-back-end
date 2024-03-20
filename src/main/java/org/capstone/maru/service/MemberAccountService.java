@@ -25,11 +25,18 @@ public class MemberAccountService {
                                       .map(MemberAccountDto::from);
     }
 
-    public MemberAccountDto login(String memberId, String email, String nickname) {
+    public MemberAccountDto login(
+        String memberId,
+        String email,
+        String nickname,
+        String birthYear,
+        String gender,
+        String phoneNumber
+    ) {
         Optional<MemberAccount> memberAccount = memberAccountRepository.findByEmail(email);
 
         if (memberAccount.isEmpty()) {
-            return saveMember(memberId, email, nickname);
+            return saveMember(memberId, email, nickname, birthYear, gender, phoneNumber);
         }
 
         if (memberAccount.get().getMemberId().equals(memberId)) {
@@ -42,7 +49,10 @@ public class MemberAccountService {
     protected MemberAccountDto saveMember(
         String memberId,
         String email,
-        String nickname
+        String nickname,
+        String birthYear,
+        String gender,
+        String phoneNumber
     ) {
         return MemberAccountDto.from(
             memberAccountRepository.save(
@@ -50,6 +60,9 @@ public class MemberAccountService {
                     memberId,
                     email,
                     nickname,
+                    birthYear,
+                    gender,
+                    phoneNumber,
                     memberId
                 )
             )

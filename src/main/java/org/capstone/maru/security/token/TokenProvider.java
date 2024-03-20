@@ -1,7 +1,6 @@
 package org.capstone.maru.security.token;
 
 import io.jsonwebtoken.JwtException;
-import org.capstone.maru.security.principal.SharedPostPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 

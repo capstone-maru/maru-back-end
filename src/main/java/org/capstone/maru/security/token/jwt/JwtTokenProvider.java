@@ -18,7 +18,7 @@ import javax.crypto.SecretKey;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.exception.RestErrorCode;
 import org.capstone.maru.security.exception.InvalidTokenException;
-import org.capstone.maru.security.principal.SharedPostPrincipal;
+import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.security.response.OAuth2Response;
 import org.capstone.maru.security.response.OAuth2ResponseFactory;
 import org.capstone.maru.security.token.RefreshTokenService;
@@ -46,7 +46,9 @@ public class JwtTokenProvider implements TokenProvider, InitializingBean {
     private static final String AUTHORITY = "authorities";
     private static final String EMAIL = "email";
     private static final String NICKNAME = "nickname";
-    private static final String ATTRIBUTE = "attributes";
+    private static final String BIRTH_YEAR = "birthyear";
+    private static final String GENDER = "gender";
+    private static final String PHONE_NUMBER = "phonenumber";
 
     public JwtTokenProvider(
         @Value("${jwt.secret}") String SECRET_KEY_STRING,
@@ -90,16 +92,22 @@ public class JwtTokenProvider implements TokenProvider, InitializingBean {
         String memberId = claims.getSubject();
         String email = claims.get(EMAIL, String.class);
         String nickname = claims.get(NICKNAME, String.class);
+        String birthYear = claims.get(BIRTH_YEAR, String.class);
+        String gender = claims.get(GENDER, String.class);
+        String phoneNumber = claims.get(PHONE_NUMBER, String.class);
         List<? extends GrantedAuthority> grantedAuthorities = claims
             .get(AUTHORITY, List.class)
             .stream()
             .map(auth -> new SimpleGrantedAuthority((String) auth))
             .toList();
 
-        SharedPostPrincipal principal = SharedPostPrincipal.of(
+        MemberPrincipal principal = MemberPrincipal.of(
             memberId,
             email,
             nickname,
+            birthYear,
+            gender,
+            phoneNumber,
             grantedAuthorities,
             Map.of()
         );
@@ -144,6 +152,10 @@ public class JwtTokenProvider implements TokenProvider, InitializingBean {
             (OAuth2AuthenticationToken) authentication
         );
 
+        String memberId =
+            ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId()
+                + "_" + oAuth2Response.id();
+
         List<String> authorities = authentication.getAuthorities()
                                                  .stream()
                                                  .map(GrantedAuthority::getAuthority)
@@ -153,12 +165,12 @@ public class JwtTokenProvider implements TokenProvider, InitializingBean {
         Date expiryDate = new Date(now.getTime() + expiration);
 
         return Jwts.builder()
-                   .subject(
-                       ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId()
-                           + "_" + oAuth2Response.id()
-                   )
+                   .subject(memberId)
                    .claim(EMAIL, oAuth2Response.email())
                    .claim(NICKNAME, oAuth2Response.nickname())
+                   .claim(BIRTH_YEAR, oAuth2Response.birthYear())
+                   .claim(GENDER, oAuth2Response.gender().name())
+                   .claim(PHONE_NUMBER, oAuth2Response.phoneNumber())
                    .claim(AUTHORITY, authorities)
                    .issuedAt(now)
                    .expiration(expiryDate)

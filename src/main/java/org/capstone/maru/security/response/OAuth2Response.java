@@ -1,9 +1,7 @@
 package org.capstone.maru.security.response;
 
-import java.util.Map;
 import lombok.Getter;
-import org.capstone.maru.security.constant.SocialType;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.capstone.maru.domain.constant.Gender;
 
 @Getter
 public abstract class OAuth2Response {
@@ -13,4 +11,10 @@ public abstract class OAuth2Response {
     public abstract String email();
 
     public abstract String nickname();
+
+    public abstract String birthYear();
+
+    public abstract Gender gender();
+
+    public abstract String phoneNumber();
 }
