@@ -78,7 +78,7 @@ public class SecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers(
                     HttpMethod.GET,
-                    "/", "/token-test"
+                    "/", "/token-test", "/auth/login/**", "/auth/logout"
                 ).permitAll()
                 .requestMatchers(
                     HttpMethod.POST,
