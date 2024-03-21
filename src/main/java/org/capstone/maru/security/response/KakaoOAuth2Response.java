@@ -47,53 +47,53 @@ public class KakaoOAuth2Response extends OAuth2Response {
 
         public static KakaoAccount from(Map<String, Object> attributes) {
             return KakaoAccount.builder()
-                               .profileNicknameNeedsAgreement(
-                                   Boolean.valueOf(String.valueOf(
-                                       attributes.get("profile_nickname_needs_agreement"))
-                                   )
-                               )
-                               .profile(
-                                   Profile.from((Map<String, Object>) attributes.get("profile"))
-                               )
-                               .hasEmail(
-                                   Boolean.valueOf(String.valueOf(attributes.get("has_email")))
-                               )
-                               .emailNeedsAgreement(
-                                   Boolean.valueOf(
-                                       String.valueOf(attributes.get("email_needs_agreement"))
-                                   )
-                               )
-                               .isEmailValid(
-                                   Boolean.valueOf(
-                                       String.valueOf(attributes.get("is_email_valid"))
-                                   )
-                               )
-                               .isEmailVerified(
-                                   Boolean.valueOf(
-                                       String.valueOf(attributes.get("is_email_verified"))
-                                   )
-                               )
-                               .email(String.valueOf(attributes.get("email")))
-                               .birthyearNeedsAgreement(
-                                   Boolean.valueOf(
-                                       String.valueOf(attributes.get("birthyear_needs_agreement"))
-                                   )
-                               )
-                               .birthyear(String.valueOf(attributes.get("birthyear")))
-                               .genderNeedsAgreement(
-                                   Boolean.valueOf(
-                                       String.valueOf(attributes.get("gender_needs_agreement"))
-                                   )
-                               )
-                               .gender(String.valueOf(attributes.get("gender")))
-                               .phoneNumberNeedsAgreement(
-                                   Boolean.valueOf(
-                                       String.valueOf(
-                                           attributes.get("phone_number_needs_agreement"))
-                                   )
-                               )
-                               .phoneNumber(String.valueOf(attributes.get("phone_number")))
-                               .build();
+                .profileNicknameNeedsAgreement(
+                    Boolean.valueOf(String.valueOf(
+                        attributes.get("profile_nickname_needs_agreement"))
+                    )
+                )
+                .profile(
+                    Profile.from((Map<String, Object>) attributes.get("profile"))
+                )
+                .hasEmail(
+                    Boolean.valueOf(String.valueOf(attributes.get("has_email")))
+                )
+                .emailNeedsAgreement(
+                    Boolean.valueOf(
+                        String.valueOf(attributes.get("email_needs_agreement"))
+                    )
+                )
+                .isEmailValid(
+                    Boolean.valueOf(
+                        String.valueOf(attributes.get("is_email_valid"))
+                    )
+                )
+                .isEmailVerified(
+                    Boolean.valueOf(
+                        String.valueOf(attributes.get("is_email_verified"))
+                    )
+                )
+                .email(String.valueOf(attributes.get("email")))
+                .birthyearNeedsAgreement(
+                    Boolean.valueOf(
+                        String.valueOf(attributes.get("birthyear_needs_agreement"))
+                    )
+                )
+                .birthyear(String.valueOf(attributes.get("birthyear")))
+                .genderNeedsAgreement(
+                    Boolean.valueOf(
+                        String.valueOf(attributes.get("gender_needs_agreement"))
+                    )
+                )
+                .gender(String.valueOf(attributes.get("gender")))
+                .phoneNumberNeedsAgreement(
+                    Boolean.valueOf(
+                        String.valueOf(
+                            attributes.get("phone_number_needs_agreement"))
+                    )
+                )
+                .phoneNumber(String.valueOf(attributes.get("phone_number")))
+                .build();
         }
 
         public String nickname() {
@@ -144,7 +144,7 @@ public class KakaoOAuth2Response extends OAuth2Response {
 
     @Override
     public Gender gender() {
-        if (this.getKakaoAccount().gender().equals("male")) {
+        if (this.getKakaoAccount().gender().equals("female")) {
             return Gender.FEMALE;
         }
         return Gender.MALE;
