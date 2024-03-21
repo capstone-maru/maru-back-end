@@ -1,33 +1,35 @@
-package org.capstone.maru.security.exception;
+package org.capstone.maru.security.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-@Component("customAuthenticationEntryPoint")
-public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+@Slf4j
+@Component("customOAuth2AuthenticationFailureHandler")
+public class CustomOAuth2AuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     private final HandlerExceptionResolver resolver;
 
-    public CustomAuthenticationEntryPoint(
+    public CustomOAuth2AuthenticationFailureHandler(
         @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver
     ) {
         this.resolver = resolver;
     }
 
     @Override
-    public void commence(
+    public void onAuthenticationFailure(
         HttpServletRequest request,
         HttpServletResponse response,
-        AuthenticationException authException
+        AuthenticationException exception
     ) throws IOException, ServletException {
-        //-- 인증 처리가 안된 사용자가 인증이 필요한 URL에 접근했을 때 작동되는 로직 입력 --//
-        resolver.resolveException(request, response, null, authException);
+        //-- 로그인이 실패했을 때 작동되는 로직 입력 --//
+        resolver.resolveException(request, response, null, exception);
     }
 }

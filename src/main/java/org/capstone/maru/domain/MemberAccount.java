@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.domain.Persistable;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,29 +23,42 @@ import lombok.ToString;
     @Index(columnList = "createdBy")
 })
 @Entity
-public class MemberAccount extends AuditingFields {
+public class MemberAccount extends AuditingFields implements Persistable<String> {
 
     @Id
     @Column(nullable = false, length = 50)
     private String memberId;
 
-    @Setter
     @Column(length = 100)
     private String email;
 
-    @Setter
     @Column(length = 100)
     private String nickname;
+
+    @Column
+    private String birthYear;
+
+    @Column
+    private String gender;
+
+    @Column
+    private String phoneNumber;
 
     private MemberAccount(
         String memberId,
         String email,
         String nickname,
+        String birthYear,
+        String gender,
+        String phoneNumber,
         String createdBy
     ) {
         this.memberId = memberId;
         this.email = email;
         this.nickname = nickname;
+        this.birthYear = birthYear;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
         this.createdBy = createdBy;
         this.modifiedBy = createdBy;
     }
@@ -52,18 +66,40 @@ public class MemberAccount extends AuditingFields {
     public static MemberAccount of(
         String memberId,
         String email,
-        String nickname
+        String nickname,
+        String birthYear,
+        String gender,
+        String phoneNumber
     ) {
-        return new MemberAccount(memberId, email, nickname, null);
+        return new MemberAccount(
+            memberId,
+            email,
+            nickname,
+            birthYear,
+            gender,
+            phoneNumber,
+            null
+        );
     }
 
     public static MemberAccount of(
         String memberId,
         String email,
         String nickname,
+        String birthYear,
+        String gender,
+        String phoneNumber,
         String createdBy
     ) {
-        return new MemberAccount(memberId, email, nickname, createdBy);
+        return new MemberAccount(
+            memberId,
+            email,
+            nickname,
+            birthYear,
+            gender,
+            phoneNumber,
+            createdBy
+        );
     }
 
     @Override
@@ -80,5 +116,15 @@ public class MemberAccount extends AuditingFields {
     @Override
     public int hashCode() {
         return Objects.hash(this.getMemberId());
+    }
+
+    @Override
+    public String getId() {
+        return memberId;
+    }
+
+    @Override
+    public boolean isNew() {
+        return getCreatedAt() == null;
     }
 }

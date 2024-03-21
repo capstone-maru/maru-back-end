@@ -1,7 +1,7 @@
 package org.capstone.maru.config;
 
 import java.util.Optional;
-import org.capstone.maru.security.principal.SharedPostPrincipal;
+import org.capstone.maru.security.principal.MemberPrincipal;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -20,7 +20,7 @@ public class JpaConfig {
                              .map(SecurityContext::getAuthentication)
                              .filter(Authentication::isAuthenticated)
                              .map(Authentication::getPrincipal)
-                             .map(SharedPostPrincipal.class::cast)
-                             .map(SharedPostPrincipal::getUsername);
+                             .map(MemberPrincipal.class::cast)
+                             .map(MemberPrincipal::getUsername);
     }
 }
