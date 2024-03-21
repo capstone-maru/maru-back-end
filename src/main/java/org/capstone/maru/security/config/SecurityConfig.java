@@ -1,6 +1,5 @@
 package org.capstone.maru.security.config;
 
-import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.security.filter.TokenAuthenticationProcessingFilter;
 import org.capstone.maru.security.service.CustomOAuth2UserService;
@@ -18,8 +17,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -34,18 +31,6 @@ public class SecurityConfig {
     private final AuthenticationSuccessHandler authSuccessHandler;
     private final LogoutHandler logoutHandler;
     private final TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter;
-
-    CorsConfigurationSource corsConfigurationSource() {
-        return request -> {
-            CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedHeaders(Collections.singletonList("*"));
-            config.setAllowedMethods(Collections.singletonList("*"));
-            config.setAllowedOriginPatterns(
-                Collections.singletonList("http://localhost:3000")); // ⭐️ 허용할 origin
-            config.setAllowCredentials(true);
-            return config;
-        };
-    }
 
     public SecurityConfig(
         @Qualifier("customAuthenticationEntryPoint") AuthenticationEntryPoint authEntryPoint,
