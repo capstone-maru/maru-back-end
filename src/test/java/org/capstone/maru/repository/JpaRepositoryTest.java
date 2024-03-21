@@ -50,7 +50,9 @@ public class JpaRepositoryTest {
         long previousCount = memberAccountRepository.count();
 
         // when
-        memberAccountRepository.save(MemberAccount.of("tester", "test@email.com", "test123"));
+        memberAccountRepository.save(
+            MemberAccount.of("tester", "test@email.com", "test123", "2024", "MALE",
+                "010-1234-5678"));
 
         // then
         assertThat(memberAccountRepository.count())

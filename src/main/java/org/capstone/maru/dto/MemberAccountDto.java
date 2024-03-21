@@ -9,6 +9,9 @@ public record MemberAccountDto(
     String memberId,
     String email,
     String nickname,
+    String birthYear,
+    String gender,
+    String phoneNumber,
     LocalDateTime createdAt,
     String createdBy,
     LocalDateTime modifiedAt,
@@ -20,6 +23,9 @@ public record MemberAccountDto(
                                .memberId(entity.getMemberId())
                                .email(entity.getEmail())
                                .nickname(entity.getNickname())
+                               .birthYear(entity.getBirthYear())
+                               .gender(entity.getGender())
+                               .phoneNumber(entity.getPhoneNumber())
                                .createdAt(entity.getCreatedAt())
                                .createdBy(entity.getCreatedBy())
                                .modifiedAt(entity.getModifiedAt())
@@ -32,6 +38,9 @@ public record MemberAccountDto(
             memberId,
             email,
             nickname,
+            birthYear,
+            gender,
+            phoneNumber,
             createdBy
         );
     }

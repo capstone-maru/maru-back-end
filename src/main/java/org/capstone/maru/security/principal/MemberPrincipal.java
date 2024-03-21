@@ -11,47 +11,61 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-public record SharedPostPrincipal(
+public record MemberPrincipal(
     String memberId,
     String email,
     String nickname,
+    String birthYear,
+    String gender,
+    String phoneNumber,
     Collection<? extends GrantedAuthority> authorities,
     Map<String, Object> oAuth2Attributes
 ) implements UserDetails, OAuth2User {
 
-    /**
-     * of 파라미터를 받아서 현제 객체를 리턴합니다.
-     *
-     * @param memberId
-     * @param email
-     * @param nickname
-     * @return
-     */
-    public static SharedPostPrincipal of(
-        String memberId,
-        String email,
-        String nickname
-    ) {
-        return of(memberId, email, nickname, Map.of());
-    }
-
-    public static SharedPostPrincipal of(
+    public static MemberPrincipal of(
         String memberId,
         String email,
         String nickname,
+        String birthYear,
+        String gender,
+        String phoneNumber,
         Map<String, Object> oAuth2Attributes
     ) {
         Set<RoleType> roleTypes = Set.of(RoleType.MEMBER);
-
-        return new SharedPostPrincipal(
+        return of(
             memberId,
             email,
             nickname,
+            birthYear,
+            gender,
+            phoneNumber,
             roleTypes
                 .stream()
                 .map(RoleType::getName)
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toUnmodifiableSet()),
+            oAuth2Attributes
+        );
+    }
+
+    public static MemberPrincipal of(
+        String memberId,
+        String email,
+        String nickname,
+        String birthYear,
+        String gender,
+        String phoneNumber,
+        Collection<? extends GrantedAuthority> authorities,
+        Map<String, Object> oAuth2Attributes
+    ) {
+        return new MemberPrincipal(
+            memberId,
+            email,
+            nickname,
+            birthYear,
+            gender,
+            phoneNumber,
+            authorities,
             oAuth2Attributes
         );
     }
@@ -62,11 +76,16 @@ public record SharedPostPrincipal(
      * @param dto
      * @return
      */
-    public static SharedPostPrincipal from(MemberAccountDto dto) {
-        return SharedPostPrincipal.of(
+    public static MemberPrincipal from(MemberAccountDto dto,
+        Map<String, Object> oAuth2Attributes) {
+        return MemberPrincipal.of(
             dto.memberId(),
             dto.email(),
-            dto.nickname()
+            dto.nickname(),
+            dto.birthYear(),
+            dto.gender(),
+            dto.phoneNumber(),
+            oAuth2Attributes
         );
     }
 

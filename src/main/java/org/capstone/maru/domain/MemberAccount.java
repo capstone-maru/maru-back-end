@@ -35,15 +35,30 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @Column(length = 100)
     private String nickname;
 
+    @Column
+    private String birthYear;
+
+    @Column
+    private String gender;
+
+    @Column
+    private String phoneNumber;
+
     private MemberAccount(
         String memberId,
         String email,
         String nickname,
+        String birthYear,
+        String gender,
+        String phoneNumber,
         String createdBy
     ) {
         this.memberId = memberId;
         this.email = email;
         this.nickname = nickname;
+        this.birthYear = birthYear;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
         this.createdBy = createdBy;
         this.modifiedBy = createdBy;
     }
@@ -51,18 +66,40 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     public static MemberAccount of(
         String memberId,
         String email,
-        String nickname
+        String nickname,
+        String birthYear,
+        String gender,
+        String phoneNumber
     ) {
-        return new MemberAccount(memberId, email, nickname, null);
+        return new MemberAccount(
+            memberId,
+            email,
+            nickname,
+            birthYear,
+            gender,
+            phoneNumber,
+            null
+        );
     }
 
     public static MemberAccount of(
         String memberId,
         String email,
         String nickname,
+        String birthYear,
+        String gender,
+        String phoneNumber,
         String createdBy
     ) {
-        return new MemberAccount(memberId, email, nickname, createdBy);
+        return new MemberAccount(
+            memberId,
+            email,
+            nickname,
+            birthYear,
+            gender,
+            phoneNumber,
+            createdBy
+        );
     }
 
     @Override
