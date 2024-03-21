@@ -3,10 +3,12 @@ package org.capstone.maru.security.response;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.constant.Gender;
 
 @SuppressWarnings("unchecked")
 @Getter
+@Slf4j
 public class NaverOAuth2Response extends OAuth2Response {
 
     private final Response response;
@@ -15,15 +17,21 @@ public class NaverOAuth2Response extends OAuth2Response {
     private record Response(
         String id,
         String email,
-        String name
+        String name,
+        String birthyear,
+        String gender,
+        String phoneNumber
     ) {
 
         public static Response from(Map<String, Object> attributes) {
             return Response.builder()
-                           .id(String.valueOf(attributes.get("id")))
-                           .email(String.valueOf(attributes.get("email")))
-                           .name(String.valueOf(attributes.get("name")))
-                           .build();
+                .id(String.valueOf(attributes.get("id")))
+                .email(String.valueOf(attributes.get("email")))
+                .name(String.valueOf(attributes.get("name")))
+                .birthyear(String.valueOf(attributes.get("birthyear")))
+                .gender(String.valueOf(attributes.get("gender")))
+                .phoneNumber(String.valueOf(attributes.get("mobile")))
+                .build();
         }
     }
 
@@ -32,6 +40,7 @@ public class NaverOAuth2Response extends OAuth2Response {
     }
 
     public static NaverOAuth2Response from(Map<String, Object> attributes) {
+        log.info("attributes: {}", attributes);
         return new NaverOAuth2Response(
             Response.from((Map<String, Object>) attributes.get("response")));
     }
@@ -53,16 +62,19 @@ public class NaverOAuth2Response extends OAuth2Response {
 
     @Override
     public String birthYear() {
-        return null;
+        return this.response.birthyear;
     }
 
     @Override
     public Gender gender() {
-        return null;
+        if (this.response.gender.equals("F")) {
+            return Gender.FEMALE;
+        }
+        return Gender.MALE;
     }
 
     @Override
     public String phoneNumber() {
-        return null;
+        return this.response.phoneNumber;
     }
 }
