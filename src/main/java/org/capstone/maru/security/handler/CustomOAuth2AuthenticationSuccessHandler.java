@@ -56,7 +56,7 @@ public class CustomOAuth2AuthenticationSuccessHandler extends
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) {
         // TODO: cookie에 access_token, refresh_token 넣어 보내기
-        
+
         log.info("[Debug] DetermineTargetUrl!");
 
         String targetUrl = CookieUtils.resolveCookie(request, REDIRECT_URL_PARAM_COOKIE_NAME)
