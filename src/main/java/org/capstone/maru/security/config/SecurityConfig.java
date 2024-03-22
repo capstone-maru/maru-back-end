@@ -1,7 +1,7 @@
 package org.capstone.maru.security.config;
 
-
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.security.cookie.HttpCookieOAuth2AuthorizationRequestRepository;
 import org.capstone.maru.security.filter.TokenAuthenticationProcessingFilter;
 import org.capstone.maru.security.service.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -28,6 +28,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 @Slf4j
 @Order(0)
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     private final AuthenticationEntryPoint authEntryPoint;
@@ -36,18 +37,22 @@ public class SecurityConfig {
     private final LogoutHandler logoutHandler;
     private final TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter;
 
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+
     public SecurityConfig(
         @Qualifier("customAuthenticationEntryPoint") AuthenticationEntryPoint authEntryPoint,
         @Qualifier("customOAuth2AuthenticationFailureHandler") AuthenticationFailureHandler authFailureHandler,
         @Qualifier("customOAuth2AuthenticationSuccessHandler") AuthenticationSuccessHandler authenticationSuccessHandler,
         @Qualifier("customLogoutHandler") LogoutHandler logoutHandler,
-        @Autowired TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter
+        @Autowired TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter,
+        @Autowired HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository
     ) {
         this.authEntryPoint = authEntryPoint;
         this.authFailureHandler = authFailureHandler;
         this.authSuccessHandler = authenticationSuccessHandler;
         this.logoutHandler = logoutHandler;
         this.tokenAuthenticationProcessingFilter = tokenAuthenticationProcessingFilter;
+        this.httpCookieOAuth2AuthorizationRequestRepository = httpCookieOAuth2AuthorizationRequestRepository;
     }
 
     @Bean
@@ -67,11 +72,11 @@ public class SecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers(
                     HttpMethod.GET,
-                    "/", "/token-test"
+                    "/", "/auth/**", "/oauth2/**"
                 ).permitAll()
                 .requestMatchers(
                     HttpMethod.POST,
-                    "/auth/token/refresh"
+                    "/auth/token/refresh", "/auth/**", "/oauth2/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
@@ -83,13 +88,19 @@ public class SecurityConfig {
                     .ignoringRequestMatchers("/api/**")
                     .disable()
             )
+            .cors(Customizer.withDefaults())
             .addFilterBefore(
                 tokenAuthenticationProcessingFilter,
                 UsernamePasswordAuthenticationFilter.class
             )
+            .formLogin(AbstractHttpConfigurer::disable)
             .oauth2Login(oAuth -> oAuth
                 .authorizationEndpoint(authorization -> authorization
-                    .baseUri("/auth/login")
+                    .baseUri("/oauth2/authorize")
+                    .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
+                )
+                .redirectionEndpoint(redirect -> redirect
+                    .baseUri("/oauth2/callback/*")
                 )
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
