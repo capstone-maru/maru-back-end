@@ -35,7 +35,7 @@ public abstract class SharedRoomPost extends AuditingFields {
     private Long id;
 
     @Setter
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 255)
     private String title;
 
     @Setter
