@@ -44,7 +44,7 @@ public class SecurityConfig {
         @Qualifier("customOAuth2AuthenticationFailureHandler") AuthenticationFailureHandler authFailureHandler,
         @Qualifier("customOAuth2AuthenticationSuccessHandler") AuthenticationSuccessHandler authenticationSuccessHandler,
         @Qualifier("customLogoutHandler") LogoutHandler logoutHandler,
-        @Autowired TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter,
+        @Qualifier("tokenAuthenticationProcessingFilter") TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter,
         @Autowired HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository
     ) {
         this.authEntryPoint = authEntryPoint;
@@ -53,13 +53,6 @@ public class SecurityConfig {
         this.logoutHandler = logoutHandler;
         this.tokenAuthenticationProcessingFilter = tokenAuthenticationProcessingFilter;
         this.httpCookieOAuth2AuthorizationRequestRepository = httpCookieOAuth2AuthorizationRequestRepository;
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
-    public WebSecurityCustomizer configureH2ConsoleEnable() {
-        return web -> web.ignoring()
-                         .requestMatchers(PathRequest.toH2Console());
     }
 
     @Bean
