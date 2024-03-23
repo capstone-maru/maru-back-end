@@ -9,10 +9,8 @@ logging:
 
 spring:
   jpa:
-    #    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    #    database: postgresql
     open-in-view: false
-    #    defer-datasource-initialization: true
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
     show-sql: true
