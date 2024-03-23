@@ -4,12 +4,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.domain.Persistable;
 
@@ -43,6 +44,14 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
 
     @Column
     private String phoneNumber;
+
+    @OneToOne
+    @JoinColumn(name = "memberId")
+    private MemberCard myCard;
+
+    @OneToOne
+    @JoinColumn(name = "memberId")
+    private MemberCard mateCard;
 
     private MemberAccount(
         String memberId,
