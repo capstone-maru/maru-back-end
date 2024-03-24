@@ -26,19 +26,19 @@ import org.springframework.data.domain.Persistable;
 public class MemberAccount extends AuditingFields implements Persistable<String> {
 
     @Id
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 100)
     private String memberId;
 
-    @Column(length = 100)
+    @Column(nullable = false, length = 50)
     private String email;
 
-    @Column(length = 100)
+    @Column(nullable = false, length = 50)
     private String nickname;
 
-    @Column
+    @Column(nullable = false)
     private String birthYear;
 
-    @Column
+    @Column(nullable = false)
     private String gender;
 
     @Column

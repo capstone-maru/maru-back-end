@@ -6,7 +6,6 @@ import org.capstone.maru.security.filter.TokenAuthenticationProcessingFilter;
 import org.capstone.maru.security.service.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +14,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -44,7 +42,7 @@ public class SecurityConfig {
         @Qualifier("customOAuth2AuthenticationFailureHandler") AuthenticationFailureHandler authFailureHandler,
         @Qualifier("customOAuth2AuthenticationSuccessHandler") AuthenticationSuccessHandler authenticationSuccessHandler,
         @Qualifier("customLogoutHandler") LogoutHandler logoutHandler,
-        @Autowired TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter,
+        @Qualifier("tokenAuthenticationProcessingFilter") TokenAuthenticationProcessingFilter tokenAuthenticationProcessingFilter,
         @Autowired HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository
     ) {
         this.authEntryPoint = authEntryPoint;
@@ -53,13 +51,6 @@ public class SecurityConfig {
         this.logoutHandler = logoutHandler;
         this.tokenAuthenticationProcessingFilter = tokenAuthenticationProcessingFilter;
         this.httpCookieOAuth2AuthorizationRequestRepository = httpCookieOAuth2AuthorizationRequestRepository;
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
-    public WebSecurityCustomizer configureH2ConsoleEnable() {
-        return web -> web.ignoring()
-                         .requestMatchers(PathRequest.toH2Console());
     }
 
     @Bean

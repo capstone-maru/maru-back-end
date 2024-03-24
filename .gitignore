@@ -202,4 +202,5 @@ gradle-app.setting
 *.hprof
 
 src/main/resources/application-oauth.*
+src/main/resources/application-datasource.*
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,intellij+all,java,gradle
