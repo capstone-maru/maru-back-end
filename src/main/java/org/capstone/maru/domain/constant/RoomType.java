@@ -1,12 +1,16 @@
 package org.capstone.maru.domain.constant;
 
+import com.google.gson.annotations.SerializedName;
 import java.util.Arrays;
 import lombok.Getter;
 
 @Getter
 public enum RoomType {
+    @SerializedName("0")
     VILLA("주택/빌라 (원투쓰리룸)"),
+    @SerializedName("1")
     OFFICE_TEL("오피스텔"),
+    @SerializedName("2")
     APT("아파트");
 
     private final String description;
