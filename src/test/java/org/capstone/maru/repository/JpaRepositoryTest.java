@@ -17,12 +17,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.test.context.TestPropertySource;
 
-@Disabled
 @DisplayName("JPA 연결 테스트")
 @Import(JpaRepositoryTest.TestJpaConfig.class)
 @DataJpaTest
-public class JpaRepositoryTest {
+@TestPropertySource(locations = "classpath:application-test.yaml")
+class JpaRepositoryTest {
 
     private final MemberAccountRepository memberAccountRepository;
     private final MemberCardRepository memberCardRepository;
@@ -39,7 +40,7 @@ public class JpaRepositoryTest {
     @Test
     void givenNothing_whenQueryingSelect_thenReturnMembers() throws Exception {
         // given
-        int expected = 100;
+        int expected = 4;
 
         // when
         List<MemberAccount> members = memberAccountRepository.findAll();
@@ -55,6 +56,7 @@ public class JpaRepositoryTest {
     void givenNothing_whenQueryingInsert_thenReturnNothing() throws Exception {
         // given
         long previousCount = memberAccountRepository.count();
+        long previousCardCount = memberCardRepository.count();
 
         // when
         memberAccountRepository.save(
@@ -64,7 +66,8 @@ public class JpaRepositoryTest {
         // then
         assertThat(memberAccountRepository.count())
             .isEqualTo(previousCount + 1);
-
+        assertThat(memberCardRepository.count())
+            .isEqualTo(previousCardCount + 1);
     }
 
     @EnableJpaAuditing

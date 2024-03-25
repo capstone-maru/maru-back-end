@@ -27,7 +27,6 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     compileOnly 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // database 관련 설정
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
@@ -36,7 +35,6 @@ dependencies {
 
     // spring security 설정
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    testImplementation 'org.springframework.security:spring-security-test'
 
     // OAuth 2.0 설정
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -48,6 +46,11 @@ dependencies {
 
     // gson 설정
     implementation 'com.google.code.gson:gson:2.10.1'
+
+    //test 설정
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    runtimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {

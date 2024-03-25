@@ -2,6 +2,7 @@ package org.capstone.maru.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.dto.AuthResponseDto;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.security.token.TokenDto;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
+@Slf4j
 @RequestMapping("/auth")
 public class AuthController {
 
@@ -30,9 +32,7 @@ public class AuthController {
     @GetMapping("/info")
     public ResponseEntity<AuthResponseDto> info(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
-
         return ResponseEntity.ok(AuthResponseDto.from(memberPrincipal));
     }
-
-
+    
 }
