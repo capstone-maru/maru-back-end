@@ -17,7 +17,7 @@ public class ProfileController {
 
         return ResponseEntity.ok().build();
     }
-
+    
     @GetMapping("/{memberId}")
     public ResponseEntity<?> getProfile(@PathVariable String memberId) {
         return ResponseEntity.ok().build();

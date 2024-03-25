@@ -25,9 +25,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class JpaRepositoryTest {
 
     private final MemberAccountRepository memberAccountRepository;
+    private final MemberCardRepository memberCardRepository;
 
-    public JpaRepositoryTest(@Autowired MemberAccountRepository memberAccountRepository) {
+    public JpaRepositoryTest(
+        @Autowired MemberAccountRepository memberAccountRepository,
+        @Autowired MemberCardRepository memberCardRepository
+    ) {
         this.memberAccountRepository = memberAccountRepository;
+        this.memberCardRepository = memberCardRepository;
     }
 
     @DisplayName("[MemberAccount] select 테스트")
@@ -59,6 +64,7 @@ public class JpaRepositoryTest {
         // then
         assertThat(memberAccountRepository.count())
             .isEqualTo(previousCount + 1);
+
     }
 
     @EnableJpaAuditing
