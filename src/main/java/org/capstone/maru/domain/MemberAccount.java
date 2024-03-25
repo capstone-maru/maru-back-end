@@ -2,6 +2,7 @@ package org.capstone.maru.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
@@ -45,12 +46,18 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @Column
     private String phoneNumber;
 
-    @OneToOne
-    @JoinColumn(name = "memberId")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "myCardId",
+        referencedColumnName = "member_card_id"
+    )
     private MemberCard myCard;
 
-    @OneToOne
-    @JoinColumn(name = "memberId")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "mateCardId",
+        referencedColumnName = "member_card_id"
+    )
     private MemberCard mateCard;
 
     private MemberAccount(
