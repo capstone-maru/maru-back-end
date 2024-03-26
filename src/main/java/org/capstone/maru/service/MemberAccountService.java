@@ -21,9 +21,16 @@ public class MemberAccountService {
     private final MemberAccountRepository memberAccountRepository;
 
     @Transactional(readOnly = true)
-    public Optional<MemberAccountDto> searchMember(String memberId) {
-        return memberAccountRepository.findById(memberId)
+    public MemberAccountDto searchMember(String memberId) {
+        Optional<MemberAccountDto> memberAccount = memberAccountRepository.findById(memberId)
             .map(MemberAccountDto::from);
+
+        if (memberAccount.isEmpty()) {
+            throw new MemberAccountNotFoundException(RestErrorCode.NOT_FOUND);
+        }
+
+        return memberAccount.get();
+
     }
 
     public MemberAccountDto login(
@@ -73,5 +80,4 @@ public class MemberAccountService {
 
         return memberAccount.get().getInitialized();
     }
-
 }
