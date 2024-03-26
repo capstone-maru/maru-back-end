@@ -21,9 +21,27 @@ public class MemberAccountService {
     private final MemberAccountRepository memberAccountRepository;
 
     @Transactional(readOnly = true)
-    public Optional<MemberAccountDto> searchMember(String memberId) {
-        return memberAccountRepository.findById(memberId)
+    public MemberAccountDto searchMember(String memberId) {
+        Optional<MemberAccountDto> memberAccount = memberAccountRepository.findById(memberId)
             .map(MemberAccountDto::from);
+
+        if (memberAccount.isEmpty()) {
+            throw new MemberAccountNotFoundException(RestErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        return memberAccount.get();
+    }
+
+    @Transactional(readOnly = true)
+    public MemberAccount searchMemberAccount(String memberId) {
+        Optional<MemberAccount> memberAccount = memberAccountRepository.findById(memberId);
+
+        if (memberAccount.isEmpty()) {
+            log.info("MemberAccount not found: {}", memberId);
+            throw new MemberAccountNotFoundException(RestErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        return memberAccount.get();
     }
 
     public MemberAccountDto login(
@@ -65,13 +83,8 @@ public class MemberAccountService {
     최초 로그인인지 판단
      */
     public Boolean isInitialized(String memberId) {
-        Optional<MemberAccount> memberAccount = memberAccountRepository.findById(memberId);
+        MemberAccountDto memberAccount = searchMember(memberId);
 
-        if (memberAccount.isEmpty()) {
-            throw new MemberAccountNotFoundException(RestErrorCode.NOT_FOUND);
-        }
-
-        return memberAccount.get().getInitialized();
+        return memberAccount.initialized();
     }
-
 }

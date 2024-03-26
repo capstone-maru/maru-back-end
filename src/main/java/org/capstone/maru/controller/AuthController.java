@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.security.principal.MemberPrincipal;
-import org.capstone.maru.dto.AuthResponseDto;
+import org.capstone.maru.dto.response.AuthResponseResponse;
 import org.capstone.maru.security.token.TokenDto;
 import org.capstone.maru.security.token.TokenReIssuer;
 import org.capstone.maru.service.MemberAccountService;
@@ -37,10 +37,10 @@ public class AuthController {
      * @return 로그인한 사용자의 정보
      */
     @GetMapping("/initial/info")
-    public ResponseEntity<AuthResponseDto> initialInfo(
+    public ResponseEntity<AuthResponseResponse> initialInfo(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
         Boolean initialized = memberAccountService.isInitialized(memberPrincipal.memberId());
-        return ResponseEntity.ok(AuthResponseDto.from(memberPrincipal, initialized));
+        return ResponseEntity.ok(AuthResponseResponse.from(memberPrincipal, initialized));
     }
 
     /**
@@ -51,9 +51,9 @@ public class AuthController {
      * @return 로그인한 사용자의 정보
      */
     @GetMapping("/info")
-    public ResponseEntity<AuthResponseDto> info(
+    public ResponseEntity<AuthResponseResponse> info(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
-        return ResponseEntity.ok(AuthResponseDto.from(memberPrincipal, false));
+        return ResponseEntity.ok(AuthResponseResponse.from(memberPrincipal, false));
     }
 
 

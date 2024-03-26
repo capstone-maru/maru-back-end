@@ -1,13 +1,10 @@
-package org.capstone.maru.dto;
+package org.capstone.maru.dto.response;
 
-import java.util.Collection;
-import java.util.Map;
 import lombok.Builder;
 import org.capstone.maru.security.principal.MemberPrincipal;
-import org.springframework.security.core.GrantedAuthority;
 
 @Builder
-public record AuthResponseDto(
+public record AuthResponseResponse(
     String email,
     String name,
     String birthYear,
@@ -16,9 +13,9 @@ public record AuthResponseDto(
     Boolean initialized
 ) {
 
-    public static AuthResponseDto from(MemberPrincipal memberPrincipal, Boolean initialized) {
+    public static AuthResponseResponse from(MemberPrincipal memberPrincipal, Boolean initialized) {
 
-        return AuthResponseDto.builder()
+        return AuthResponseResponse.builder()
             .email(memberPrincipal.email())
             .name(memberPrincipal.nickname())
             .birthYear(memberPrincipal.birthYear())
