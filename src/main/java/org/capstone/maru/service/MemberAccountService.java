@@ -22,7 +22,7 @@ public class MemberAccountService {
     @Transactional(readOnly = true)
     public Optional<MemberAccountDto> searchMember(String memberId) {
         return memberAccountRepository.findById(memberId)
-                                      .map(MemberAccountDto::from);
+            .map(MemberAccountDto::from);
     }
 
     public MemberAccountDto login(
@@ -36,7 +36,17 @@ public class MemberAccountService {
         Optional<MemberAccount> memberAccount = memberAccountRepository.findByEmail(email);
 
         if (memberAccount.isEmpty()) {
-            return saveMember(memberId, email, nickname, birthYear, gender, phoneNumber);
+            MemberAccount member = MemberAccount.of(
+                memberId,
+                email,
+                nickname,
+                birthYear,
+                gender,
+                phoneNumber,
+                memberId
+            );
+
+            return saveMember(member);
         }
 
         if (memberAccount.get().getMemberId().equals(memberId)) {
@@ -47,24 +57,11 @@ public class MemberAccountService {
     }
 
     protected MemberAccountDto saveMember(
-        String memberId,
-        String email,
-        String nickname,
-        String birthYear,
-        String gender,
-        String phoneNumber
+        MemberAccount member
     ) {
         return MemberAccountDto.from(
             memberAccountRepository.save(
-                MemberAccount.of(
-                    memberId,
-                    email,
-                    nickname,
-                    birthYear,
-                    gender,
-                    phoneNumber,
-                    memberId
-                )
+                member
             )
         );
     }

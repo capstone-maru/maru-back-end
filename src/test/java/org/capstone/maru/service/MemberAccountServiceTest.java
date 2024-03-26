@@ -65,15 +65,18 @@ class MemberAccountServiceTest {
         MemberAccount savedMemberAccount = createSigningUpMemberAccount("testId");
         given(memberAccountRepository.save(memberAccount)).willReturn(savedMemberAccount);
 
-        // when
-        MemberAccountDto result = sut.saveMember(
+        MemberAccount member = MemberAccount.of(
             memberAccount.getMemberId(),
             memberAccount.getEmail(),
             memberAccount.getNickname(),
             memberAccount.getBirthYear(),
             memberAccount.getGender(),
-            memberAccount.getPhoneNumber()
+            memberAccount.getPhoneNumber(),
+            memberAccount.getMemberId()
         );
+
+        // when
+        MemberAccountDto result = sut.saveMember(member);
 
         // then
         assertThat(result)

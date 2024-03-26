@@ -75,8 +75,8 @@ class JpaRepositoryTest {
         assertThat(memberCardRepository.count())
             .isEqualTo(previousCardCount + 2);
         
-        assertThat(memberAccountTest.getMyCard().getMemberFeatures().size())
-            .isZero();
+        assertThat(memberAccountTest.getMyCard().getMemberFeatures())
+            .isEmpty();
     }
 
     @DisplayName("[MemberCard] update 테스트")

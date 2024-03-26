@@ -63,6 +63,9 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     )
     private MemberCard mateCard;
 
+    @Column(nullable = false)
+    private Boolean initialized;
+
     @Builder
     private MemberAccount(
         String memberId,
@@ -88,6 +91,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
          */
         this.myCard = new MemberCard(List.of());
         this.mateCard = new MemberCard(List.of());
+
+        this.initialized = true;
     }
 
     public static MemberAccount of(
