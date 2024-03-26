@@ -1,11 +1,14 @@
 package org.capstone.maru.domain.constant;
 
+import com.google.gson.annotations.SerializedName;
 import java.util.Arrays;
 import lombok.Getter;
 
 @Getter
 public enum RentalType {
+    @SerializedName("0")
     MONTHLY("월세"),
+    @SerializedName("1")
     JEONSE("전세");
 
     private final String description;

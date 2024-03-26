@@ -11,9 +11,9 @@ import org.capstone.maru.repository.MemberAccountRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
-@Slf4j
 @Service
 public class MemberAccountService {
 

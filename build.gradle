@@ -47,7 +47,7 @@ dependencies {
     // gson 설정
     implementation 'com.google.code.gson:gson:2.10.1'
 
-    //test 설정
+    // test 설정
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     runtimeOnly 'com.h2database:h2'

@@ -63,11 +63,11 @@ public class SecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers(
                     HttpMethod.GET,
-                    "/", "/auth/**", "/oauth2/**", "auth/info"
+                    "/", "/oauth2/**"
                 ).permitAll()
                 .requestMatchers(
                     HttpMethod.POST,
-                    "/auth/token/refresh", "/auth/**", "/oauth2/**"
+                    "/auth/token/refresh", "/oauth2/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
