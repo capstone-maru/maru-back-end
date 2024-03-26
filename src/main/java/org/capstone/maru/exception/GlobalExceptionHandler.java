@@ -22,16 +22,6 @@ public class GlobalExceptionHandler {
                              .body(RestErrorResponse.of(RestErrorCode.NOT_FOUND));
     }
 
-    @ExceptionHandler({RuntimeException.class})
-    public ResponseEntity<RestErrorResponse> handleRuntimeException(
-        RuntimeException ex
-    ) {
-        log.error("[Error] RuntimeException occur!: {}", ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                             .body(RestErrorResponse.of(RestErrorCode.FORBIDDEN));
-    }
-
     @ExceptionHandler({PageSizeOutOfBoundsException.class})
     public ResponseEntity<RestErrorResponse> handlePageSizeOutOfBoundsException(
         PageSizeOutOfBoundsException ex
