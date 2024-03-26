@@ -1,5 +1,6 @@
 package org.capstone.maru.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -8,8 +9,10 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.List;
 import java.util.Objects;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -46,20 +49,24 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @Column
     private String phoneNumber;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(
         name = "myCardId",
         referencedColumnName = "member_card_id"
     )
     private MemberCard myCard;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(
         name = "mateCardId",
         referencedColumnName = "member_card_id"
     )
     private MemberCard mateCard;
 
+    @Column(nullable = false)
+    private Boolean initialized;
+
+    @Builder
     private MemberAccount(
         String memberId,
         String email,
@@ -77,6 +84,15 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         this.phoneNumber = phoneNumber;
         this.createdBy = createdBy;
         this.modifiedBy = createdBy;
+
+        /*
+          Discussion
+          최초 생성시에 특성을 null 로 두는 것이 나은가???
+         */
+        this.myCard = new MemberCard(List.of());
+        this.mateCard = new MemberCard(List.of());
+
+        this.initialized = true;
     }
 
     public static MemberAccount of(
@@ -143,4 +159,5 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     public boolean isNew() {
         return getCreatedAt() == null;
     }
+
 }

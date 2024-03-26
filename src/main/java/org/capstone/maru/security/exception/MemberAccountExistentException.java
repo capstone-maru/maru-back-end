@@ -30,4 +30,5 @@ public class MemberAccountExistentException extends AuthenticationException {
         this.errorCode = errorCode;
         this.reason = reason;
     }
+
 }

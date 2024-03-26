@@ -8,26 +8,23 @@ import org.springframework.security.core.GrantedAuthority;
 
 @Builder
 public record AuthResponseDto(
-    String memberId,
     String email,
-    String nickname,
+    String name,
     String birthYear,
     String gender,
     String phoneNumber,
-    Collection<? extends GrantedAuthority> authorities,
-    Map<String, Object> oAuth2Attributes
+    Boolean initialized
 ) {
 
-    public static AuthResponseDto from(MemberPrincipal memberPrincipal) {
+    public static AuthResponseDto from(MemberPrincipal memberPrincipal, Boolean initialized) {
+
         return AuthResponseDto.builder()
-            .memberId(memberPrincipal.memberId())
             .email(memberPrincipal.email())
-            .nickname(memberPrincipal.nickname())
+            .name(memberPrincipal.nickname())
             .birthYear(memberPrincipal.birthYear())
             .gender(memberPrincipal.gender())
             .phoneNumber(memberPrincipal.phoneNumber())
-            .authorities(memberPrincipal.authorities())
-            .oAuth2Attributes(memberPrincipal.oAuth2Attributes())
+            .initialized(initialized)
             .build();
     }
 }

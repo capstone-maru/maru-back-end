@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.capstone.maru.config.JpaConfig;
 import org.capstone.maru.domain.MemberAccount;
+import org.capstone.maru.domain.MemberCard;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,15 +60,50 @@ class JpaRepositoryTest {
         long previousCardCount = memberCardRepository.count();
 
         // when
-        memberAccountRepository.save(
-            MemberAccount.of("tester", "test@email.com", "test123", "2024", "MALE",
-                "010-1234-5678"));
+
+        MemberAccount memberAccount = MemberAccount.of("tester", "test@email.com", "test123",
+            "2024", "MALE",
+            "010-1234-5678");
+
+        var memberAccountTest = memberAccountRepository.save(memberAccount);
 
         // then
+        assertThat(memberAccountTest.getMemberId())
+            .isEqualTo("tester");
         assertThat(memberAccountRepository.count())
             .isEqualTo(previousCount + 1);
         assertThat(memberCardRepository.count())
-            .isEqualTo(previousCardCount + 1);
+            .isEqualTo(previousCardCount + 2);
+        
+        assertThat(memberAccountTest.getMyCard().getMemberFeatures())
+            .isEmpty();
+    }
+
+    @DisplayName("[MemberCard] update 테스트")
+    @Test
+    void givenNothing_whenQueryingUpdate_thenReturnNothing() throws Exception {
+        // given
+
+        // when
+
+        MemberAccount memberAccount = MemberAccount.of("tester", "test@email.com", "test123",
+            "2024", "MALE",
+            "010-1234-5678");
+
+        var memberAccountTest = memberAccountRepository.save(memberAccount);
+
+        MemberCard memberCard = memberAccountTest.getMyCard();
+        memberCard.updateMemberFeatures(List.of("아침형", "흡연", "음주"));
+
+        long previousCardCount = memberCardRepository.count();
+
+        var memberCardTest = memberCardRepository.save(memberCard);
+
+        // then
+        assertThat(memberCardTest.getMemberFeatures())
+            .isEqualTo(List.of("아침형", "흡연", "음주"));
+        assertThat(memberCardRepository.count())
+            .isEqualTo(previousCardCount);
     }
 
     @EnableJpaAuditing

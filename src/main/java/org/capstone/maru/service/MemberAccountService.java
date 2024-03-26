@@ -8,6 +8,7 @@ import org.capstone.maru.security.exception.MemberAccountExistentException;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.dto.MemberAccountDto;
 import org.capstone.maru.repository.MemberAccountRepository;
+import org.capstone.maru.security.exception.MemberAccountNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,7 @@ public class MemberAccountService {
     @Transactional(readOnly = true)
     public Optional<MemberAccountDto> searchMember(String memberId) {
         return memberAccountRepository.findById(memberId)
-                                      .map(MemberAccountDto::from);
+            .map(MemberAccountDto::from);
     }
 
     public MemberAccountDto login(
@@ -36,7 +37,21 @@ public class MemberAccountService {
         Optional<MemberAccount> memberAccount = memberAccountRepository.findByEmail(email);
 
         if (memberAccount.isEmpty()) {
-            return saveMember(memberId, email, nickname, birthYear, gender, phoneNumber);
+            MemberAccount member = MemberAccount.of(
+                memberId,
+                email,
+                nickname,
+                birthYear,
+                gender,
+                phoneNumber,
+                memberId
+            );
+
+            return MemberAccountDto.from(
+                memberAccountRepository.save(
+                    member
+                )
+            );
         }
 
         if (memberAccount.get().getMemberId().equals(memberId)) {
@@ -46,26 +61,17 @@ public class MemberAccountService {
         throw new MemberAccountExistentException(RestErrorCode.DUPLICATE_VALUE);
     }
 
-    protected MemberAccountDto saveMember(
-        String memberId,
-        String email,
-        String nickname,
-        String birthYear,
-        String gender,
-        String phoneNumber
-    ) {
-        return MemberAccountDto.from(
-            memberAccountRepository.save(
-                MemberAccount.of(
-                    memberId,
-                    email,
-                    nickname,
-                    birthYear,
-                    gender,
-                    phoneNumber,
-                    memberId
-                )
-            )
-        );
+    /*
+    최초 로그인인지 판단
+     */
+    public Boolean isInitialized(String memberId) {
+        Optional<MemberAccount> memberAccount = memberAccountRepository.findById(memberId);
+
+        if (memberAccount.isEmpty()) {
+            throw new MemberAccountNotFoundException(RestErrorCode.NOT_FOUND);
+        }
+
+        return memberAccount.get().getInitialized();
     }
+
 }
