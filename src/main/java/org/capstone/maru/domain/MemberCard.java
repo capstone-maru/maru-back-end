@@ -1,13 +1,16 @@
 package org.capstone.maru.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.capstone.maru.domain.converter.MemberFeaturesConverter;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,6 +22,14 @@ public class MemberCard {
     @Column(name = "member_card_id", nullable = false)
     private Long memberCardId;
 
-    private Long memberFeatures;
+    @Convert(converter = MemberFeaturesConverter.class)
+    private List<String> memberFeatures;
 
+    public MemberCard(List<String> memberFeatures) {
+        this.memberFeatures = memberFeatures;
+    }
+
+    public void updateMemberFeatures(List<String> memberFeatures) {
+        this.memberFeatures = memberFeatures;
+    }
 }

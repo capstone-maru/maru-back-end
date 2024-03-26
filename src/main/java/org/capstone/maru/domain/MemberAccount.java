@@ -9,6 +9,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.List;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -85,8 +86,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
           Discussion
           최초 생성시에 특성을 null 로 두는 것이 나은가???
          */
-        this.myCard = new MemberCard();
-        this.mateCard = new MemberCard();
+        this.myCard = new MemberCard(List.of());
+        this.mateCard = new MemberCard(List.of());
     }
 
     public static MemberAccount of(
