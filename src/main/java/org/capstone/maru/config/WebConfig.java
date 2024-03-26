@@ -1,6 +1,7 @@
 package org.capstone.maru.config;
 
 import java.util.List;
+import org.capstone.maru.resolver.CustomPageableArgumentResolver;
 import org.capstone.maru.resolver.SearchFilterArgumentResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -22,5 +23,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new SearchFilterArgumentResolver());
+        resolvers.add(new CustomPageableArgumentResolver());
     }
 }
