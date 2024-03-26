@@ -10,6 +10,7 @@ public enum RestErrorCode {
     REFRESH_TOKEN_NOTFOUND(401, "C003", "존재하지 않는 리프레시 토큰입니다."),
     NOT_FOUND(404, "C001", "존재하지 않는 url 입니다."),
     DUPLICATE_VALUE(409, "C001", "이미 존재하는 값입니다."),
+    MEMBER_NOT_FOUND(404, "C001", "존재하지 않는 회원입니다."),
     ;
 
     // 에러 코드의 '코드 상태'을 반환한다.
