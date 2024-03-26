@@ -16,8 +16,7 @@ public record AuthResponseDto(
     Boolean initialized
 ) {
 
-    public static AuthResponseDto from(MemberPrincipal memberPrincipal) {
-        Boolean initialized = true;
+    public static AuthResponseDto from(MemberPrincipal memberPrincipal, Boolean initialized) {
 
         return AuthResponseDto.builder()
             .email(memberPrincipal.email())

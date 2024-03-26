@@ -8,6 +8,7 @@ import org.capstone.maru.security.exception.MemberAccountExistentException;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.dto.MemberAccountDto;
 import org.capstone.maru.repository.MemberAccountRepository;
+import org.capstone.maru.security.exception.MemberAccountNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +47,11 @@ public class MemberAccountService {
                 memberId
             );
 
-            return saveMember(member);
+            return MemberAccountDto.from(
+                memberAccountRepository.save(
+                    member
+                )
+            );
         }
 
         if (memberAccount.get().getMemberId().equals(memberId)) {
@@ -56,13 +61,17 @@ public class MemberAccountService {
         throw new MemberAccountExistentException(RestErrorCode.DUPLICATE_VALUE);
     }
 
-    protected MemberAccountDto saveMember(
-        MemberAccount member
-    ) {
-        return MemberAccountDto.from(
-            memberAccountRepository.save(
-                member
-            )
-        );
+    /*
+    최초 로그인인지 판단
+     */
+    public Boolean isInitialized(String memberId) {
+        Optional<MemberAccount> memberAccount = memberAccountRepository.findById(memberId);
+
+        if (memberAccount.isEmpty()) {
+            throw new MemberAccountNotFoundException(RestErrorCode.NOT_FOUND);
+        }
+
+        return memberAccount.get().getInitialized();
     }
+
 }
