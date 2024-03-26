@@ -59,15 +59,20 @@ class JpaRepositoryTest {
         long previousCardCount = memberCardRepository.count();
 
         // when
-        memberAccountRepository.save(
-            MemberAccount.of("tester", "test@email.com", "test123", "2024", "MALE",
-                "010-1234-5678"));
 
+        MemberAccount memberAccount = MemberAccount.of("tester", "test@email.com", "test123",
+            "2024", "MALE",
+            "010-1234-5678");
+
+        var memberAccountTest = memberAccountRepository.save(memberAccount);
         // then
+        assertThat(memberAccountTest.getMemberId())
+            .isEqualTo("tester");
+        
         assertThat(memberAccountRepository.count())
             .isEqualTo(previousCount + 1);
         assertThat(memberCardRepository.count())
-            .isEqualTo(previousCardCount + 1);
+            .isEqualTo(previousCardCount + 2);
     }
 
     @EnableJpaAuditing

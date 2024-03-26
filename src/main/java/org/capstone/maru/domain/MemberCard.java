@@ -5,13 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import java.util.Set;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class MemberCard {
 
@@ -20,11 +19,6 @@ public class MemberCard {
     @Column(name = "member_card_id", nullable = false)
     private Long memberCardId;
 
-    @ManyToMany
-    @JoinTable(
-        name = "member_features",
-        joinColumns = @JoinColumn(name = "member_id"),
-        inverseJoinColumns = @JoinColumn(name = "feature_id")
-    )
-    private Set<MemberFeature> memberFeatures;
+    private Long memberFeatures;
+
 }
