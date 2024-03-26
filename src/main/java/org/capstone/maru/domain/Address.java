@@ -29,7 +29,8 @@ public class Address {
 
     @Getter
     public enum CITY {
-        SEOUL("서울특별시");
+        SEOUL("서울특별시"),
+        BUSAN("부산광역시");
 
         private final String name;
 

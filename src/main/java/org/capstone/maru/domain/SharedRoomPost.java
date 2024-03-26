@@ -11,6 +11,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -62,5 +63,32 @@ public abstract class SharedRoomPost extends AuditingFields {
                     .map(MemberPrincipal.class::cast)
                     .map(MemberPrincipal::gender)
         );
+    }
+
+
+    // -- 생성자 메서드 -- //
+    protected SharedRoomPost(Long id, String title, String content, String publisherGender) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.publisherGender = publisherGender;
+    }
+
+    
+    // -- Equals & Hash -- //
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SharedRoomPost sharedRoomPost)) {
+            return false;
+        }
+        return id != null && id.equals(sharedRoomPost.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
