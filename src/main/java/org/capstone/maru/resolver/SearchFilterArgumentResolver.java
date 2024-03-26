@@ -2,7 +2,7 @@ package org.capstone.maru.resolver;
 
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.annotation.RequestQueryString;
-import org.capstone.maru.dto.request.SearchFilterDto;
+import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -14,7 +14,7 @@ public class SearchFilterArgumentResolver implements HandlerMethodArgumentResolv
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().equals(SearchFilterDto.class) &&
+        return parameter.getParameterType().equals(SearchFilterRequest.class) &&
             parameter.hasParameterAnnotation(RequestQueryString.class);
     }
 
@@ -32,6 +32,6 @@ public class SearchFilterArgumentResolver implements HandlerMethodArgumentResolv
 
         String requestParameter = webRequest.getParameter(annotation.name());
 
-        return SearchFilterDto.fromJson(requestParameter);
+        return SearchFilterRequest.fromJson(requestParameter);
     }
 }
