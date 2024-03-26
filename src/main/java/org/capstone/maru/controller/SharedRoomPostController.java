@@ -3,7 +3,7 @@ package org.capstone.maru.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.annotation.RequestQueryString;
-import org.capstone.maru.dto.request.SearchFilterDto;
+import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.dto.response.StudioRoomPostResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.SharedRoomPostService;
@@ -28,14 +28,14 @@ public class SharedRoomPostController {
     @GetMapping("/studio")
     public Page<StudioRoomPostResponse> studioRoomPosts(
         @AuthenticationPrincipal MemberPrincipal principal,
-        @RequestQueryString(name = "filter", required = false) SearchFilterDto searchFilterDto,
+        @RequestQueryString(name = "filter", required = false) SearchFilterRequest searchFilterRequest,
         @RequestParam(name = "search", required = false) String searchKeyWords,
         @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
         return sharedRoomPostService
             .searchStudioRoomPosts(
                 principal.gender(),
-                searchFilterDto,
+                searchFilterRequest,
                 searchKeyWords,
                 pageable
             )

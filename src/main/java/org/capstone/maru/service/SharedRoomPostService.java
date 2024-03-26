@@ -32,7 +32,13 @@ public class SharedRoomPostService {
                 .map(StudioRoomPostDto::from);
         }
 
-        // TODO: 필터링과 검색어로 검색
-        return null;
+        return studioRoomPostRepository
+            .findStudioRoomPostByDynamicFilter(
+                gender,
+                searchFilterRequest,
+                searchKeyWords,
+                pageable
+            )
+            .map(StudioRoomPostDto::from);
     }
 }
