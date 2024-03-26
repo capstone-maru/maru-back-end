@@ -16,9 +16,27 @@ public class GlobalExceptionHandler {
     public ResponseEntity<RestErrorResponse> handleNoResourceFoundException(
         NoResourceFoundException ex
     ) {
-        log.error("NoResourceFoundException occur!: {}", ex.getMessage());
+        log.error("[Error] NoResourceFoundException occur!: {}", ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                              .body(RestErrorResponse.of(RestErrorCode.NOT_FOUND));
+    }
+
+    @ExceptionHandler({RuntimeException.class})
+    public ResponseEntity<RestErrorResponse> handleRuntimeException(
+        RuntimeException ex
+    ) {
+        log.error("[Error] RuntimeException occur!: {}", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                             .body(RestErrorResponse.of(RestErrorCode.FORBIDDEN));
+    }
+
+    @ExceptionHandler({PageSizeOutOfBoundsException.class})
+    public ResponseEntity<RestErrorResponse> handlePageSizeOutOfBoundsException(
+        PageSizeOutOfBoundsException ex
+    ) {
+        return ResponseEntity.status(ex.getErrorCode().getStatus())
+                             .body(RestErrorResponse.of(ex.getErrorCode(), ex.getReason()));
     }
 }

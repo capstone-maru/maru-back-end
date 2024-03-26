@@ -5,13 +5,13 @@ import java.util.List;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
 
-public record SearchFilterDto(
+public record SearchFilterRequest(
     List<RoomType> roomTypes,
     List<RentalType> rentalTypes
 ) {
 
-    public static SearchFilterDto fromJson(String json) {
-        return new Gson().fromJson(json, SearchFilterDto.class);
+    public static SearchFilterRequest fromJson(String json) {
+        return new Gson().fromJson(json, SearchFilterRequest.class);
     }
 
 }
