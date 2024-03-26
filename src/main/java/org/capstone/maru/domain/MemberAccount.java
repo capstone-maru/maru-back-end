@@ -47,11 +47,17 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     private String phoneNumber;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "my_card_id")
+    @JoinColumn(
+        name = "myCardId",
+        referencedColumnName = "member_card_id"
+    )
     private MemberCard myCard;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mate_card_id")
+    @JoinColumn(
+        name = "mateCardId",
+        referencedColumnName = "member_card_id"
+    )
     private MemberCard mateCard;
 
     private MemberAccount(

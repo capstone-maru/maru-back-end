@@ -16,9 +16,9 @@ import lombok.Getter;
 public class MemberCard {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "card_id", nullable = false)
-    private Long cardId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_card_id", nullable = false)
+    private Long memberCardId;
 
     @ManyToMany
     @JoinTable(

@@ -16,13 +16,12 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements
     public static final String REDIRECT_URL_PARAM_COOKIE_NAME = "redirect_uri";
     private static final int cookieExpireSeconds = 180;
 
-
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
         return CookieUtils.resolveCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
-                          .map(cookie -> CookieUtils.deserialize(cookie,
-                              OAuth2AuthorizationRequest.class))
-                          .orElse(null);
+            .map(cookie -> CookieUtils.deserialize(cookie,
+                OAuth2AuthorizationRequest.class))
+            .orElse(null);
     }
 
     @Override
