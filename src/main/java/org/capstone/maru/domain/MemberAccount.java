@@ -49,7 +49,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @Column
     private String phoneNumber;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(
         name = "myCardId",
         referencedColumnName = "member_card_id",
@@ -57,7 +57,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     )
     private MemberCard myCard;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(
         name = "mateCardId",
         referencedColumnName = "member_card_id",
@@ -87,11 +87,6 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         this.createdBy = createdBy;
         this.modifiedBy = createdBy;
 
-        /*
-          Discussion
-          최초 생성시에 특성을 null 로 두는 것이 나은가???
-          빈 리스트
-         */
         this.myCard = new MemberCard(List.of());
         this.mateCard = new MemberCard(List.of());
 
