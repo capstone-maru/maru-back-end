@@ -52,14 +52,16 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(
         name = "myCardId",
-        referencedColumnName = "member_card_id"
+        referencedColumnName = "member_card_id",
+        nullable = false
     )
     private MemberCard myCard;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(
         name = "mateCardId",
-        referencedColumnName = "member_card_id"
+        referencedColumnName = "member_card_id",
+        nullable = false
     )
     private MemberCard mateCard;
 
