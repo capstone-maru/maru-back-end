@@ -34,4 +34,13 @@ public class Follow {
         referencedColumnName = "memberId"
     )
     private MemberAccount following;
+
+    // -- 생성자 -- //
+    public Follow(MemberAccount follower, MemberAccount following) {
+        this.follower = follower;
+        this.following = following;
+    }
+
+    // -- Method -- //
+
 }

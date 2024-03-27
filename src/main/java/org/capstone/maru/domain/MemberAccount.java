@@ -167,6 +167,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         return getCreatedAt() == null;
     }
 
+    // -- 비즈니스 로직 -- //
+
     /*
         특성이 없는 경우는 initialized를 false로 변경
         따라서 user를 특성을 입력하는 곳으로 이동

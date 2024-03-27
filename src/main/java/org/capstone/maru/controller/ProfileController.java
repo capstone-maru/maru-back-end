@@ -8,6 +8,8 @@ import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
+import org.capstone.maru.service.FollowService;
+import org.capstone.maru.service.MemberAccountService;
 import org.capstone.maru.service.ProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final FollowService followService;
 
     @PutMapping
     public ResponseEntity<APIResponse> updateMyProfile(
@@ -63,13 +66,26 @@ public class ProfileController {
         return ResponseEntity.ok(APIResponse.success(result));
     }
 
+    /*
+     * 팔로우
+     */
     @PostMapping("/{memberId}/follow")
-    public ResponseEntity<APIResponse> follow(@PathVariable String memberId) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<APIResponse> follow(
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+        @PathVariable String memberId
+    ) {
+        followService.followUser(memberPrincipal.memberId(), memberId);
+        return ResponseEntity.ok(APIResponse.success());
     }
 
-    @GetMapping("/{memberId}/follow")
-    public ResponseEntity<APIResponse> getFollow(@PathVariable String memberId) {
+    /*
+     * 내가 팔로잉한 사람 조회
+     */
+    @GetMapping("/follow")
+    public ResponseEntity<APIResponse> getFollow(
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+        @PathVariable String memberId
+    ) {
         return ResponseEntity.ok().build();
     }
 }
