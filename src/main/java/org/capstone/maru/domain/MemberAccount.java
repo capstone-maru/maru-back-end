@@ -10,11 +10,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -70,13 +70,12 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     )
     private MemberCard mateCard;
 
-    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.PERSIST)
     private Set<Follow> followers;
 
-    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "following", cascade = CascadeType.PERSIST)
     private Set<Follow> followings;
 
-    @Builder
     private MemberAccount(
         String memberId,
         String email,
@@ -98,6 +97,9 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
 
         this.myCard = new MemberCard(List.of());
         this.mateCard = new MemberCard(List.of());
+
+        this.followers = new HashSet<>();
+        this.followings = new HashSet<>();
     }
 
     public static MemberAccount of(
