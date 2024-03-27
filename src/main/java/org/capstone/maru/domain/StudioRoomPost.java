@@ -39,4 +39,26 @@ public class StudioRoomPost extends SharedRoomPost {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_info_id", nullable = false)
     private RoomInfo roomInfo;
+
+    // -- 생성자 메서드 -- //
+    private StudioRoomPost(
+        Long id, String title, String content, String publisherGender,
+        MemberAccount publisherAccount, RoomInfo roomInfo) {
+        super(id, title, content, publisherGender);
+        this.publisherAccount = publisherAccount;
+        this.roomInfo = roomInfo;
+    }
+
+    public static StudioRoomPost of(
+        Long id,
+        String title,
+        String content,
+        String publisherGender,
+        MemberAccount publisherAccount,
+        RoomInfo roomInfo
+    ) {
+        return new StudioRoomPost(
+            id, title, content, publisherGender, publisherAccount, roomInfo
+        );
+    }
 }

@@ -2,20 +2,22 @@ package org.capstone.maru.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.domain.Persistable;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true)
+@ToString(callSuper = true, exclude = {"myCard", "mateCard"})
 @Table(indexes = {
     @Index(columnList = "memberId", unique = true),
     @Index(columnList = "email", unique = true),
@@ -43,6 +45,20 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
 
     @Column
     private String phoneNumber;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "myCardId",
+        referencedColumnName = "member_card_id"
+    )
+    private MemberCard myCard;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "mateCardId",
+        referencedColumnName = "member_card_id"
+    )
+    private MemberCard mateCard;
 
     private MemberAccount(
         String memberId,

@@ -16,9 +16,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<RestErrorResponse> handleNoResourceFoundException(
         NoResourceFoundException ex
     ) {
-        log.error("NoResourceFoundException occur!: {}", ex.getMessage());
+        log.error("[Error] NoResourceFoundException occur!: {}", ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                              .body(RestErrorResponse.of(RestErrorCode.NOT_FOUND));
+    }
+
+    @ExceptionHandler({PageSizeOutOfBoundsException.class})
+    public ResponseEntity<RestErrorResponse> handlePageSizeOutOfBoundsException(
+        PageSizeOutOfBoundsException ex
+    ) {
+        return ResponseEntity.status(ex.getErrorCode().getStatus())
+                             .body(RestErrorResponse.of(ex.getErrorCode(), ex.getReason()));
     }
 }

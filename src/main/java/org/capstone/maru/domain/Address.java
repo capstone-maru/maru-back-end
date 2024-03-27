@@ -29,7 +29,8 @@ public class Address {
 
     @Getter
     public enum CITY {
-        SEOUL("서울특별시");
+        SEOUL("서울특별시"),
+        BUSAN("부산광역시");
 
         private final String name;
 
@@ -39,9 +40,9 @@ public class Address {
 
         public static CITY of(String name) {
             return Arrays.stream(CITY.values())
-                         .filter(v -> v.getName().equals(name))
-                         .findAny()
-                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 도시명입니다."));
+                .filter(v -> v.getName().equals(name))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 도시명입니다."));
         }
     }
 }
