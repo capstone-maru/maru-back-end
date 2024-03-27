@@ -19,14 +19,32 @@ public class ProfileService {
     @Transactional
     public MemberCardDto updateMyCard(String memberId, List<String> myFeatures) {
         log.info("updateMyCard - memberId: {}, myFeatures: {}", memberId, myFeatures);
+
         MemberCard myCard = memberAccountService.searchMemberAccount(memberId).getMyCard();
         myCard.updateMemberFeatures(myFeatures);
         return MemberCardDto.from(myCard);
     }
 
+    @Transactional(readOnly = true)
     public MemberCardDto getMemberCard(String memberId) {
         log.info("getMyCard - memberId: {}", memberId);
+
         MemberCard memberCard = memberAccountService.searchMemberAccount(memberId).getMyCard();
         return MemberCardDto.from(memberCard);
+    }
+
+    @Transactional
+    public MemberCardDto updateRoomCard(String memberId, String roomCardId, List<String> strings) {
+        log.info("updateRoomCard - memberId: {}, roomCardId: {}, myFeatures: {}", memberId,
+            roomCardId, strings);
+
+        /*
+         * TODO
+         * 해당 roomCardId의 글이 로그인 한 사용자가 쓴 일치하는지 확인
+         * 해당 roomCardId의 글이 존재하는지 확인, 존재하는 경우 그 카드를 가져옵니다.
+         * 가져온 카드의 정보를 업데이트하고 저장합니다.
+         * */
+
+        return MemberCardDto.builder().build();
     }
 }

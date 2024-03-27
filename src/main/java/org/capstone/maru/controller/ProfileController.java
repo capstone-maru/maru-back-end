@@ -49,9 +49,18 @@ public class ProfileController {
         return ResponseEntity.ok(APIResponse.success(result));
     }
 
-    @PutMapping("/{memberId}")
-    public ResponseEntity<APIResponse> putProfile(@PathVariable String memberId) {
-        return ResponseEntity.ok().build();
+    @PutMapping("/{roomCardId}")
+    public ResponseEntity<APIResponse> updateRoomCardProfile(
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+        @PathVariable String roomCardId,
+        @RequestBody MemberFeatureRequest memberFeatureRequest) {
+        log.info("call updateRoomCardProfile : {}", memberFeatureRequest);
+        String memberId = memberPrincipal.memberId();
+
+        MemberCardDto result = profileService.updateRoomCard(memberId, roomCardId,
+            memberFeatureRequest.myFeatures());
+
+        return ResponseEntity.ok(APIResponse.success(result));
     }
 
     @PostMapping("/{memberId}/follow")
