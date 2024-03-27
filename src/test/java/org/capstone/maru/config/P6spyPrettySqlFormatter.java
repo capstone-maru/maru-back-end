@@ -16,7 +16,7 @@ public class P6spyPrettySqlFormatter implements MessageFormattingStrategy {
         sql = formatSQL(category, sql);
         Date currentDate = new Date();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yy.MM.ddHH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yy.MM.dd'T'HH:mm:ss");
 
         return dateFormat.format(currentDate) + " | " + "OperationTime: " + elapsed + "ms" + sql;
     }
@@ -34,7 +34,7 @@ public class P6spyPrettySqlFormatter implements MessageFormattingStrategy {
             } else {
                 sql = FormatStyle.BASIC.getFormatter().format(sql);
             }
-            sql = "|\nHeFormatSql(P6Spy sql, Hibernate format): " + sql;
+            sql = "|\nleejh7 FormatSql(P6Spy sql, Hibernate format): " + sql;
         }
 
         return sql;
