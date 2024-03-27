@@ -3,7 +3,7 @@ package org.capstone.maru.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.dto.StudioRoomPostDto;
-import org.capstone.maru.dto.request.SearchFilterDto;
+import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.repository.StudioRoomPostRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,17 +22,23 @@ public class SharedRoomPostService {
     @Transactional(readOnly = true)
     public Page<StudioRoomPostDto> searchStudioRoomPosts(
         String gender,
-        SearchFilterDto searchFilterDto,
+        SearchFilterRequest searchFilterRequest,
         String searchKeyWords,
         Pageable pageable
     ) {
-        if (searchFilterDto == null && !StringUtils.hasText(searchKeyWords)) {
+        if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
             return studioRoomPostRepository
                 .findAllByPublisherGender(gender, pageable)
                 .map(StudioRoomPostDto::from);
         }
 
-        // TODO: 필터링과 검색어로 검색
-        return null;
+        return studioRoomPostRepository
+            .findStudioRoomPostByDynamicFilter(
+                gender,
+                searchFilterRequest,
+                searchKeyWords,
+                pageable
+            )
+            .map(StudioRoomPostDto::from);
     }
 }
