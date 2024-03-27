@@ -3,6 +3,7 @@ package org.capstone.maru.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberCard;
 import org.capstone.maru.dto.MemberCardDto;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,12 @@ public class ProfileService {
     public MemberCardDto updateMyCard(String memberId, List<String> myFeatures) {
         log.info("updateMyCard - memberId: {}, myFeatures: {}", memberId, myFeatures);
 
-        MemberCard myCard = memberAccountService.searchMemberAccount(memberId).getMyCard();
+        MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
+        MemberCard myCard = memberAccount.getMyCard();
+
+        memberAccount.updateInitialized(myFeatures);
         myCard.updateMemberFeatures(myFeatures);
+        
         return MemberCardDto.from(myCard);
     }
 

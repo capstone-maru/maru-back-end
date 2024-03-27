@@ -49,6 +49,9 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @Column
     private String phoneNumber;
 
+    @Column(nullable = false)
+    private Boolean initialized;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(
         name = "myCardId",
@@ -64,9 +67,6 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         nullable = false
     )
     private MemberCard mateCard;
-
-    @Column(nullable = false)
-    private Boolean initialized;
 
     @Builder
     private MemberAccount(
@@ -86,11 +86,10 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         this.phoneNumber = phoneNumber;
         this.createdBy = createdBy;
         this.modifiedBy = createdBy;
+        this.initialized = true;
 
         this.myCard = new MemberCard(List.of());
         this.mateCard = new MemberCard(List.of());
-
-        this.initialized = true;
     }
 
     public static MemberAccount of(
@@ -158,4 +157,15 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         return getCreatedAt() == null;
     }
 
+    /*
+        특성이 없는 경우는 initialized를 false로 변경
+        따라서 user를 특성을 입력하는 곳으로 이동
+     */
+    public void updateInitialized(List<String> myFeatures) {
+        if (myFeatures.isEmpty()) {
+            this.initialized = false;
+            return;
+        }
+        this.initialized = true;
+    }
 }
