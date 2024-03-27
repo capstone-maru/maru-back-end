@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberCard;
+import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
+import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.ProfileService;
 import org.springframework.http.ResponseEntity;
@@ -26,32 +28,39 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @PutMapping
-    public ResponseEntity<?> updateProfile(
+    public ResponseEntity<APIResponse> updateMyProfile(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
         @RequestBody MemberFeatureRequest memberFeatureRequest) {
         log.info("call updateProfile : {}", memberFeatureRequest);
+
         String memberId = memberPrincipal.memberId();
-        profileService.updateMyCard(memberId, memberFeatureRequest.myFeatures());
-        return ResponseEntity.ok().build();
+        MemberCardDto result = profileService.updateMyCard(memberId,
+            memberFeatureRequest.myFeatures());
+
+        return ResponseEntity.ok(APIResponse.success(result));
     }
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<?> getProfile(@PathVariable String memberId) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<APIResponse> getMemberProfile(@PathVariable String memberId) {
+        log.info("call getProfile : {}", memberId);
+
+        MemberCardDto result = profileService.getMemberCard(memberId);
+
+        return ResponseEntity.ok(APIResponse.success(result));
     }
 
     @PutMapping("/{memberId}")
-    public ResponseEntity<?> putProfile(@PathVariable String memberId) {
+    public ResponseEntity<APIResponse> putProfile(@PathVariable String memberId) {
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{memberId}/follow")
-    public ResponseEntity<?> follow(@PathVariable String memberId) {
+    public ResponseEntity<APIResponse> follow(@PathVariable String memberId) {
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{memberId}/follow")
-    public ResponseEntity<?> getFollow(@PathVariable String memberId) {
+    public ResponseEntity<APIResponse> getFollow(@PathVariable String memberId) {
         return ResponseEntity.ok().build();
     }
 }
