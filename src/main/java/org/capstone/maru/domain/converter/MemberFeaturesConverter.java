@@ -8,15 +8,16 @@ import java.util.List;
 @Converter
 public class MemberFeaturesConverter implements AttributeConverter<List<String>, String> {
 
-    Gson gson = new Gson();
 
     @Override
     public String convertToDatabaseColumn(List strings) {
+        Gson gson = new Gson();
         return gson.toJson(strings);
     }
 
     @Override
     public List<String> convertToEntityAttribute(String s) {
+        Gson gson = new Gson();
         return gson.fromJson(s, List.class);
     }
 }
