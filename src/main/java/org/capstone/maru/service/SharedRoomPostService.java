@@ -32,6 +32,12 @@ public class SharedRoomPostService {
                 .map(StudioRoomPostDto::from);
         }
 
+        if (searchFilterRequest == null) {
+            return studioRoomPostRepository
+                .findStudioRoomPostBySearchKeyWords(gender, searchKeyWords, pageable)
+                .map(StudioRoomPostDto::from);
+        }
+
         return studioRoomPostRepository
             .findStudioRoomPostByDynamicFilter(
                 gender,

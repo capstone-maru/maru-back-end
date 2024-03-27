@@ -1,13 +1,9 @@
 package org.capstone.maru.dto;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import lombok.Builder;
-import org.capstone.maru.domain.MemberAccount;
-import org.capstone.maru.domain.RoomImage;
 import org.capstone.maru.domain.StudioRoomPost;
 
 @Builder
