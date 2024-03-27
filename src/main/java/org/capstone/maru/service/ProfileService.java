@@ -26,7 +26,7 @@ public class ProfileService {
 
         memberAccount.updateInitialized(myFeatures);
         myCard.updateMemberFeatures(myFeatures);
-        
+
         return MemberCardDto.from(myCard);
     }
 
@@ -52,4 +52,5 @@ public class ProfileService {
 
         return MemberCardDto.builder().build();
     }
+
 }
