@@ -25,7 +25,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @DiscriminatorValue("S")
 @Entity
 public class StudioRoomPost extends SharedRoomPost {
-
+    
     @OneToMany(mappedBy = "studioRoomPost", cascade = CascadeType.ALL)
     @OrderBy("createdAt DESC ")
     private final Set<RoomImage> roomImages = new LinkedHashSet<>();
@@ -60,5 +60,16 @@ public class StudioRoomPost extends SharedRoomPost {
         return new StudioRoomPost(
             id, title, content, publisherGender, publisherAccount, roomInfo
         );
+    }
+
+    // -- Equals & Hash -- //
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }
