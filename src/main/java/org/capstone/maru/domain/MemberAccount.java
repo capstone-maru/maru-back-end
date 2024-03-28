@@ -70,10 +70,10 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     )
     private MemberCard mateCard;
 
-    @OneToMany(mappedBy = "follower", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "following")
     private Set<Follow> followers;
 
-    @OneToMany(mappedBy = "following", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "follower")
     private Set<Follow> followings;
 
     private MemberAccount(

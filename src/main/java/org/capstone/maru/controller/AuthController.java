@@ -56,5 +56,4 @@ public class AuthController {
         return ResponseEntity.ok(AuthResponseResponse.from(memberPrincipal, false));
     }
 
-
 }

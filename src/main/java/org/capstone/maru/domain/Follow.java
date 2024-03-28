@@ -23,14 +23,14 @@ public class Follow {
 
     @ManyToOne
     @JoinColumn(
-        name = "follower_id",
+        name = "follower",
         referencedColumnName = "memberId"
     )
     private MemberAccount follower;
 
     @ManyToOne
     @JoinColumn(
-        name = "following_id",
+        name = "following",
         referencedColumnName = "memberId"
     )
     private MemberAccount following;

@@ -1,9 +1,9 @@
 package org.capstone.maru.service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Follow;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.dto.FollowingDto;
@@ -11,6 +11,7 @@ import org.capstone.maru.repository.FollowRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class FollowService {
@@ -30,18 +31,24 @@ public class FollowService {
 
         Follow follow = new Follow(followerAccount, followingAccount);
         followRepository.save(follow);
+        log.info("followerAccount: {}", followerAccount.getFollowings());
+        log.info("followingAccount: {}", followerAccount.getFollowers());
+        
+        log.info("followingAccount: {}", followingAccount.getFollowers());
+        log.info("followerAccount: {}", followingAccount.getFollowings());
     }
 
     @Transactional(readOnly = true)
     public FollowingDto getFollowings(String follower) {
         MemberAccount followerAccount = memberAccountService.searchMemberAccount(follower);
 
+        log.info("followerAccount: {}", followerAccount.getFollowings());
         Map<String, String> followingList = followerAccount
             .getFollowings().stream().collect(Collectors.toMap(
                 follow -> follow.getFollowing().getMemberId(),
                 follow -> follow.getFollowing().getNickname()
             ));
-
+        log.info("followingList: {}", followingList);
         return FollowingDto.from(followingList);
     }
 }
