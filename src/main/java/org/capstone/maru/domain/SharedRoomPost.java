@@ -29,11 +29,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true)
 @Table(indexes = {
-        @Index(columnList = "id", unique = true),
-        @Index(columnList = "title"),
-        @Index(columnList = "publisherGender"),
-        @Index(columnList = "createdAt"),
-        @Index(columnList = "createdBy")
+    @Index(columnList = "id", unique = true),
+    @Index(columnList = "title"),
+    @Index(columnList = "publisherGender"),
+    @Index(columnList = "createdAt"),
+    @Index(columnList = "createdBy")
 })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
@@ -57,14 +57,16 @@ public abstract class SharedRoomPost extends AuditingFields {
 
     @PrePersist
     public void fillInPublisherGender() {
-        publisherGender = String.valueOf(
-                Optional.ofNullable(SecurityContextHolder.getContext())
-                        .map(SecurityContext::getAuthentication)
-                        .filter(Authentication::isAuthenticated)
-                        .map(Authentication::getPrincipal)
-                        .map(MemberPrincipal.class::cast)
-                        .map(MemberPrincipal::gender)
-        );
+        publisherGender =
+            Optional.of(SecurityContextHolder.getContext())
+                    .map(SecurityContext::getAuthentication)
+                    .filter(Authentication::isAuthenticated)
+                    .map(Authentication::getPrincipal)
+                    .map(MemberPrincipal.class::cast)
+                    .map(MemberPrincipal::gender)
+                    .orElseThrow(
+                        () -> new IllegalArgumentException("인증되지 않은 방식의 사용자가 게시글을 작성하려 하였습니다.")
+                    );
     }
 
 

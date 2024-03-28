@@ -27,6 +27,28 @@ public class Address {
 
     private String detailAddress; // 상세 주소
 
+    // -- 생성 메서드 -- //
+    private Address(CITY city, String oldAddress, String roadAddress, String detailAddress) {
+        this.city = city;
+        this.oldAddress = oldAddress;
+        this.roadAddress = roadAddress;
+        this.detailAddress = detailAddress;
+    }
+
+    public static Address of(
+        CITY city,
+        String oldAddress,
+        String roadAddress,
+        String detailAddress
+    ) {
+        return new Address(
+            city,
+            oldAddress,
+            roadAddress,
+            detailAddress
+        );
+    }
+
     @Getter
     public enum CITY {
         @SerializedName("SEOUL")
