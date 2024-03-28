@@ -14,7 +14,7 @@ public record MemberProfileDto(
         AuthResponse authResponse) {
         return MemberProfileDto.builder()
             .memberCard(MemberCardDto.from(memberCard))
-            .authResponseResponse(authResponse)
+            .authResponse(authResponse)
             .build();
     }
 }

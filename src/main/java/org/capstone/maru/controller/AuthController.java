@@ -26,7 +26,7 @@ public class AuthController {
 
     @PostMapping("/token/refresh")
     public ResponseEntity<TokenDto> refreshToken(HttpServletRequest request) {
-        TokenDto newAccessToken = tokenReIssuer.reissueAccessToken(request);
+        TokenDto newAccessToken = tokenReIssuer.reissueTokens(request);
         return ResponseEntity.ok(newAccessToken);
     }
 
