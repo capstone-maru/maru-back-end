@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.capstone.maru.domain.converter.MemberFeaturesConverter;
@@ -25,6 +26,12 @@ public class MemberCard {
     @Convert(converter = MemberFeaturesConverter.class)
     private List<String> memberFeatures;
 
+    @Builder
+    public MemberCard(Long memberCardId, List<String> memberFeatures) {
+        this.memberCardId = memberCardId;
+        this.memberFeatures = memberFeatures;
+    }
+
     public MemberCard(List<String> memberFeatures) {
         this.memberFeatures = memberFeatures;
     }
@@ -32,4 +39,5 @@ public class MemberCard {
     public void updateMemberFeatures(List<String> memberFeatures) {
         this.memberFeatures = memberFeatures;
     }
+
 }

@@ -7,12 +7,14 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -49,24 +51,31 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @Column
     private String phoneNumber;
 
+    @Column(nullable = false)
+    private Boolean initialized;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(
         name = "myCardId",
-        referencedColumnName = "member_card_id"
+        referencedColumnName = "member_card_id",
+        nullable = false
     )
     private MemberCard myCard;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(
         name = "mateCardId",
-        referencedColumnName = "member_card_id"
+        referencedColumnName = "member_card_id",
+        nullable = false
     )
     private MemberCard mateCard;
 
-    @Column(nullable = false)
-    private Boolean initialized;
+    @OneToMany(mappedBy = "following", cascade = CascadeType.PERSIST)
+    private Set<Follow> followers;
 
-    @Builder
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.PERSIST)
+    private Set<Follow> followings;
+
     private MemberAccount(
         String memberId,
         String email,
@@ -84,15 +93,13 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         this.phoneNumber = phoneNumber;
         this.createdBy = createdBy;
         this.modifiedBy = createdBy;
+        this.initialized = true;
 
-        /*
-          Discussion
-          최초 생성시에 특성을 null 로 두는 것이 나은가???
-         */
         this.myCard = new MemberCard(List.of());
         this.mateCard = new MemberCard(List.of());
 
-        this.initialized = true;
+        this.followers = new HashSet<>();
+        this.followings = new HashSet<>();
     }
 
     public static MemberAccount of(
@@ -160,4 +167,17 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         return getCreatedAt() == null;
     }
 
+    // -- 비즈니스 로직 -- //
+
+    /*
+        특성이 없는 경우는 initialized를 false로 변경
+        따라서 user를 특성을 입력하는 곳으로 이동
+     */
+    public void updateInitialized(List<String> myFeatures) {
+        if (myFeatures.isEmpty()) {
+            this.initialized = false;
+            return;
+        }
+        this.initialized = true;
+    }
 }
