@@ -5,6 +5,7 @@ import org.capstone.maru.security.principal.MemberPrincipal;
 
 @Builder
 public record AuthResponseResponse(
+    String memberId,
     String email,
     String name,
     String birthYear,
@@ -16,6 +17,7 @@ public record AuthResponseResponse(
     public static AuthResponseResponse from(MemberPrincipal memberPrincipal, Boolean initialized) {
 
         return AuthResponseResponse.builder()
+            .memberId(memberPrincipal.memberId())
             .email(memberPrincipal.email())
             .name(memberPrincipal.nickname())
             .birthYear(memberPrincipal.birthYear())
