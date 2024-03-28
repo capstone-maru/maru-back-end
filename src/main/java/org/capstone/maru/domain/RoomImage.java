@@ -38,9 +38,8 @@ public class RoomImage extends AuditingFields {
     private StudioRoomPost studioRoomPost;
 
     // -- 생성자 메서드 -- //
-    private RoomImage(Long id, String fileName, String storeImagePath,
+    private RoomImage(String fileName, String storeImagePath,
         Boolean isThumbnail, StudioRoomPost studioRoomPost) {
-        this.id = id;
         this.fileName = fileName;
         this.storeImagePath = storeImagePath;
         this.isThumbnail = isThumbnail;
@@ -48,14 +47,13 @@ public class RoomImage extends AuditingFields {
     }
 
     public static RoomImage of(
-        Long id,
         String fileName,
         String storeImagePath,
         Boolean isThumbnail,
         StudioRoomPost studioRoomPost
     ) {
         return new RoomImage(
-            id, fileName, storeImagePath, isThumbnail, studioRoomPost
+            fileName, storeImagePath, isThumbnail, studioRoomPost
         );
     }
 
