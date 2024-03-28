@@ -83,8 +83,6 @@ public class MemberAccountService {
     최초 로그인인지 판단
      */
     public Boolean isInitialized(String memberId) {
-        MemberAccountDto memberAccount = searchMember(memberId);
-
-        return memberAccount.initialized();
+        return memberAccountRepository.getInitializedById(memberId).getInitialized();
     }
 }

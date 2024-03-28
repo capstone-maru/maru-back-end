@@ -10,5 +10,5 @@ public interface MemberAccountRepository extends JpaRepository<MemberAccount, St
 
     Optional<MemberAccount> findByEmail(String email);
 
-    List<InitialView> getInitializedById(String memberId);
+    InitialView getInitializedById(String memberId);
 }
