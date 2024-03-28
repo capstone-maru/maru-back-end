@@ -5,9 +5,9 @@ import lombok.Builder;
 import org.capstone.maru.domain.MemberCard;
 
 @Builder
-public class MemberCardDto {
-
-    private List<String> myFeatures;
+public record MemberCardDto(
+    List<String> myFeatures
+) {
 
     public static MemberCardDto from(MemberCard entity) {
         return MemberCardDto

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberCard;
+import org.capstone.maru.dto.FollowingDto;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
 import org.capstone.maru.dto.response.APIResponse;
@@ -83,9 +84,10 @@ public class ProfileController {
      */
     @GetMapping("/follow")
     public ResponseEntity<APIResponse> getFollow(
-        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
-        @PathVariable String memberId
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal
     ) {
-        return ResponseEntity.ok().build();
+        FollowingDto result = followService.getFollowings(memberPrincipal.memberId());
+
+        return ResponseEntity.ok(APIResponse.success(result));
     }
 }
