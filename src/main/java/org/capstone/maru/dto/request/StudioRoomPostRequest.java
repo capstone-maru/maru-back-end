@@ -1,10 +1,20 @@
 package org.capstone.maru.dto.request;
 
 import com.google.gson.Gson;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import org.capstone.maru.domain.Address;
 import org.capstone.maru.domain.Address.CITY;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
+import org.capstone.maru.dto.MemberAccountDto;
+import org.capstone.maru.dto.MemberAccountWithCardsDto;
+import org.capstone.maru.dto.RoomImageDto;
+import org.capstone.maru.dto.RoomInfoDto;
+import org.capstone.maru.dto.StudioRoomPostDetailDto;
+import org.capstone.maru.dto.StudioRoomPostDto;
 import org.springframework.web.multipart.MultipartFile;
 
 public record StudioRoomPostRequest(
@@ -34,6 +44,34 @@ public record StudioRoomPostRequest(
         this.transactionInfoData = TransactionData.fromJson(transactionData);
         this.roomInfoData = RoomDetailData.fromJson(roomDetailData);
         this.locationInfoData = LocationData.fromJson(locationData);
+    }
+
+    public StudioRoomPostDto toBaseStudioRoomPostDto() {
+        return StudioRoomPostDto
+            .builder()
+            .title(postInfoData.title)
+            .content(postInfoData.content)
+            .build();
+    }
+
+    public Set<RoomImageDto> toRoomImagesDto() {
+        return createDummyRoomImagesDto();
+    }
+
+    public RoomInfoDto toRoomInfoDto() {
+        return RoomInfoDto
+            .builder()
+            .address(
+                Address.of(locationInfoData.city, locationInfoData.oldAddress,
+                    locationInfoData.roadAddress, locationInfoData.detailAddress)
+            )
+            .roomType(roomInfoData.roomType)
+            .size(roomInfoData.size)
+            .numberOfRoom(roomInfoData.numberOfRoom)
+            .rentalType(transactionInfoData.rentalType)
+            .price(transactionInfoData.price)
+            .managementFee(transactionInfoData.managementFee)
+            .build();
     }
 
     // -- Nested -- //
@@ -87,5 +125,34 @@ public record StudioRoomPostRequest(
             return gson.fromJson(json, LocationData.class);
         }
 
+    }
+
+    // -- 편의 메서드 -- //
+
+    /**
+     * 이미지 기능 구현 전이라 임시 이미지 데이터 작성. 코드 이미지 기능 구현 후 코드 지워주기
+     */
+    private static Set<RoomImageDto> createDummyRoomImagesDto() {
+        return Set.of(
+            createDummyRoomImageDto(true),
+            createDummyRoomImageDto(false),
+            createDummyRoomImageDto(false)
+        );
+    }
+
+    private static RoomImageDto createDummyRoomImageDto(Boolean isThumbnail) {
+        final String imageUrl = "http://mstatic1.e-himart.co.kr/contents/content/upload/style/20200914/950958/thumbnail_750_propse_tagging_4920.jpg";
+
+        return RoomImageDto
+            .builder()
+            .id(new Random().nextLong())
+            .fileName("dummy room image")
+            .storeImagePath(imageUrl)
+            .isThumbnail(isThumbnail)
+            .createdAt(LocalDateTime.now())
+            .createdBy("tester")
+            .modifiedAt(LocalDateTime.now())
+            .createdBy("tester")
+            .build();
     }
 }
