@@ -6,6 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberCard;
 import org.capstone.maru.dto.MemberCardDto;
+import org.capstone.maru.dto.MemberProfileDto;
+import org.capstone.maru.dto.response.AuthResponse;
+import org.capstone.maru.security.principal.MemberPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +34,15 @@ public class ProfileService {
     }
 
     @Transactional(readOnly = true)
-    public MemberCardDto getMemberCard(String memberId) {
+    public MemberProfileDto getMemberCard(String memberId, MemberPrincipal memberPrincipal) {
         log.info("getMyCard - memberId: {}", memberId);
 
         MemberCard memberCard = memberAccountService.searchMemberAccount(memberId).getMyCard();
-        return MemberCardDto.from(memberCard);
+        log.info("memberCard: {}", memberCard.getMemberFeatures());
+        AuthResponse authResponse = AuthResponse.from(memberPrincipal,
+            memberCard.getMemberFeatures() == null || memberCard.getMemberFeatures().isEmpty());
+
+        return MemberProfileDto.from(memberCard, authResponse);
     }
 
     @Transactional

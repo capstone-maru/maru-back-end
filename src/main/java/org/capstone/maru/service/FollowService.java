@@ -31,11 +31,6 @@ public class FollowService {
 
         Follow follow = new Follow(followerAccount, followingAccount);
         followRepository.save(follow);
-        log.info("followerAccount: {}", followerAccount.getFollowings());
-        log.info("followingAccount: {}", followerAccount.getFollowers());
-        
-        log.info("followingAccount: {}", followingAccount.getFollowers());
-        log.info("followerAccount: {}", followingAccount.getFollowings());
     }
 
     @Transactional(readOnly = true)

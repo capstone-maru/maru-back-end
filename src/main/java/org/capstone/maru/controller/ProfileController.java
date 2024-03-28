@@ -2,15 +2,13 @@ package org.capstone.maru.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.capstone.maru.domain.MemberAccount;
-import org.capstone.maru.domain.MemberCard;
 import org.capstone.maru.dto.FollowingDto;
 import org.capstone.maru.dto.MemberCardDto;
+import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.FollowService;
-import org.capstone.maru.service.MemberAccountService;
 import org.capstone.maru.service.ProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,7 +32,8 @@ public class ProfileController {
     @PutMapping
     public ResponseEntity<APIResponse> updateMyProfile(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
-        @RequestBody MemberFeatureRequest memberFeatureRequest) {
+        @RequestBody MemberFeatureRequest memberFeatureRequest
+    ) {
         log.info("call updateProfile : {}", memberFeatureRequest);
 
         String memberId = memberPrincipal.memberId();
@@ -45,10 +44,12 @@ public class ProfileController {
     }
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<APIResponse> getMemberProfile(@PathVariable String memberId) {
+    public ResponseEntity<APIResponse> getMemberProfile(
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+        @PathVariable String memberId
+    ) {
         log.info("call getProfile : {}", memberId);
-
-        MemberCardDto result = profileService.getMemberCard(memberId);
+        MemberProfileDto result = profileService.getMemberCard(memberId, memberPrincipal);
 
         return ResponseEntity.ok(APIResponse.success(result));
     }
@@ -57,7 +58,8 @@ public class ProfileController {
     public ResponseEntity<APIResponse> updateRoomCardProfile(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
         @PathVariable String roomCardId,
-        @RequestBody MemberFeatureRequest memberFeatureRequest) {
+        @RequestBody MemberFeatureRequest memberFeatureRequest
+    ) {
         log.info("call updateRoomCardProfile : {}", memberFeatureRequest);
         String memberId = memberPrincipal.memberId();
 

@@ -4,7 +4,7 @@ import lombok.Builder;
 import org.capstone.maru.security.principal.MemberPrincipal;
 
 @Builder
-public record AuthResponseResponse(
+public record AuthResponse(
     String memberId,
     String email,
     String name,
@@ -14,9 +14,9 @@ public record AuthResponseResponse(
     Boolean initialized
 ) {
 
-    public static AuthResponseResponse from(MemberPrincipal memberPrincipal, Boolean initialized) {
+    public static AuthResponse from(MemberPrincipal memberPrincipal, Boolean initialized) {
 
-        return AuthResponseResponse.builder()
+        return AuthResponse.builder()
             .memberId(memberPrincipal.memberId())
             .email(memberPrincipal.email())
             .name(memberPrincipal.nickname())
