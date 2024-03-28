@@ -83,7 +83,7 @@ public class ProfileController {
      * 내가 팔로잉한 사람 조회
      */
     @GetMapping("/follow")
-    public ResponseEntity<APIResponse> getFollow(
+    public ResponseEntity<APIResponse> getFollowing(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal
     ) {
         FollowingDto result = followService.getFollowings(memberPrincipal.memberId());
