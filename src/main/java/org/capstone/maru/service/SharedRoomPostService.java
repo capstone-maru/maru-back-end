@@ -1,7 +1,10 @@
 package org.capstone.maru.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.domain.StudioRoomPost;
+import org.capstone.maru.dto.StudioRoomPostDetailDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.repository.StudioRoomPostRepository;
@@ -46,5 +49,14 @@ public class SharedRoomPostService {
                 pageable
             )
             .map(StudioRoomPostDto::from);
+    }
+
+    @Transactional(readOnly = true)
+    public StudioRoomPostDetailDto getStudioRoomPostDetail(Long postId, String gender) {
+        return studioRoomPostRepository
+            .findById(postId)
+            .filter(studioRoomPost -> studioRoomPost.getPublisherGender().equals(gender))
+            .map(StudioRoomPostDetailDto::from)
+            .orElseThrow(() -> new IllegalArgumentException("그런 게시물은 존재하지 않습니다."));
     }
 }
