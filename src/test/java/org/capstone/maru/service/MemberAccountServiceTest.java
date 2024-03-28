@@ -1,6 +1,7 @@
 package org.capstone.maru.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -8,6 +9,7 @@ import java.util.Optional;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.dto.MemberAccountDto;
 import org.capstone.maru.repository.MemberAccountRepository;
+import org.capstone.maru.security.exception.MemberAccountNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,8 +36,7 @@ class MemberAccountServiceTest {
             .willReturn(Optional.of(createMemberAccount(memberId)));
 
         // when
-        Optional<MemberAccountDto> result = sut.searchMember(memberId);
-
+        Optional<MemberAccountDto> result = Optional.of(sut.searchMember(memberId));
         // then
         assertThat(result).isPresent();
         then(memberAccountRepository).should().findById(memberId);
@@ -50,10 +51,12 @@ class MemberAccountServiceTest {
             .willReturn(Optional.empty());
 
         // when
-        Optional<MemberAccountDto> result = sut.searchMember(wrongMemberId);
+        Exception exception = assertThrows(MemberAccountNotFoundException.class, () -> {
+            sut.searchMember(wrongMemberId);
+        });
 
         // then
-        assertThat(result).isEmpty();
+        assertThat(exception).isInstanceOf(MemberAccountNotFoundException.class);
         then(memberAccountRepository).should().findById(wrongMemberId);
     }
 
@@ -65,14 +68,24 @@ class MemberAccountServiceTest {
         MemberAccount savedMemberAccount = createSigningUpMemberAccount("testId");
         given(memberAccountRepository.save(memberAccount)).willReturn(savedMemberAccount);
 
-        // when
-        MemberAccountDto result = sut.saveMember(
+        MemberAccount member = MemberAccount.of(
             memberAccount.getMemberId(),
             memberAccount.getEmail(),
             memberAccount.getNickname(),
             memberAccount.getBirthYear(),
             memberAccount.getGender(),
-            memberAccount.getPhoneNumber()
+            memberAccount.getPhoneNumber(),
+            memberAccount.getMemberId()
+        );
+
+        // when
+        MemberAccountDto result = sut.login(
+            member.getMemberId(),
+            member.getEmail(),
+            member.getNickname(),
+            member.getBirthYear(),
+            member.getGender(),
+            member.getPhoneNumber()
         );
 
         // then

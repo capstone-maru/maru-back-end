@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j
-@Component
+@Component("tokenAuthenticationProcessingFilter")
 public class TokenAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     private final TokenAuthenticationFailureHandler failureHandler;

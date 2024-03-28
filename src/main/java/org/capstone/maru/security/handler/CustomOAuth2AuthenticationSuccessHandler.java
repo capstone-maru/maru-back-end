@@ -59,17 +59,17 @@ public class CustomOAuth2AuthenticationSuccessHandler extends
 
         log.info("[Debug] DetermineTargetUrl!");
 
-        String targetUrl = CookieUtils.resolveCookie(request, REDIRECT_URL_PARAM_COOKIE_NAME)
-                                      .map(Cookie::getValue)
-                                      .orElse("/");
+        String targetUrl = CookieUtils
+            .resolveCookie(request, REDIRECT_URL_PARAM_COOKIE_NAME)
+            .map(Cookie::getValue)
+            .orElse("/");
 
-        return UriComponentsBuilder.fromUriString(targetUrl)
-                                   .queryParam("access_token",
-                                       tokenProvider.createAccessToken(authentication))
-                                   .queryParam("refresh_token",
-                                       tokenProvider.createRefreshToken(authentication))
-                                   .queryParam("expires_in", tokenProvider.getExpiration())
-                                   .encode(StandardCharsets.UTF_8)
-                                   .build().toUriString();
+        return UriComponentsBuilder
+            .fromUriString(targetUrl)
+            .queryParam("access_token", tokenProvider.createAccessToken(authentication))
+            .queryParam("refresh_token", tokenProvider.createRefreshToken(authentication))
+            .queryParam("expires_in", tokenProvider.getExpiration())
+            .encode(StandardCharsets.UTF_8)
+            .build().toUriString();
     }
 }

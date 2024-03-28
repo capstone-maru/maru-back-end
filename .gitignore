@@ -201,5 +201,17 @@ gradle-app.setting
 # Java heap dump
 *.hprof
 
-src/main/resources/application-oauth.yml
+### YAML File
+src/main/resources/application-oauth.*
+src/main/resources/application-datasource.*
+
+### Initial Dummy Data
+src/main/resources/data.sql
+
+### Querydsl
+/src/main/generated
+
+### JPA Buddy
+.jpb/
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,intellij+all,java,gradle
