@@ -12,6 +12,8 @@ public interface TokenProvider {
 
     TokenDto reissueAccessTokenUsing(String refreshToken) throws JwtException;
 
+    TokenDto reissueTokensUsing(String refreshToken) throws JwtException;
+
     String createAccessToken(Authentication authentication);
 
     String createRefreshToken(Authentication authentication);
