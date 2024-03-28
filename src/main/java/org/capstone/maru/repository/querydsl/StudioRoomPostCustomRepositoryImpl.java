@@ -5,6 +5,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class StudioRoomPostCustomRepositoryImpl implements StudioRoomPostCustomR
     @Override
     public Page<StudioRoomPost> findStudioRoomPostByDynamicFilter(
         String gender,
-        SearchFilterRequest searchFilterRequest,
+        @Nonnull SearchFilterRequest searchFilterRequest,
         String searchKeyWords,
         Pageable pageable
     ) {
@@ -56,6 +57,34 @@ public class StudioRoomPostCustomRepositoryImpl implements StudioRoomPostCustomR
                 eqGender(gender),
                 inRoomTypes(searchFilterRequest.roomTypes()),
                 inRentalTypes(searchFilterRequest.rentalTypes()),
+                containSearchKeyWords(searchKeyWords)
+            );
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Page<StudioRoomPost> findStudioRoomPostBySearchKeyWords(
+        String gender,
+        String searchKeyWords,
+        Pageable pageable
+    ) {
+        List<StudioRoomPost> content = jpaQueryFactory
+            .selectFrom(studioRoomPost)
+            .where(
+                eqGender(gender),
+                containSearchKeyWords(searchKeyWords)
+            )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(postSort(pageable))
+            .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+            .select(studioRoomPost.count())
+            .from(studioRoomPost)
+            .where(
+                eqGender(gender),
                 containSearchKeyWords(searchKeyWords)
             );
 

@@ -1,21 +1,22 @@
 package org.capstone.maru.dto.response;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.Builder;
-import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
 
-// TODO: 방 이미지 추가하기
-
 /**
- * 게시판에서 보는 게시글 response
+ * 상세 페이지에서 보는 상세 게시글 response
  */
 @Builder
-public record StudioRoomPostResponse(
+public record StudioRoomPostDetailResponse(
     Long id,
     String title,
     String content,
-    RoomImageResponse thumbnail,
+    String publisherGender,
+    Set<RoomImageResponse> roomImages,
     MemberAccountResponse publisherAccount,
     RoomInfoResponse roomInfo,
     LocalDateTime createdAt,
@@ -24,13 +25,18 @@ public record StudioRoomPostResponse(
     String modifiedBy
 ) {
 
-    public static StudioRoomPostResponse from(StudioRoomPostDto dto) {
-        return StudioRoomPostResponse
+    public static StudioRoomPostDetailResponse from(StudioRoomPostDto dto) {
+        return StudioRoomPostDetailResponse
             .builder()
             .id(dto.id())
             .title(dto.title())
             .content(dto.content())
-            .thumbnail(RoomImageResponse.from(dto.thumbnail()))
+            .roomImages(
+                dto.roomImages()
+                   .stream()
+                   .map(RoomImageResponse::from)
+                   .collect(Collectors.toSet())
+            )
             .publisherAccount(MemberAccountResponse.from(dto.publisherAccount()))
             .roomInfo(RoomInfoResponse.from(dto.roomInfo()))
             .createdAt(dto.createdAt())

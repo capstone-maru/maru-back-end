@@ -46,4 +46,19 @@ public class JwtTokenReIssuer implements TokenReIssuer {
 
         return tokenProvider.reissueAccessTokenUsing(refreshToken);
     }
+
+    @Override
+    public TokenDto reissueTokens(HttpServletRequest request) throws InvalidTokenException {
+        String refreshToken = tokenResolver.resolveTokenOrNull(request);
+
+        if (!tokenProvider.validate(refreshToken)) {
+            throw new InvalidTokenException(RestErrorCode.INVALID_TOKEN_VALUE, "유효하지 않은 토큰입니다.");
+        }
+
+        if (!refreshTokenService.hasRefreshToken(refreshToken)) {
+            throw new RefreshTokenNotFoundException(RestErrorCode.NOT_FOUND);
+        }
+
+        return tokenProvider.reissueTokensUsing(refreshToken);
+    }
 }

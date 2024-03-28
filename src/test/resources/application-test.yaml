@@ -9,7 +9,7 @@ logging:
 
 spring:
   datasource:
-    url: jdbc:h2:mem:test
+    url: jdbc:h2:mem:test;MODE=LEGACY
     driverClassName: org.h2.Driver
     username: sa
     password:
@@ -33,6 +33,12 @@ spring:
   profiles:
     include:
       - oauth
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+      multiline: true
 
 jwt:
   header: Authorization
