@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Builder;
+import org.capstone.maru.dto.StudioRoomPostDetailDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
 
 /**
@@ -15,9 +16,8 @@ public record StudioRoomPostDetailResponse(
     Long id,
     String title,
     String content,
-    String publisherGender,
     Set<RoomImageResponse> roomImages,
-    MemberAccountResponse publisherAccount,
+    MemberAccountWithCardsResponse publisherAccount,
     RoomInfoResponse roomInfo,
     LocalDateTime createdAt,
     String createdBy,
@@ -25,7 +25,7 @@ public record StudioRoomPostDetailResponse(
     String modifiedBy
 ) {
 
-    public static StudioRoomPostDetailResponse from(StudioRoomPostDto dto) {
+    public static StudioRoomPostDetailResponse from(StudioRoomPostDetailDto dto) {
         return StudioRoomPostDetailResponse
             .builder()
             .id(dto.id())
@@ -37,7 +37,7 @@ public record StudioRoomPostDetailResponse(
                    .map(RoomImageResponse::from)
                    .collect(Collectors.toSet())
             )
-            .publisherAccount(MemberAccountResponse.from(dto.publisherAccount()))
+            .publisherAccount(MemberAccountWithCardsResponse.from(dto.publisherAccount()))
             .roomInfo(RoomInfoResponse.from(dto.roomInfo()))
             .createdAt(dto.createdAt())
             .createdBy(dto.createdBy())

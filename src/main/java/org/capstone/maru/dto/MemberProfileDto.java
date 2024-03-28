@@ -6,15 +6,15 @@ import org.capstone.maru.dto.response.AuthResponse;
 
 @Builder
 public record MemberProfileDto(
-    MemberCardDto memberCard,
-    AuthResponse authResponse
+        MemberCardDto memberCard,
+        AuthResponse authResponse
 ) {
 
     public static MemberProfileDto from(MemberCard memberCard,
-        AuthResponse authResponse) {
+                                        AuthResponse authResponse) {
         return MemberProfileDto.builder()
-            .memberCard(MemberCardDto.from(memberCard))
-            .authResponseResponse(authResponse)
-            .build();
+                .memberCard(MemberCardDto.from(memberCard))
+                .authResponse(authResponse)
+                .build();
     }
 }
