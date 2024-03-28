@@ -174,7 +174,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         따라서 user를 특성을 입력하는 곳으로 이동
      */
     public void updateInitialized(List<String> myFeatures) {
-        if (myFeatures.isEmpty()) {
+        if (myFeatures == null || myFeatures.isEmpty()) {
             this.initialized = false;
             return;
         }
