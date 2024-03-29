@@ -1,9 +1,9 @@
 package org.capstone.maru.domain;
 
+import com.google.gson.annotations.SerializedName;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Enumerated;
 import java.util.Arrays;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -27,9 +27,33 @@ public class Address {
 
     private String detailAddress; // 상세 주소
 
+    // -- 생성 메서드 -- //
+    private Address(CITY city, String oldAddress, String roadAddress, String detailAddress) {
+        this.city = city;
+        this.oldAddress = oldAddress;
+        this.roadAddress = roadAddress;
+        this.detailAddress = detailAddress;
+    }
+
+    public static Address of(
+        CITY city,
+        String oldAddress,
+        String roadAddress,
+        String detailAddress
+    ) {
+        return new Address(
+            city,
+            oldAddress,
+            roadAddress,
+            detailAddress
+        );
+    }
+
     @Getter
     public enum CITY {
+        @SerializedName("SEOUL")
         SEOUL("서울특별시"),
+        @SerializedName("BUSAN")
         BUSAN("부산광역시");
 
         private final String name;
@@ -40,9 +64,9 @@ public class Address {
 
         public static CITY of(String name) {
             return Arrays.stream(CITY.values())
-                .filter(v -> v.getName().equals(name))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 도시명입니다."));
+                         .filter(v -> v.getName().equals(name))
+                         .findAny()
+                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 도시명입니다."));
         }
     }
 }

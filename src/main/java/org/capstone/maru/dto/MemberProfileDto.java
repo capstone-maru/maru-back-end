@@ -12,7 +12,8 @@ public record MemberProfileDto(
 
     public static MemberProfileDto from(MemberCard memberCard,
         AuthResponse authResponse) {
-        return MemberProfileDto.builder()
+        return MemberProfileDto
+            .builder()
             .memberCard(MemberCardDto.from(memberCard))
             .authResponse(authResponse)
             .build();

@@ -11,8 +11,10 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+
 import java.util.Objects;
 import java.util.Optional;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -55,26 +57,27 @@ public abstract class SharedRoomPost extends AuditingFields {
 
     @PrePersist
     public void fillInPublisherGender() {
-        publisherGender = String.valueOf(
-            Optional.ofNullable(SecurityContextHolder.getContext())
+        publisherGender =
+            Optional.of(SecurityContextHolder.getContext())
                     .map(SecurityContext::getAuthentication)
                     .filter(Authentication::isAuthenticated)
                     .map(Authentication::getPrincipal)
                     .map(MemberPrincipal.class::cast)
                     .map(MemberPrincipal::gender)
-        );
+                    .orElseThrow(
+                        () -> new IllegalArgumentException("인증되지 않은 방식의 사용자가 게시글을 작성하려 하였습니다.")
+                    );
     }
 
 
     // -- 생성자 메서드 -- //
-    protected SharedRoomPost(Long id, String title, String content, String publisherGender) {
-        this.id = id;
+    protected SharedRoomPost(String title, String content, String publisherGender) {
         this.title = title;
         this.content = content;
         this.publisherGender = publisherGender;
     }
 
-    
+
     // -- Equals & Hash -- //
     @Override
     public boolean equals(Object o) {

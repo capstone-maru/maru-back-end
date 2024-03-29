@@ -32,7 +32,7 @@ public record RoomImageDto(
     }
 
     public RoomImage toEntity(StudioRoomPost studioRoomPost) {
-        return RoomImage.of(id, fileName, storeImagePath, isThumbnail, studioRoomPost);
+        return RoomImage.of(fileName, storeImagePath, isThumbnail, studioRoomPost);
     }
 
 }

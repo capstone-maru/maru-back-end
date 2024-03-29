@@ -37,7 +37,6 @@ public record RoomInfoDto(
 
     public RoomInfo toEntity() {
         return RoomInfo.of(
-            id,
             address,
             roomType,
             size,

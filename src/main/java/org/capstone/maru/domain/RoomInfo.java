@@ -55,9 +55,8 @@ public class RoomInfo {
 
 
     // -- 생성 메서드 -- //
-    private RoomInfo(Long id, Address address, RoomType roomType, Short size, Short numberOfRoom,
+    private RoomInfo(Address address, RoomType roomType, Short size, Short numberOfRoom,
         RentalType rentalType, Long price, Long managementFee, Long expectedPayment) {
-        this.id = id;
         this.address = address;
         this.roomType = roomType;
         this.size = size;
@@ -69,7 +68,6 @@ public class RoomInfo {
     }
 
     public static RoomInfo of(
-        Long id,
         Address address,
         RoomType roomType,
         Short size,
@@ -80,7 +78,6 @@ public class RoomInfo {
         Long expectedPayment
     ) {
         return new RoomInfo(
-            id,
             address,
             roomType,
             size,
