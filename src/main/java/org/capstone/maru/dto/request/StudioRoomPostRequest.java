@@ -63,14 +63,21 @@ public record StudioRoomPostRequest(
             .builder()
             .address(
                 Address.of(locationInfoData.city, locationInfoData.oldAddress,
-                    locationInfoData.roadAddress, locationInfoData.detailAddress)
+                    locationInfoData.roadAddress, locationInfoData.detailAddress,
+                    locationInfoData.stationName,
+                    locationInfoData.stationTime, locationInfoData.busStopTime,
+                    locationInfoData.schoolName, locationInfoData.schoolTime,
+                    locationInfoData.convenienceStoreTime
+                )
             )
             .roomType(roomInfoData.roomType)
             .size(roomInfoData.size)
             .numberOfRoom(roomInfoData.numberOfRoom)
             .rentalType(transactionInfoData.rentalType)
             .price(transactionInfoData.price)
+            .monthlyFee(transactionInfoData.monthlyFee)
             .managementFee(transactionInfoData.managementFee)
+            .recruitmentCapacity(roomInfoData.recruitmentCapacity)
             .build();
     }
 
@@ -89,7 +96,7 @@ public record StudioRoomPostRequest(
     public record TransactionData(
         RentalType rentalType,
         Long price,
-        Long rentalFee,
+        Long monthlyFee,
         Long managementFee
     ) {
 
@@ -103,7 +110,8 @@ public record StudioRoomPostRequest(
     public record RoomDetailData(
         RoomType roomType,
         Short size,
-        Short numberOfRoom
+        Short numberOfRoom,
+        Short recruitmentCapacity
     ) {
 
         private static RoomDetailData fromJson(String json) {
@@ -117,7 +125,13 @@ public record StudioRoomPostRequest(
         CITY city,
         String oldAddress,
         String roadAddress,
-        String detailAddress
+        String detailAddress,
+        String stationName,
+        Short stationTime,
+        Short busStopTime,
+        String schoolName,
+        String schoolTime,
+        String convenienceStoreTime
     ) {
 
         private static LocationData fromJson(String json) {
