@@ -13,10 +13,12 @@ public record RoomInfoResponse(
     RoomType roomType,
     Short size,
     Short numberOfRoom,
+    Short recruitmentCapacity,
     RentalType rentalType,
     Long price,
     Long managementFee,
-    Long expectedPayment
+    Long expectedPayment,
+    Long monthlyFee
 ) {
 
     public static RoomInfoResponse from(RoomInfoDto dto) {
@@ -27,10 +29,12 @@ public record RoomInfoResponse(
             .roomType(dto.roomType())
             .size(dto.size())
             .numberOfRoom(dto.numberOfRoom())
+            .recruitmentCapacity(dto.recruitmentCapacity())
             .rentalType(dto.rentalType())
             .price(dto.price())
             .managementFee(dto.managementFee())
             .expectedPayment(dto.expectedPayment())
+            .monthlyFee(dto.monthlyFee())
             .build();
     }
 }
