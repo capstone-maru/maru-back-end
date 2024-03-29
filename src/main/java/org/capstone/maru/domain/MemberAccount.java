@@ -54,7 +54,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @Column(nullable = false)
     private Boolean initialized;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(
         name = "myCardId",
         referencedColumnName = "member_card_id",
@@ -62,7 +62,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     )
     private MemberCard myCard;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(
         name = "mateCardId",
         referencedColumnName = "member_card_id",
