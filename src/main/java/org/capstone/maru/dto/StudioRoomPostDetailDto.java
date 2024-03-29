@@ -3,20 +3,17 @@ package org.capstone.maru.dto;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.Set;
-
 import lombok.Builder;
-import org.capstone.maru.domain.MemberAccount;
-import org.capstone.maru.domain.RoomInfo;
 import org.capstone.maru.domain.StudioRoomPost;
 
 @Builder
-public record StudioRoomPostDto(
+public record StudioRoomPostDetailDto(
     Long id,
     String title,
     String content,
     String publisherGender,
     Set<RoomImageDto> roomImages,
-    MemberAccountDto publisherAccount,
+    MemberAccountWithCardsDto publisherAccount,
     RoomInfoDto roomInfo,
     LocalDateTime createdAt,
     String createdBy,
@@ -24,31 +21,21 @@ public record StudioRoomPostDto(
     String modifiedBy
 ) {
 
-    public static StudioRoomPostDto from(StudioRoomPost entity) {
-        return StudioRoomPostDto
+    public static StudioRoomPostDetailDto from(StudioRoomPost entity) {
+        return StudioRoomPostDetailDto
             .builder()
             .id(entity.getId())
             .title(entity.getTitle())
             .content(entity.getContent())
             .roomImages(createDummyRoomImagesDto())
             .publisherGender(entity.getPublisherGender())
-            .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))
+            .publisherAccount(MemberAccountWithCardsDto.from(entity.getPublisherAccount()))
             .roomInfo(RoomInfoDto.from(entity.getRoomInfo()))
             .createdAt(entity.getCreatedAt())
             .createdBy(entity.getCreatedBy())
             .modifiedAt(entity.getModifiedAt())
             .modifiedBy(entity.getModifiedBy())
             .build();
-    }
-
-    public StudioRoomPost toEntity(MemberAccount publisherAccountEntity, RoomInfo roomInfoEntity) {
-        return StudioRoomPost.of(
-            title,
-            content,
-            publisherGender,
-            publisherAccountEntity,
-            roomInfoEntity
-        );
     }
 
     /**
@@ -76,13 +63,5 @@ public record StudioRoomPostDto(
             .modifiedAt(LocalDateTime.now())
             .createdBy("tester")
             .build();
-    }
-
-    public RoomImageDto thumbnail() {
-        return roomImages
-            .stream()
-            .filter(RoomImageDto::isThumbnail)
-            .findAny()
-            .orElseThrow(IllegalArgumentException::new);
     }
 }

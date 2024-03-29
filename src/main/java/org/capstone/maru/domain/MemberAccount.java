@@ -22,7 +22,7 @@ import org.springframework.data.domain.Persistable;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true, exclude = {"myCard", "mateCard"})
+@ToString(callSuper = true, exclude = {"myCard", "mateCard", "followers", "followings"})
 @Table(indexes = {
     @Index(columnList = "memberId", unique = true),
     @Index(columnList = "email", unique = true),
