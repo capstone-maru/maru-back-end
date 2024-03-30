@@ -24,6 +24,7 @@ spring:
     include:
       - oauth
       - datasource
+      - cloud
 
 jwt:
   header: Authorization

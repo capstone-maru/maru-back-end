@@ -71,6 +71,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     runtimeOnly 'com.h2database:h2:1.4.197'
+
+    // amazon s3 설정
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws'
 }
 
 tasks.named('test') {
