@@ -45,7 +45,8 @@ public class StudioRoomPost extends SharedRoomPost {
     // -- 생성자 메서드 -- //
     private StudioRoomPost(
         String title, String content, String publisherGender,
-        MemberAccount publisherAccount, RoomInfo roomInfo) {
+        MemberAccount publisherAccount, RoomInfo roomInfo
+    ) {
         super(title, content, publisherGender);
         this.publisherAccount = publisherAccount;
         this.roomInfo = roomInfo;
