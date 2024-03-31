@@ -130,8 +130,8 @@ public record StudioRoomPostRequest(
         Short stationTime,
         Short busStopTime,
         String schoolName,
-        String schoolTime,
-        String convenienceStoreTime
+        Short schoolTime,
+        Short convenienceStoreTime
     ) {
 
         private static LocationData fromJson(String json) {
