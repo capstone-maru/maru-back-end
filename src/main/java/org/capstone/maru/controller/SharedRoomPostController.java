@@ -5,6 +5,7 @@ import static org.capstone.maru.security.cookie.HttpCookieOAuth2AuthorizationReq
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -79,7 +80,7 @@ public class SharedRoomPostController {
     @PostMapping(path = "/studio", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public void postNewStudioRoomPost(
         @AuthenticationPrincipal MemberPrincipal principal,
-        @ModelAttribute StudioRoomPostRequest studioRoomPostRequest,
+        @Valid @ModelAttribute StudioRoomPostRequest studioRoomPostRequest,
         HttpServletRequest request, HttpServletResponse response
     ) throws IOException {
         StudioRoomPostDto studioRoomPostDto = studioRoomPostRequest.toBaseStudioRoomPostDto();

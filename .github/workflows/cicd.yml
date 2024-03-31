@@ -4,7 +4,8 @@ on:
   pull_request:
     branches: [ "main" ]
     types: [ closed ]
-
+  workflow_dispatch:
+  
 jobs:
   build:
     if: github.event.pull_request.merged == true
@@ -23,8 +24,14 @@ jobs:
       - name: make application-oauth.yml
         run: |
           cd ./src/main/resources
-          touch ./application-prod.yml
-          echo "${{ secrets.APPLICATION_PROD }}" > ./application-prod.yml
+          touch ./application-oauth.yml
+          echo "${{ secrets.APPLICATION_PROD }}" > ./application-oauth.yml
+          
+      - name: make application-datasource.yaml
+        run: |
+          cd ./src/main/resources
+          touch ./application-datasource.yaml
+          echo "${{ secrets.APPLICATION_DATASOURCE }}" > ./application-datasource.yaml
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
