@@ -1,8 +1,11 @@
 package org.capstone.maru.dto;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import lombok.Builder;
+import org.capstone.maru.domain.Follow;
 import org.capstone.maru.domain.MemberAccount;
+import org.capstone.maru.domain.MemberCard;
 
 @Builder
 public record MemberAccountDto(
@@ -37,7 +40,8 @@ public record MemberAccountDto(
             .build();
     }
 
-    public MemberAccount toEntity() {
+    public MemberAccount toEntity(MemberCard myCard, MemberCard mateCard, Set<Follow> followers,
+        Set<Follow> followings) {
         return MemberAccount.of(
             memberId,
             email,
@@ -45,7 +49,12 @@ public record MemberAccountDto(
             birthYear,
             gender,
             phoneNumber,
-            createdBy
+            createdBy,
+            initialized,
+            myCard,
+            mateCard,
+            followers,
+            followings
         );
     }
 }

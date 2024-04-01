@@ -26,13 +26,8 @@ public class MemberCard {
     @Convert(converter = MemberFeaturesConverter.class)
     private List<String> memberFeatures;
 
-    @Builder
     public MemberCard(Long memberCardId, List<String> memberFeatures) {
         this.memberCardId = memberCardId;
-        this.memberFeatures = memberFeatures;
-    }
-
-    public MemberCard(List<String> memberFeatures) {
         this.memberFeatures = memberFeatures;
     }
 
@@ -40,4 +35,7 @@ public class MemberCard {
         this.memberFeatures = memberFeatures;
     }
 
+    public static MemberCard of(Long memberCardId, List<String> memberFeatures) {
+        return new MemberCard(memberCardId, memberFeatures);
+    }
 }
