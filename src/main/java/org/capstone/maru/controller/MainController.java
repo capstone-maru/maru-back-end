@@ -23,8 +23,6 @@ public class MainController {
 
     private final TokenProvider tokenProvider;
 
-    private final S3FileService s3FileService;
-
     @GetMapping("/")
     public String root() {
         return "health check!";
@@ -45,10 +43,4 @@ public class MainController {
         );
     }
 
-    @PostMapping("/upload")
-    public URL uploadFile(
-        @RequestPart(value = "file") MultipartFile multipartFile) throws IOException {
-        log.info("uploadFile: {}", multipartFile.getOriginalFilename());
-        return s3FileService.saveFile(multipartFile.getOriginalFilename());
-    }
 }
