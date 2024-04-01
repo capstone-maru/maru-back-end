@@ -21,13 +21,13 @@ public class MemberCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_card_id", nullable = false)
-    private Long memberCardId;
+    private Long id;
 
     @Convert(converter = MemberFeaturesConverter.class)
     private List<String> memberFeatures;
 
     public MemberCard(Long memberCardId, List<String> memberFeatures) {
-        this.memberCardId = memberCardId;
+        this.id = memberCardId;
         this.memberFeatures = memberFeatures;
     }
 

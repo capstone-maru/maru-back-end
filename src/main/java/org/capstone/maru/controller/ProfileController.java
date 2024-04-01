@@ -37,6 +37,7 @@ public class ProfileController {
         log.info("call updateProfile : {}", memberFeatureRequest);
 
         String memberId = memberPrincipal.memberId();
+        
         MemberCardDto result = profileService.updateMyCard(memberId,
             memberFeatureRequest.myFeatures());
 
