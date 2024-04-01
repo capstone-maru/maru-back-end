@@ -2,16 +2,16 @@ package org.capstone.maru.controller;
 
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.security.token.TokenProvider;
-import org.capstone.maru.service.S3UploadService;
+import org.capstone.maru.service.S3FileService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,8 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class MainController {
 
     private final TokenProvider tokenProvider;
-
-    private final S3UploadService s3UploadService;
 
     @GetMapping("/")
     public String root() {
@@ -45,10 +43,4 @@ public class MainController {
         );
     }
 
-    @PostMapping("/upload")
-    public String uploadFile(
-        @RequestPart(value = "file") MultipartFile multipartFile) throws IOException {
-        log.info("uploadFile: {}", multipartFile.getOriginalFilename());
-        return s3UploadService.saveFile(multipartFile);
-    }
 }
