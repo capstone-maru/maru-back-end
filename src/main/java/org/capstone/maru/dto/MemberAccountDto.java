@@ -6,6 +6,7 @@ import lombok.Builder;
 import org.capstone.maru.domain.Follow;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberCard;
+import org.capstone.maru.domain.ProfileImage;
 
 @Builder
 public record MemberAccountDto(
@@ -36,12 +37,11 @@ public record MemberAccountDto(
             .modifiedAt(entity.getModifiedAt())
             .modifiedBy(entity.getModifiedBy())
             .initialized(entity.getInitialized())
-
             .build();
     }
 
     public MemberAccount toEntity(MemberCard myCard, MemberCard mateCard, Set<Follow> followers,
-        Set<Follow> followings) {
+        Set<Follow> followings, ProfileImage profileImage) {
         return MemberAccount.of(
             memberId,
             email,
@@ -54,7 +54,8 @@ public record MemberAccountDto(
             myCard,
             mateCard,
             followers,
-            followings
+            followings,
+            profileImage
         );
     }
 }

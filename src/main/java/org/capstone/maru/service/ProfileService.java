@@ -1,14 +1,17 @@
 package org.capstone.maru.service;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberCard;
+import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.response.AuthResponse;
 import org.capstone.maru.repository.MemberCardRepository;
+import org.capstone.maru.repository.ProfileImageRepository;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +24,11 @@ public class ProfileService {
 
     private final MemberAccountService memberAccountService;
 
+    private final S3FileService s3FileService;
+
     private final MemberCardRepository memberCardRepository;
+
+    private final ProfileImageRepository profileImageRepository;
 
     @Transactional
     public MemberCardDto updateMyCard(String memberId, List<String> myFeatures) {
@@ -42,14 +49,19 @@ public class ProfileService {
 
         MemberCard myCard = memberAccountService.searchMemberAccount(memberId).getMyCard();
         MemberCard mateCard = memberAccountService.searchMemberAccount(memberId).getMateCard();
+        ProfileImage profileImage = memberAccountService.searchMemberAccount(memberId)
+            .getProfileImage();
 
         log.info("myCard: {}", myCard.getMemberFeatures());
         log.info("mateCard: {}", mateCard.getMemberFeatures());
+        log.info("profileImage: {}", profileImage.getFileName());
+
+        String imgURL = s3FileService.getPreSignedUrlForLoad(profileImage.getFileName());
 
         AuthResponse authResponse = AuthResponse.from(memberPrincipal,
             myCard.getMemberFeatures() == null || myCard.getMemberFeatures().isEmpty());
 
-        return MemberProfileDto.from(myCard, mateCard, authResponse);
+        return MemberProfileDto.from(imgURL, myCard, mateCard, authResponse);
     }
 
     @Transactional
@@ -76,5 +88,24 @@ public class ProfileService {
 
         return MemberCardDto.from(memberCard);
 
+    }
+
+    /*
+     * 프로필 이미지 업데이트
+     * 이때는 이미지가 이미 업로드 되어 있는 시점이다.
+     */
+    @Transactional
+    public void updateProfileImage(String memberId, String fileName) {
+        log.info("updateProfileImage - memberId: {}, fileName: {}", memberId, fileName);
+
+        MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
+
+        Optional<ProfileImage> profileImage = profileImageRepository.findById(fileName);
+
+        if (profileImage.isEmpty()) {
+            throw new IllegalArgumentException("ProfileImage not found");
+        }
+
+        memberAccount.updateProfileImage(profileImage.get());
     }
 }

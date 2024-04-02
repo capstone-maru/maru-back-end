@@ -76,6 +76,13 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @OneToMany(mappedBy = "follower", cascade = CascadeType.PERSIST)
     private Set<Follow> followings;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(
+        name = "profile_image_id",
+        referencedColumnName = "file_name"
+    )
+    private ProfileImage profileImage;
+
     private MemberAccount(
         String memberId,
         String email,
@@ -88,7 +95,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         MemberCard myCard,
         MemberCard mateCard,
         Set<Follow> followers,
-        Set<Follow> followings
+        Set<Follow> followings,
+        ProfileImage profileImage
     ) {
         this.memberId = memberId;
         this.email = email;
@@ -106,6 +114,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
 
         this.followers = followers;
         this.followings = followings;
+        this.profileImage = profileImage;
     }
 
     public static MemberAccount of(
@@ -128,7 +137,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             MemberCard.of(null, List.of()),
             MemberCard.of(null, List.of()),
             new HashSet<>(),
-            new HashSet<>()
+            new HashSet<>(),
+            ProfileImage.defaultImage()
         );
     }
 
@@ -144,7 +154,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         MemberCard myCard,
         MemberCard mateCard,
         Set<Follow> followers,
-        Set<Follow> followings
+        Set<Follow> followings,
+        ProfileImage profileImage
     ) {
         return new MemberAccount(
             memberId,
@@ -158,7 +169,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             myCard,
             mateCard,
             followers,
-            followings
+            followings,
+            profileImage
         );
     }
 
@@ -200,5 +212,9 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             return;
         }
         this.initialized = false;
+    }
+
+    public void updateProfileImage(ProfileImage profileImage) {
+        this.profileImage = profileImage;
     }
 }

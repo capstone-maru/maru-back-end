@@ -13,6 +13,7 @@ import org.capstone.maru.service.ProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -55,7 +56,7 @@ public class ProfileController {
         return ResponseEntity.ok(APIResponse.success(result));
     }
 
-    @GetMapping("/{cardId}")
+    @GetMapping("/card/{cardId}")
     public ResponseEntity<APIResponse> getCardData(
         @PathVariable Long cardId
     ) {
@@ -102,5 +103,20 @@ public class ProfileController {
         FollowingDto result = followService.getFollowings(memberPrincipal.memberId());
 
         return ResponseEntity.ok(APIResponse.success(result));
+    }
+
+    /*
+     * 프로필 이미지 수정
+     */
+    @PatchMapping("/image")
+    public ResponseEntity<APIResponse> updateProfileImage(
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+        @RequestBody String fileName
+    ) {
+        log.info("call updateProfileImage : {}", fileName);
+        
+        profileService.updateProfileImage(memberPrincipal.memberId(), fileName);
+
+        return ResponseEntity.ok(APIResponse.success());
     }
 }

@@ -29,7 +29,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class StudioRoomPost extends SharedRoomPost {
 
     @OneToMany(mappedBy = "studioRoomPost", cascade = CascadeType.ALL)
-    @OrderBy("createdAt DESC ")
+    @OrderBy("createdAt DESC")
     private final Set<RoomImage> roomImages = new LinkedHashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -62,6 +62,12 @@ public class StudioRoomPost extends SharedRoomPost {
         return new StudioRoomPost(
             title, content, publisherGender, publisherAccount, roomInfo
         );
+    }
+
+    // -- 비지니스 로직 -- //
+    public void addRoomImage(RoomImage roomImage) {
+        this.roomImages.add(roomImage);
+        roomImage.updateRoomPost(this);
     }
 
     // -- Equals & Hash -- //

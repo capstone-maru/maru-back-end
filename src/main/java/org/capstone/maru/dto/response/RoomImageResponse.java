@@ -7,15 +7,17 @@ import org.capstone.maru.dto.RoomImageDto;
 
 @Builder
 public record RoomImageResponse(
-    Long id,
-    String storeImagePath
+    String fileName,
+    Boolean isThumbnail,
+    Short order
 ) {
 
     public static RoomImageResponse from(RoomImageDto dto) {
         return RoomImageResponse
             .builder()
-            .id(dto.id())
-            .storeImagePath(dto.storeImagePath())
+            .fileName(dto.fileName())
+            .isThumbnail(dto.isThumbnail())
+            .order(dto.order())
             .build();
     }
 }

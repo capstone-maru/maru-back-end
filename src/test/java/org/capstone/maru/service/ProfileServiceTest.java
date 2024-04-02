@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberCard;
+import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.dto.MemberAccountDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.repository.MemberAccountRepository;
@@ -39,7 +40,7 @@ class ProfileServiceTest {
 
     @DisplayName("내 프로필 조회 할때, 내 프로필, 내 카드, 메이트 카드를 반환한다.")
     @Test
-    public void givenMemberId_whenSearching_thenReturnsMemberProfile() {
+    void givenMemberId_whenSearching_thenReturnsMemberProfile() {
         // given
         String memberId = "testId";
         MemberAccount memberAccount = createMemberAccount(memberId);
@@ -83,7 +84,8 @@ class ProfileServiceTest {
             createMyCard(),
             createMateCard(),
             new HashSet<>(),
-            new HashSet<>()
+            new HashSet<>(),
+            ProfileImage.defaultImage()
         );
     }
 

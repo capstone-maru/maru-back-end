@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -77,15 +77,15 @@ public class SharedRoomPostController {
         return ResponseEntity.ok(APIResponse.success(result));
     }
 
-    @PostMapping(path = "/studio", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping("/studio")
     public void postNewStudioRoomPost(
         @AuthenticationPrincipal MemberPrincipal principal,
         @Valid @ModelAttribute StudioRoomPostRequest studioRoomPostRequest,
         HttpServletRequest request, HttpServletResponse response
     ) throws IOException {
         StudioRoomPostDto studioRoomPostDto = studioRoomPostRequest.toBaseStudioRoomPostDto();
+        List<RoomImageDto> roomImagesDto = studioRoomPostRequest.toRoomImagesDto();
         RoomInfoDto roomInfoDto = studioRoomPostRequest.toRoomInfoDto();
-        Set<RoomImageDto> roomImagesDto = studioRoomPostRequest.toRoomImagesDto();
 
         sharedRoomPostService.saveStudioRoomPost(
             principal.memberId(), studioRoomPostDto, roomImagesDto, roomInfoDto

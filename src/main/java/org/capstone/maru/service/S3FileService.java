@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.capstone.maru.dto.ImageDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,26 +27,27 @@ public class S3FileService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String getPreSignedUrlForUpload(String prefix, @Nonnull String filename) {
-        if (StringUtils.isNotBlank(prefix)) {
-            filename = createPath(prefix, filename);
-        }
+    public ImageDto getPreSignedUrlForUpload(@Nonnull String extension) {
+        String filename = createPath(extension);
 
         Date expiration = getPreSignedUrlExpiration();
 
-        return amazonS3.generatePresignedUrl(bucket, filename, expiration, HttpMethod.PUT)
-                       .toString();
+        String imageURL = amazonS3.generatePresignedUrl(bucket, filename, expiration,
+                HttpMethod.PUT)
+            .toString();
+
+        return ImageDto.from(imageURL, filename);
     }
 
-    public String getPreSignedUrlForLoad(String prefix, String filename) {
-        if (StringUtils.isNotBlank(prefix)) {
-            filename = prefix + "/" + filename;
+    public String getPreSignedUrlForLoad(String filename) {
+        if (StringUtils.isNotBlank(filename)) {
+            filename = "images/" + filename;
         }
 
         Date expiration = getPreSignedUrlExpiration();
 
         return amazonS3.generatePresignedUrl(bucket, filename, expiration)
-                       .toString();
+            .toString();
     }
 
     private Date getPreSignedUrlExpiration() {
@@ -63,8 +65,8 @@ public class S3FileService {
         return UUID.randomUUID().toString();
     }
 
-    private String createPath(String prefix, String fileName) {
+    private String createPath(String extension) {
         String fileId = createFileId();
-        return String.format("%s/%s", prefix, fileId + fileName);
+        return String.format("%s/%s", "images", fileId + extension);
     }
 }
