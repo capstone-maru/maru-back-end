@@ -27,7 +27,7 @@ public class ImageController {
 
     @GetMapping("/load")
     public ResponseEntity<APIResponse> loadFile(@RequestParam("fileName") String fileName) {
-        String preSignedUrl = s3FileService.getPreSignedUrlForLoad("images", fileName);
+        String preSignedUrl = s3FileService.getPreSignedUrlForLoad(fileName);
 
         return ResponseEntity.ok(APIResponse.success(preSignedUrl));
     }
