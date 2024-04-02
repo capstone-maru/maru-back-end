@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.core.annotation.AnnotationUtils;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,6 +44,18 @@ public class RoomImage extends Image {
         return new RoomImage(
             fileName, isThumbnail, studioRoomPost
         );
+    }
+
+    public static RoomImage of(
+        String fileName,
+        Boolean isThumbnail
+    ) {
+        return new RoomImage(fileName, isThumbnail, null);
+    }
+
+    // -- 비지니스 로직 -- //
+    public void updateRoomPost(StudioRoomPost studioRoomPost) {
+        this.studioRoomPost = studioRoomPost;
     }
 
     // -- Equals & Hash -- //
