@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberCard;
+import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.dto.MemberAccountDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.repository.MemberAccountRepository;
@@ -83,7 +84,8 @@ class ProfileServiceTest {
             createMyCard(),
             createMateCard(),
             new HashSet<>(),
-            new HashSet<>()
+            new HashSet<>(),
+            ProfileImage.of("default_profile_image.png")
         );
     }
 

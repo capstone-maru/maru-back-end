@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Follow;
 import org.capstone.maru.domain.MemberCard;
+import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.exception.RestErrorCode;
 import org.capstone.maru.security.exception.MemberAccountExistentException;
 import org.capstone.maru.domain.MemberAccount;
@@ -67,6 +68,8 @@ public class MemberAccountService {
             Set<Follow> followers = new HashSet<>();
             Set<Follow> followings = new HashSet<>();
 
+            ProfileImage profileImage = ProfileImage.of("default_profile_image.png");
+
             MemberAccount member = MemberAccount.of(
                 memberId,
                 email,
@@ -79,7 +82,8 @@ public class MemberAccountService {
                 myCard,
                 mateCard,
                 followers,
-                followings
+                followings,
+                profileImage
             );
 
             return MemberAccountDto.from(
