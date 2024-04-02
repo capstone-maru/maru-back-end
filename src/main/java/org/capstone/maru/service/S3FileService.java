@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.capstone.maru.dto.ImageDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,13 +27,16 @@ public class S3FileService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String getPreSignedUrlForUpload(@Nonnull String extension) {
+    public ImageDto getPreSignedUrlForUpload(@Nonnull String extension) {
         String filename = createPath(extension);
 
         Date expiration = getPreSignedUrlExpiration();
 
-        return amazonS3.generatePresignedUrl(bucket, filename, expiration, HttpMethod.PUT)
+        String imageURL = amazonS3.generatePresignedUrl(bucket, filename, expiration,
+                HttpMethod.PUT)
             .toString();
+
+        return ImageDto.from(imageURL, filename);
     }
 
     public String getPreSignedUrlForLoad(String filename) {
