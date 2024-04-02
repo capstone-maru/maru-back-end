@@ -213,4 +213,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         }
         this.initialized = false;
     }
+
+    public void updateProfileImage(ProfileImage profileImage) {
+        this.profileImage = profileImage;
+    }
 }
