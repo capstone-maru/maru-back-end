@@ -8,6 +8,7 @@ import org.capstone.maru.domain.MemberCard;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.response.AuthResponse;
+import org.capstone.maru.repository.MemberCardRepository;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProfileService {
 
     private final MemberAccountService memberAccountService;
+
+    private final MemberCardRepository memberCardRepository;
 
     @Transactional
     public MemberCardDto updateMyCard(String memberId, List<String> myFeatures) {
@@ -34,15 +37,19 @@ public class ProfileService {
     }
 
     @Transactional(readOnly = true)
-    public MemberProfileDto getMemberCard(String memberId, MemberPrincipal memberPrincipal) {
+    public MemberProfileDto getMemberProfile(String memberId, MemberPrincipal memberPrincipal) {
         log.info("getMyCard - memberId: {}", memberId);
 
-        MemberCard memberCard = memberAccountService.searchMemberAccount(memberId).getMyCard();
-        log.info("memberCard: {}", memberCard.getMemberFeatures());
-        AuthResponse authResponse = AuthResponse.from(memberPrincipal,
-            memberCard.getMemberFeatures() == null || memberCard.getMemberFeatures().isEmpty());
+        MemberCard myCard = memberAccountService.searchMemberAccount(memberId).getMyCard();
+        MemberCard mateCard = memberAccountService.searchMemberAccount(memberId).getMateCard();
 
-        return MemberProfileDto.from(memberCard, authResponse);
+        log.info("myCard: {}", myCard.getMemberFeatures());
+        log.info("mateCard: {}", mateCard.getMemberFeatures());
+
+        AuthResponse authResponse = AuthResponse.from(memberPrincipal,
+            myCard.getMemberFeatures() == null || myCard.getMemberFeatures().isEmpty());
+
+        return MemberProfileDto.from(myCard, mateCard, authResponse);
     }
 
     @Transactional
@@ -60,4 +67,14 @@ public class ProfileService {
         return MemberCardDto.builder().build();
     }
 
+    @Transactional
+    public MemberCardDto getCard(Long cardId) {
+        log.info("getCard - cardId: {}", cardId);
+
+        MemberCard memberCard = memberCardRepository.findById(cardId)
+            .orElseThrow(() -> new IllegalArgumentException("MemberCard not found"));
+
+        return MemberCardDto.from(memberCard);
+
+    }
 }

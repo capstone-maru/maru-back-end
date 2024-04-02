@@ -21,18 +21,13 @@ public class MemberCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_card_id", nullable = false)
-    private Long memberCardId;
+    private Long id;
 
     @Convert(converter = MemberFeaturesConverter.class)
     private List<String> memberFeatures;
 
-    @Builder
     public MemberCard(Long memberCardId, List<String> memberFeatures) {
-        this.memberCardId = memberCardId;
-        this.memberFeatures = memberFeatures;
-    }
-
-    public MemberCard(List<String> memberFeatures) {
+        this.id = memberCardId;
         this.memberFeatures = memberFeatures;
     }
 
@@ -40,4 +35,7 @@ public class MemberCard {
         this.memberFeatures = memberFeatures;
     }
 
+    public static MemberCard of(Long memberCardId, List<String> memberFeatures) {
+        return new MemberCard(memberCardId, memberFeatures);
+    }
 }
