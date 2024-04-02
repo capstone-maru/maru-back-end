@@ -138,7 +138,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             MemberCard.of(null, List.of()),
             new HashSet<>(),
             new HashSet<>(),
-            ProfileImage.of("default_profile_image.png")
+            ProfileImage.defaultImage()
         );
     }
 

@@ -13,14 +13,21 @@ import lombok.ToString;
 public class ProfileImage extends Image {
 
     // -- 생성자 메서드 -- //
-    private ProfileImage(String fileName) {
+    private ProfileImage(String fileName, String createdBy) {
         super(fileName);
+        this.createdBy = createdBy;
+        this.modifiedBy = createdBy;
     }
 
     public static ProfileImage of(
-        String fileName
+        String fileName,
+        String createdBy
     ) {
-        return new ProfileImage(fileName);
+        return new ProfileImage(fileName, createdBy);
+    }
+
+    public static ProfileImage defaultImage() {
+        return new ProfileImage("images/default.jpg", "system");
     }
 
     // -- Equals & Hash -- //

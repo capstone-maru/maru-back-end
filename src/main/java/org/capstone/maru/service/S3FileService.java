@@ -26,15 +26,13 @@ public class S3FileService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String getPreSignedUrlForUpload(String prefix, @Nonnull String filename) {
-        if (StringUtils.isNotBlank(prefix)) {
-            filename = createPath(prefix, filename);
-        }
+    public String getPreSignedUrlForUpload(@Nonnull String extension) {
+        String filename = createPath(extension);
 
         Date expiration = getPreSignedUrlExpiration();
 
         return amazonS3.generatePresignedUrl(bucket, filename, expiration, HttpMethod.PUT)
-                       .toString();
+            .toString();
     }
 
     public String getPreSignedUrlForLoad(String prefix, String filename) {
@@ -45,7 +43,7 @@ public class S3FileService {
         Date expiration = getPreSignedUrlExpiration();
 
         return amazonS3.generatePresignedUrl(bucket, filename, expiration)
-                       .toString();
+            .toString();
     }
 
     private Date getPreSignedUrlExpiration() {
@@ -63,8 +61,8 @@ public class S3FileService {
         return UUID.randomUUID().toString();
     }
 
-    private String createPath(String prefix, String fileName) {
+    private String createPath(String extension) {
         String fileId = createFileId();
-        return String.format("%s/%s", prefix, fileId + fileName);
+        return String.format("%s/%s", "images", fileId + extension);
     }
 }

@@ -85,7 +85,7 @@ class ProfileServiceTest {
             createMateCard(),
             new HashSet<>(),
             new HashSet<>(),
-            ProfileImage.of("default_profile_image.png")
+            ProfileImage.defaultImage()
         );
     }
 

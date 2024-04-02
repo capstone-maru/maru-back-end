@@ -198,9 +198,8 @@ public record StudioRoomPostRequest(
 
         return RoomImageDto
             .builder()
-            .id(new Random().nextLong())
+            .id("dummy room image")
             .fileName("dummy room image")
-            .storeImagePath(imageUrl)
             .isThumbnail(isThumbnail)
             .createdAt(LocalDateTime.now())
             .createdBy("tester")

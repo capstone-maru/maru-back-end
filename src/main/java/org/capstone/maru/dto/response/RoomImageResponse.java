@@ -7,7 +7,7 @@ import org.capstone.maru.dto.RoomImageDto;
 
 @Builder
 public record RoomImageResponse(
-    Long id,
+    String id,
     String storeImagePath
 ) {
 
@@ -15,7 +15,6 @@ public record RoomImageResponse(
         return RoomImageResponse
             .builder()
             .id(dto.id())
-            .storeImagePath(dto.storeImagePath())
             .build();
     }
 }
