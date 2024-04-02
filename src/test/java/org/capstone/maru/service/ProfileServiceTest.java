@@ -39,7 +39,7 @@ class ProfileServiceTest {
 
     @DisplayName("내 프로필 조회 할때, 내 프로필, 내 카드, 메이트 카드를 반환한다.")
     @Test
-    public void givenMemberId_whenSearching_thenReturnsMemberProfile() {
+    void givenMemberId_whenSearching_thenReturnsMemberProfile() {
         // given
         String memberId = "testId";
         MemberAccount memberAccount = createMemberAccount(memberId);
