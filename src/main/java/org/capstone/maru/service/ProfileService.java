@@ -8,6 +8,7 @@ import org.capstone.maru.domain.MemberCard;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.response.AuthResponse;
+import org.capstone.maru.repository.MemberCardRepository;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProfileService {
 
     private final MemberAccountService memberAccountService;
+
+    private final MemberCardRepository memberCardRepository;
 
     @Transactional
     public MemberCardDto updateMyCard(String memberId, List<String> myFeatures) {
@@ -60,4 +63,14 @@ public class ProfileService {
         return MemberCardDto.builder().build();
     }
 
+    @Transactional
+    public MemberCardDto getCard(Long cardId) {
+        log.info("getCard - cardId: {}", cardId);
+
+        MemberCard memberCard = memberCardRepository.findById(cardId)
+            .orElseThrow(() -> new IllegalArgumentException("MemberCard not found"));
+
+        return MemberCardDto.from(memberCard);
+
+    }
 }
