@@ -50,7 +50,7 @@ public class ProfileController {
         @PathVariable String memberId
     ) {
         log.info("call getProfile : {}", memberId);
-        MemberProfileDto result = profileService.getMemberCard(memberId, memberPrincipal);
+        MemberProfileDto result = profileService.getMemberProfile(memberId, memberPrincipal);
 
         return ResponseEntity.ok(APIResponse.success(result));
     }

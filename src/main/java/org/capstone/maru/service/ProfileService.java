@@ -37,15 +37,19 @@ public class ProfileService {
     }
 
     @Transactional(readOnly = true)
-    public MemberProfileDto getMemberCard(String memberId, MemberPrincipal memberPrincipal) {
+    public MemberProfileDto getMemberProfile(String memberId, MemberPrincipal memberPrincipal) {
         log.info("getMyCard - memberId: {}", memberId);
 
-        MemberCard memberCard = memberAccountService.searchMemberAccount(memberId).getMyCard();
-        log.info("memberCard: {}", memberCard.getMemberFeatures());
-        AuthResponse authResponse = AuthResponse.from(memberPrincipal,
-            memberCard.getMemberFeatures() == null || memberCard.getMemberFeatures().isEmpty());
+        MemberCard myCard = memberAccountService.searchMemberAccount(memberId).getMyCard();
+        MemberCard mateCard = memberAccountService.searchMemberAccount(memberId).getMateCard();
 
-        return MemberProfileDto.from(memberCard, authResponse);
+        log.info("myCard: {}", myCard.getMemberFeatures());
+        log.info("mateCard: {}", mateCard.getMemberFeatures());
+
+        AuthResponse authResponse = AuthResponse.from(memberPrincipal,
+            myCard.getMemberFeatures() == null || myCard.getMemberFeatures().isEmpty());
+
+        return MemberProfileDto.from(myCard, mateCard, authResponse);
     }
 
     @Transactional
