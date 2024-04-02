@@ -37,6 +37,7 @@ public class ProfileController {
         log.info("call updateProfile : {}", memberFeatureRequest);
 
         String memberId = memberPrincipal.memberId();
+
         MemberCardDto result = profileService.updateMyCard(memberId,
             memberFeatureRequest.myFeatures());
 
@@ -49,7 +50,17 @@ public class ProfileController {
         @PathVariable String memberId
     ) {
         log.info("call getProfile : {}", memberId);
-        MemberProfileDto result = profileService.getMemberCard(memberId, memberPrincipal);
+        MemberProfileDto result = profileService.getMemberProfile(memberId, memberPrincipal);
+
+        return ResponseEntity.ok(APIResponse.success(result));
+    }
+
+    @GetMapping("/{cardId}")
+    public ResponseEntity<APIResponse> getCardData(
+        @PathVariable Long cardId
+    ) {
+        log.info("call getCardData : {}", cardId);
+        MemberCardDto result = profileService.getCard(cardId);
 
         return ResponseEntity.ok(APIResponse.success(result));
     }

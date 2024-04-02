@@ -48,47 +48,57 @@ public class RoomInfo {
     private Long price;
 
     @Column
+    private Long monthlyFee;
+
+    @Column
     private Long managementFee;
 
     @Column
     private Long expectedPayment;
 
+    @Column
+    private Short recruitmentCapacity;
 
     // -- 생성 메서드 -- //
-    private RoomInfo(Long id, Address address, RoomType roomType, Short size, Short numberOfRoom,
-        RentalType rentalType, Long price, Long managementFee, Long expectedPayment) {
-        this.id = id;
+    private RoomInfo(Address address, RoomType roomType, Short size, Short numberOfRoom,
+        RentalType rentalType, Long price, Long monthlyFee, Long managementFee,
+        Long expectedPayment,
+        Short recruitmentCapacity) {
         this.address = address;
         this.roomType = roomType;
         this.size = size;
         this.numberOfRoom = numberOfRoom;
         this.rentalType = rentalType;
         this.price = price;
+        this.monthlyFee = monthlyFee;
         this.managementFee = managementFee;
         this.expectedPayment = expectedPayment;
+        this.recruitmentCapacity = recruitmentCapacity;
     }
 
     public static RoomInfo of(
-        Long id,
         Address address,
         RoomType roomType,
         Short size,
         Short numberOfRoom,
         RentalType rentalType,
         Long price,
+        Long monthlyFee,
         Long managementFee,
-        Long expectedPayment
+        Long expectedPayment,
+        Short recruitmentCapacity
     ) {
         return new RoomInfo(
-            id,
             address,
             roomType,
             size,
             numberOfRoom,
             rentalType,
             price,
+            monthlyFee,
             managementFee,
-            expectedPayment
+            expectedPayment,
+            recruitmentCapacity
         );
     }
 

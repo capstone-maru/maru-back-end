@@ -22,7 +22,7 @@ import org.springframework.data.domain.Persistable;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true, exclude = {"myCard", "mateCard"})
+@ToString(callSuper = true, exclude = {"myCard", "mateCard", "followers", "followings"})
 @Table(indexes = {
     @Index(columnList = "memberId", unique = true),
     @Index(columnList = "email", unique = true),
@@ -83,7 +83,12 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         String birthYear,
         String gender,
         String phoneNumber,
-        String createdBy
+        String createdBy,
+        Boolean initialized,
+        MemberCard myCard,
+        MemberCard mateCard,
+        Set<Follow> followers,
+        Set<Follow> followings
     ) {
         this.memberId = memberId;
         this.email = email;
@@ -93,13 +98,14 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         this.phoneNumber = phoneNumber;
         this.createdBy = createdBy;
         this.modifiedBy = createdBy;
-        this.initialized = true;
 
-        this.myCard = new MemberCard(List.of());
-        this.mateCard = new MemberCard(List.of());
+        this.initialized = initialized;
 
-        this.followers = new HashSet<>();
-        this.followings = new HashSet<>();
+        this.myCard = myCard;
+        this.mateCard = mateCard;
+
+        this.followers = followers;
+        this.followings = followings;
     }
 
     public static MemberAccount of(
@@ -117,7 +123,12 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             birthYear,
             gender,
             phoneNumber,
-            null
+            null,
+            true,
+            MemberCard.of(null, List.of()),
+            MemberCard.of(null, List.of()),
+            new HashSet<>(),
+            new HashSet<>()
         );
     }
 
@@ -128,7 +139,12 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         String birthYear,
         String gender,
         String phoneNumber,
-        String createdBy
+        String createdBy,
+        Boolean initialized,
+        MemberCard myCard,
+        MemberCard mateCard,
+        Set<Follow> followers,
+        Set<Follow> followings
     ) {
         return new MemberAccount(
             memberId,
@@ -137,7 +153,12 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             birthYear,
             gender,
             phoneNumber,
-            createdBy
+            createdBy,
+            initialized,
+            myCard,
+            mateCard,
+            followers,
+            followings
         );
     }
 
@@ -170,14 +191,14 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     // -- 비즈니스 로직 -- //
 
     /*
-        특성이 없는 경우는 initialized를 false로 변경
-        따라서 user를 특성을 입력하는 곳으로 이동
+       false면 user의 특성이 있는 것으로 판단
+       true면 user의 특성이 없는 것으로 판단
      */
     public void updateInitialized(List<String> myFeatures) {
         if (myFeatures == null || myFeatures.isEmpty()) {
-            this.initialized = false;
+            this.initialized = true;
             return;
         }
-        this.initialized = true;
+        this.initialized = false;
     }
 }

@@ -1,29 +1,28 @@
 package org.capstone.maru.dto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Set;
 import lombok.Builder;
-import org.capstone.maru.domain.Follow;
 import org.capstone.maru.domain.MemberAccount;
-import org.capstone.maru.domain.MemberCard;
 
 @Builder
-public record MemberAccountDto(
+public record MemberAccountWithCardsDto(
     String memberId,
     String email,
     String nickname,
     String birthYear,
     String gender,
     String phoneNumber,
+    MemberCardDto myCard,
+    MemberCardDto mateCard,
     LocalDateTime createdAt,
     String createdBy,
     LocalDateTime modifiedAt,
-    String modifiedBy,
-    Boolean initialized
+    String modifiedBy
 ) {
 
-    public static MemberAccountDto from(MemberAccount entity) {
-        return MemberAccountDto
+    public static MemberAccountWithCardsDto from(MemberAccount entity) {
+        return MemberAccountWithCardsDto
             .builder()
             .memberId(entity.getMemberId())
             .email(entity.getEmail())
@@ -31,30 +30,13 @@ public record MemberAccountDto(
             .birthYear(entity.getBirthYear())
             .gender(entity.getGender())
             .phoneNumber(entity.getPhoneNumber())
+            .myCard(MemberCardDto.from(entity.getMyCard()))
+            .mateCard(MemberCardDto.from(entity.getMateCard()))
             .createdAt(entity.getCreatedAt())
             .createdBy(entity.getCreatedBy())
             .modifiedAt(entity.getModifiedAt())
             .modifiedBy(entity.getModifiedBy())
-            .initialized(entity.getInitialized())
-
             .build();
     }
 
-    public MemberAccount toEntity(MemberCard myCard, MemberCard mateCard, Set<Follow> followers,
-        Set<Follow> followings) {
-        return MemberAccount.of(
-            memberId,
-            email,
-            nickname,
-            birthYear,
-            gender,
-            phoneNumber,
-            createdBy,
-            initialized,
-            myCard,
-            mateCard,
-            followers,
-            followings
-        );
-    }
 }

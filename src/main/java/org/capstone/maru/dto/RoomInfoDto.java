@@ -16,8 +16,10 @@ public record RoomInfoDto(
     Short numberOfRoom,
     RentalType rentalType,
     Long price,
+    Long monthlyFee,
     Long managementFee,
-    Long expectedPayment
+    Long expectedPayment,
+    Short recruitmentCapacity
 ) {
 
     public static RoomInfoDto from(RoomInfo entity) {
@@ -30,22 +32,25 @@ public record RoomInfoDto(
             .numberOfRoom(entity.getNumberOfRoom())
             .rentalType(entity.getRentalType())
             .price(entity.getPrice())
+            .monthlyFee(entity.getMonthlyFee())
             .managementFee(entity.getManagementFee())
             .expectedPayment(entity.getExpectedPayment())
+            .recruitmentCapacity(entity.getRecruitmentCapacity())
             .build();
     }
 
     public RoomInfo toEntity() {
         return RoomInfo.of(
-            id,
             address,
             roomType,
             size,
             numberOfRoom,
             rentalType,
             price,
+            monthlyFee,
             managementFee,
-            expectedPayment
+            expectedPayment,
+            recruitmentCapacity
         );
     }
 }

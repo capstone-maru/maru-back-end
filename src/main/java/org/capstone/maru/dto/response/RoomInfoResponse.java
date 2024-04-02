@@ -10,13 +10,15 @@ import org.capstone.maru.dto.RoomInfoDto;
 public record RoomInfoResponse(
     Long id,
     Address address,
-    RoomType roomType,
+    String roomType,
     Short size,
     Short numberOfRoom,
-    RentalType rentalType,
+    Short recruitmentCapacity,
+    String rentalType,
     Long price,
     Long managementFee,
-    Long expectedPayment
+    Long expectedPayment,
+    Long monthlyFee
 ) {
 
     public static RoomInfoResponse from(RoomInfoDto dto) {
@@ -24,13 +26,15 @@ public record RoomInfoResponse(
             .builder()
             .id(dto.id())
             .address(dto.address())
-            .roomType(dto.roomType())
+            .roomType(dto.roomType().getDescription())
             .size(dto.size())
             .numberOfRoom(dto.numberOfRoom())
-            .rentalType(dto.rentalType())
+            .recruitmentCapacity(dto.recruitmentCapacity())
+            .rentalType(dto.rentalType().getDescription())
             .price(dto.price())
             .managementFee(dto.managementFee())
             .expectedPayment(dto.expectedPayment())
+            .monthlyFee(dto.monthlyFee())
             .build();
     }
 }

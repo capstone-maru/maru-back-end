@@ -14,4 +14,5 @@ public interface StudioRoomPostRepository extends
 
     Page<StudioRoomPost> findAllByPublisherGender(String gender, Pageable pageable);
 
+    void deleteByIdAndAndPublisherAccount_MemberId(Long postId, String memberId);
 }

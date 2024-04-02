@@ -10,8 +10,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +27,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @DiscriminatorValue("S")
 @Entity
 public class StudioRoomPost extends SharedRoomPost {
-    
+
     @OneToMany(mappedBy = "studioRoomPost", cascade = CascadeType.ALL)
     @OrderBy("createdAt DESC ")
     private final Set<RoomImage> roomImages = new LinkedHashSet<>();
@@ -36,21 +38,21 @@ public class StudioRoomPost extends SharedRoomPost {
     @JsonIgnore
     private MemberAccount publisherAccount;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "room_info_id", nullable = false)
     private RoomInfo roomInfo;
 
     // -- 생성자 메서드 -- //
     private StudioRoomPost(
-        Long id, String title, String content, String publisherGender,
-        MemberAccount publisherAccount, RoomInfo roomInfo) {
-        super(id, title, content, publisherGender);
+        String title, String content, String publisherGender,
+        MemberAccount publisherAccount, RoomInfo roomInfo
+    ) {
+        super(title, content, publisherGender);
         this.publisherAccount = publisherAccount;
         this.roomInfo = roomInfo;
     }
 
     public static StudioRoomPost of(
-        Long id,
         String title,
         String content,
         String publisherGender,
@@ -58,7 +60,7 @@ public class StudioRoomPost extends SharedRoomPost {
         RoomInfo roomInfo
     ) {
         return new StudioRoomPost(
-            id, title, content, publisherGender, publisherAccount, roomInfo
+            title, content, publisherGender, publisherAccount, roomInfo
         );
     }
 
