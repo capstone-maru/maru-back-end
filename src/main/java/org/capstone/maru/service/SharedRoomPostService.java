@@ -1,7 +1,6 @@
 package org.capstone.maru.service;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.MemberAccount;
@@ -12,6 +11,7 @@ import org.capstone.maru.dto.StudioRoomPostDetailDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.repository.MemberAccountRepository;
+import org.capstone.maru.repository.RoomImageRepository;
 import org.capstone.maru.repository.StudioRoomPostRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +26,7 @@ import org.springframework.util.StringUtils;
 public class SharedRoomPostService {
 
     private final StudioRoomPostRepository studioRoomPostRepository;
+    private final RoomImageRepository roomImageRepository;
     private final MemberAccountRepository memberAccountRepository;
 
     @Transactional(readOnly = true)
@@ -66,20 +67,26 @@ public class SharedRoomPostService {
             .orElseThrow(() -> new IllegalArgumentException("그런 게시물은 존재하지 않습니다."));
     }
 
-    // TODO: 방 이미지 저장 기능 구현하기
     public void saveStudioRoomPost(
         String publisherMemberId,
         StudioRoomPostDto studioRoomPostDto,
-        Set<RoomImageDto> roomImagesDto,
+        List<RoomImageDto> roomImagesDto,
         RoomInfoDto roomInfoDto
     ) {
         MemberAccount publisherAccount = memberAccountRepository.getReferenceById(
             publisherMemberId);
 
+        StudioRoomPost studioRoomPost = studioRoomPostDto.toEntity(
+            publisherAccount, roomInfoDto.toEntity()
+        );
+
+        roomImagesDto
+            .stream()
+            .map(RoomImageDto::toEntityWithoutStudioRoomPost)
+            .forEach(studioRoomPost::addRoomImage);
+
         studioRoomPostRepository.save(
-            studioRoomPostDto.toEntity(
-                publisherAccount, roomInfoDto.toEntity()
-            )
+            studioRoomPost
         );
     }
 

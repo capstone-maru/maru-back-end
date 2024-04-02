@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.core.annotation.AnnotationUtils;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,25 +25,44 @@ public class RoomImage extends Image {
     @Column
     private Boolean isThumbnail;
 
+    @Column
+    private Short orderNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "studio_room_post_id", nullable = false)
     private StudioRoomPost studioRoomPost;
 
     // -- 생성자 메서드 -- //
-    private RoomImage(String fileName, Boolean isThumbnail, StudioRoomPost studioRoomPost) {
+    private RoomImage(String fileName, Boolean isThumbnail, Short orderNumber,
+        StudioRoomPost studioRoomPost) {
         super(fileName);
         this.isThumbnail = isThumbnail;
+        this.orderNumber = orderNumber;
         this.studioRoomPost = studioRoomPost;
     }
 
     public static RoomImage of(
         String fileName,
         Boolean isThumbnail,
+        Short orderNumber,
         StudioRoomPost studioRoomPost
     ) {
         return new RoomImage(
-            fileName, isThumbnail, studioRoomPost
+            fileName, isThumbnail, orderNumber, studioRoomPost
         );
+    }
+
+    public static RoomImage of(
+        String fileName,
+        Boolean isThumbnail,
+        Short orderNumber
+    ) {
+        return new RoomImage(fileName, isThumbnail, orderNumber, null);
+    }
+
+    // -- 비지니스 로직 -- //
+    public void updateRoomPost(StudioRoomPost studioRoomPost) {
+        this.studioRoomPost = studioRoomPost;
     }
 
     // -- Equals & Hash -- //
