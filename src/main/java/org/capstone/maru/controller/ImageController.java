@@ -19,7 +19,8 @@ public class ImageController {
     private final S3FileService s3FileService;
 
     @GetMapping("/upload")
-    public ResponseEntity<APIResponse> uploadFile(@RequestParam("fileName") String fileName) {
+    public ResponseEntity<APIResponse> uploadFile(
+        @RequestParam(value = "fileName") String fileName) {
         String preSignedUrl = s3FileService.getPreSignedUrlForUpload("images", fileName);
 
         return ResponseEntity.ok(APIResponse.success(preSignedUrl));
