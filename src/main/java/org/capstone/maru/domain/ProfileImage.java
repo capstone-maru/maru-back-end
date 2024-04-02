@@ -27,7 +27,7 @@ public class ProfileImage extends Image {
     }
 
     public static ProfileImage defaultImage() {
-        return new ProfileImage("default.jpg", "system");
+        return new ProfileImage("default.png", "system");
     }
 
     // -- Equals & Hash -- //

@@ -55,7 +55,7 @@ public class ProfileController {
         return ResponseEntity.ok(APIResponse.success(result));
     }
 
-    @GetMapping("/{cardId}")
+    @GetMapping("/card/{cardId}")
     public ResponseEntity<APIResponse> getCardData(
         @PathVariable Long cardId
     ) {

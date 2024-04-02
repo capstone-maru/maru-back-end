@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberCard;
+import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.response.AuthResponse;
@@ -22,6 +23,8 @@ public class ProfileService {
     private final MemberAccountService memberAccountService;
 
     private final MemberCardRepository memberCardRepository;
+
+    private final S3FileService s3FileService;
 
     @Transactional
     public MemberCardDto updateMyCard(String memberId, List<String> myFeatures) {
@@ -42,14 +45,19 @@ public class ProfileService {
 
         MemberCard myCard = memberAccountService.searchMemberAccount(memberId).getMyCard();
         MemberCard mateCard = memberAccountService.searchMemberAccount(memberId).getMateCard();
+        ProfileImage profileImage = memberAccountService.searchMemberAccount(memberId)
+            .getProfileImage();
 
         log.info("myCard: {}", myCard.getMemberFeatures());
         log.info("mateCard: {}", mateCard.getMemberFeatures());
+        log.info("profileImage: {}", profileImage.getFileName());
+
+        String imgURL = s3FileService.getPreSignedUrlForLoad(profileImage.getFileName());
 
         AuthResponse authResponse = AuthResponse.from(memberPrincipal,
             myCard.getMemberFeatures() == null || myCard.getMemberFeatures().isEmpty());
 
-        return MemberProfileDto.from(myCard, mateCard, authResponse);
+        return MemberProfileDto.from(imgURL, myCard, mateCard, authResponse);
     }
 
     @Transactional

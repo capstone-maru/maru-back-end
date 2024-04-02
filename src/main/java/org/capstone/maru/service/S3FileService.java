@@ -37,7 +37,7 @@ public class S3FileService {
 
     public String getPreSignedUrlForLoad(String filename) {
         if (StringUtils.isNotBlank(filename)) {
-            filename = "images" + filename;
+            filename = "images/" + filename;
         }
 
         Date expiration = getPreSignedUrlExpiration();
