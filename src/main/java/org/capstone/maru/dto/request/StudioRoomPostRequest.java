@@ -6,12 +6,10 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
-import org.capstone.maru.annotation.MultipartFileConstraints;
+import java.util.stream.Collectors;
 import org.capstone.maru.domain.Address;
 import org.capstone.maru.domain.Address.CITY;
 import org.capstone.maru.domain.constant.RentalType;
@@ -19,12 +17,9 @@ import org.capstone.maru.domain.constant.RoomType;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
-import org.springframework.web.multipart.MultipartFile;
 
 public record StudioRoomPostRequest(
-    @NotNull(message = "이미지를 한개 이상은 선택해야 합니다.")
-    @Size(min = 1, max = 10, message = "이미지는 최대 10개까지 업로드 가능합니다.")
-    List<@MultipartFileConstraints MultipartFile> files,
+    String imageFilesData,
     @NotBlank(message = "게시글 정보는 반드시 작성해야 합니다.")
     String postData,
     @NotBlank(message = "거래 정보는 반드시 작성해야 합니다.")
@@ -33,6 +28,8 @@ public record StudioRoomPostRequest(
     String roomDetailData,
     @NotBlank(message = "방 위치 정보는 반드시 작성해야 합니다.")
     String locationData,
+    @Valid
+    ImageFilesData imageFilesInfoData,
     @Valid
     PostData postInfoData,
     @Valid
@@ -44,16 +41,17 @@ public record StudioRoomPostRequest(
 ) {
 
     // -- 생성자 -- //
-    public StudioRoomPostRequest(List<MultipartFile> files, String postData, String transactionData,
-        String roomDetailData, String locationData, PostData postInfoData,
-        TransactionData transactionInfoData, RoomDetailData roomInfoData,
+    public StudioRoomPostRequest(String imageFilesData, String postData, String transactionData,
+        String roomDetailData, String locationData, ImageFilesData imageFilesInfoData,
+        PostData postInfoData, TransactionData transactionInfoData, RoomDetailData roomInfoData,
         LocationData locationInfoData) {
-        this.files = files;
+        this.imageFilesData = imageFilesData;
         this.postData = postData;
         this.transactionData = transactionData;
         this.roomDetailData = roomDetailData;
         this.locationData = locationData;
 
+        this.imageFilesInfoData = ImageFilesData.fromJson(imageFilesData);
         this.postInfoData = PostData.fromJson(postData);
         this.transactionInfoData = TransactionData.fromJson(transactionData);
         this.roomInfoData = RoomDetailData.fromJson(roomDetailData);
@@ -68,8 +66,17 @@ public record StudioRoomPostRequest(
             .build();
     }
 
-    public Set<RoomImageDto> toRoomImagesDto() {
-        return createDummyRoomImagesDto();
+    public List<RoomImageDto> toRoomImagesDto() {
+        return imageFilesInfoData.imageFiles
+            .stream()
+            .map(imageFileData ->
+                RoomImageDto
+                    .builder()
+                    .fileName(imageFileData.fileName)
+                    .isThumbnail(imageFileData.isThumbNail)
+                    .build()
+            )
+            .toList();
     }
 
     public RoomInfoDto toRoomInfoDto() {
@@ -97,6 +104,25 @@ public record StudioRoomPostRequest(
     }
 
     // -- Nested -- //
+    public record ImageFilesData(
+        List<ImageFileData> imageFiles
+    ) {
+
+        public static ImageFilesData fromJson(String json) {
+            Gson gson = new Gson();
+            List<ImageFileData> result = Arrays.asList(gson.fromJson(json, ImageFileData[].class));
+            return new ImageFilesData(result);
+        }
+
+        public record ImageFileData(
+            String fileName,
+            Boolean isThumbNail,
+            Integer order
+        ) {
+
+        }
+    }
+
     public record PostData(
         @NotBlank(message = "제목을 작성해야 합니다.")
         String title,
@@ -181,31 +207,4 @@ public record StudioRoomPostRequest(
     }
 
     // -- 편의 메서드 -- //
-
-    /**
-     * 이미지 기능 구현 전이라 임시 이미지 데이터 작성. 코드 이미지 기능 구현 후 코드 지워주기
-     */
-    private static Set<RoomImageDto> createDummyRoomImagesDto() {
-        return Set.of(
-            createDummyRoomImageDto(true),
-            createDummyRoomImageDto(false),
-            createDummyRoomImageDto(false)
-        );
-    }
-
-    private static RoomImageDto createDummyRoomImageDto(Boolean isThumbnail) {
-        final String imageUrl = "http://mstatic1.e-himart.co.kr/contents/content/upload/style/20200914/950958/thumbnail_750_propse_tagging_4920.jpg";
-
-        return RoomImageDto
-            .builder()
-            .id(new Random().nextLong())
-            .fileName("dummy room image")
-            .storeImagePath(imageUrl)
-            .isThumbnail(isThumbnail)
-            .createdAt(LocalDateTime.now())
-            .createdBy("tester")
-            .modifiedAt(LocalDateTime.now())
-            .createdBy("tester")
-            .build();
-    }
 }
