@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.capstone.maru.annotation.ImageFilesConstraints;
 import org.capstone.maru.domain.Address;
 import org.capstone.maru.domain.Address.CITY;
 import org.capstone.maru.domain.constant.RentalType;
@@ -17,6 +18,7 @@ import org.capstone.maru.domain.constant.RoomType;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 public record StudioRoomPostRequest(
     String imageFilesData,
@@ -74,6 +76,7 @@ public record StudioRoomPostRequest(
                     .builder()
                     .fileName(imageFileData.fileName)
                     .isThumbnail(imageFileData.isThumbNail)
+                    .order(imageFileData.order)
                     .build()
             )
             .toList();
@@ -105,7 +108,8 @@ public record StudioRoomPostRequest(
 
     // -- Nested -- //
     public record ImageFilesData(
-        List<ImageFileData> imageFiles
+        @ImageFilesConstraints
+        List<@Valid ImageFileData> imageFiles
     ) {
 
         public static ImageFilesData fromJson(String json) {
@@ -115,9 +119,13 @@ public record StudioRoomPostRequest(
         }
 
         public record ImageFileData(
+            @NotBlank(message = "업로드 된 이미지 파일 이름을 작성해야 합니다.")
             String fileName,
+            @NotNull(message = "썸네일인지 아닌지 boolean 값으로 작성해야 합니다.")
             Boolean isThumbNail,
-            Integer order
+            @Min(value = 1, message = "순서는 1부터 시작합니다.")
+            @Max(value = 10, message = "11개 이상의 순서는 있을 수 없습니다.")
+            Short order
         ) {
 
         }

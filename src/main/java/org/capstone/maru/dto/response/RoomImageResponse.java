@@ -8,7 +8,8 @@ import org.capstone.maru.dto.RoomImageDto;
 @Builder
 public record RoomImageResponse(
     String fileName,
-    Boolean isThumbnail
+    Boolean isThumbnail,
+    Short order
 ) {
 
     public static RoomImageResponse from(RoomImageDto dto) {
@@ -16,6 +17,7 @@ public record RoomImageResponse(
             .builder()
             .fileName(dto.fileName())
             .isThumbnail(dto.isThumbnail())
+            .order(dto.order())
             .build();
     }
 }
