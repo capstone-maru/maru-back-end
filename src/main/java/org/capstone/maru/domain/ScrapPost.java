@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(indexes = {
-    @Index(columnList = "scrapper"),
-    @Index(columnList = "scrapped")
+    @Index(columnList = "scrapper_member_id"),
+    @Index(columnList = "scrapped_post_id")
 })
 @Entity
 public class ScrapPost {

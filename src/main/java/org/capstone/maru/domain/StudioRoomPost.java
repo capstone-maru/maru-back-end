@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -27,9 +28,9 @@ import org.hibernate.annotations.OnDeleteAction;
 @DiscriminatorValue("S")
 @Entity
 public class StudioRoomPost extends SharedRoomPost {
-
+    
     @OneToMany(mappedBy = "studioRoomPost", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @OrderBy("createdAt DESC")
+    @OrderBy("orderNumber ASC")
     private final List<RoomImage> roomImages = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
