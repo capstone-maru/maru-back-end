@@ -18,12 +18,12 @@ import org.springframework.test.context.TestPropertySource;
 @Import(TestJpaConfig.class)
 @DataJpaTest
 @TestPropertySource(locations = "classpath:application-test.yaml")
-class JpaRepositoryTest {
+class MemberAccountRepositoryTest {
 
     private final MemberAccountRepository memberAccountRepository;
     private final MemberCardRepository memberCardRepository;
 
-    public JpaRepositoryTest(
+    public MemberAccountRepositoryTest(
         @Autowired MemberAccountRepository memberAccountRepository,
         @Autowired MemberCardRepository memberCardRepository
     ) {
