@@ -21,6 +21,7 @@ public record StudioRoomPostDetailResponse(
     List<RoomImageResponse> roomImages,
     MemberAccountWithCardsResponse publisherAccount,
     RoomInfoResponse roomInfo,
+    Boolean isScrapped,
     LocalDateTime createdAt,
     String createdBy,
     LocalDateTime modifiedAt,
@@ -42,6 +43,7 @@ public record StudioRoomPostDetailResponse(
             )
             .publisherAccount(MemberAccountWithCardsResponse.from(dto.publisherAccount()))
             .roomInfo(RoomInfoResponse.from(dto.roomInfo()))
+            .isScrapped(dto.isScrapped())
             .createdAt(dto.createdAt())
             .createdBy(dto.createdBy())
             .modifiedAt(dto.modifiedAt())
