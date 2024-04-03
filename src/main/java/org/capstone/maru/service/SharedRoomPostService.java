@@ -1,9 +1,11 @@
 package org.capstone.maru.service;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.MemberAccount;
+import org.capstone.maru.domain.ScrapPost;
 import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
@@ -12,6 +14,7 @@ import org.capstone.maru.dto.StudioRoomPostDto;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.repository.MemberAccountRepository;
 import org.capstone.maru.repository.RoomImageRepository;
+import org.capstone.maru.repository.ScrapPostRepository;
 import org.capstone.maru.repository.StudioRoomPostRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,26 +29,40 @@ import org.springframework.util.StringUtils;
 public class SharedRoomPostService {
 
     private final StudioRoomPostRepository studioRoomPostRepository;
-    private final RoomImageRepository roomImageRepository;
     private final MemberAccountRepository memberAccountRepository;
+    private final RoomImageRepository roomImageRepository;
+    private final ScrapPostRepository scrapPostRepository;
 
     @Transactional(readOnly = true)
     public Page<StudioRoomPostDto> searchStudioRoomPosts(
+        String memberId,
         String gender,
         SearchFilterRequest searchFilterRequest,
         String searchKeyWords,
         Pageable pageable
     ) {
+        List<ScrapPost> scrapPosts = scrapPostRepository.findByScrapperMemberId(memberId);
+
         if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
             return studioRoomPostRepository
                 .findAllByPublisherGender(gender, pageable)
-                .map(StudioRoomPostDto::from);
+                .map(studioRoomPost ->
+                    StudioRoomPostDto.from(
+                        studioRoomPost,
+                        scrapPosts
+                    )
+                );
         }
 
         if (searchFilterRequest == null) {
             return studioRoomPostRepository
                 .findStudioRoomPostBySearchKeyWords(gender, searchKeyWords, pageable)
-                .map(StudioRoomPostDto::from);
+                .map(studioRoomPost ->
+                    StudioRoomPostDto.from(
+                        studioRoomPost,
+                        scrapPosts
+                    )
+                );
         }
 
         return studioRoomPostRepository
@@ -55,15 +72,32 @@ public class SharedRoomPostService {
                 searchKeyWords,
                 pageable
             )
-            .map(StudioRoomPostDto::from);
+            .map(studioRoomPost ->
+                StudioRoomPostDto.from(
+                    studioRoomPost,
+                    scrapPosts
+                )
+            );
     }
 
     @Transactional(readOnly = true)
-    public StudioRoomPostDetailDto getStudioRoomPostDetail(Long postId, String gender) {
+    public StudioRoomPostDetailDto getStudioRoomPostDetail(String memberId, Long postId,
+        String gender) {
+        Optional<ScrapPost> scrapPost = scrapPostRepository.findByScrappedIdAndScrapperMemberId(
+            postId, memberId);
+
+        final Boolean isScrapped;
+
+        if (scrapPost.isPresent()) {
+            isScrapped = scrapPost.get().getIsScrapped();
+        } else {
+            isScrapped = false;
+        }
+
         return studioRoomPostRepository
             .findById(postId)
             .filter(studioRoomPost -> studioRoomPost.getPublisherGender().equals(gender))
-            .map(StudioRoomPostDetailDto::from)
+            .map(studioRoomPost -> StudioRoomPostDetailDto.from(studioRoomPost, isScrapped))
             .orElseThrow(() -> new IllegalArgumentException("그런 게시물은 존재하지 않습니다."));
     }
 
@@ -81,9 +115,7 @@ public class SharedRoomPostService {
         );
 
         roomImagesDto
-            .stream()
-            .map(RoomImageDto::toEntityWithoutStudioRoomPost)
-            .forEach(studioRoomPost::addRoomImage);
+            .forEach(roomImageDto -> roomImageDto.toEntity(studioRoomPost));
 
         studioRoomPostRepository.save(
             studioRoomPost
@@ -96,4 +128,27 @@ public class SharedRoomPostService {
     ) {
         studioRoomPostRepository.deleteByIdAndAndPublisherAccount_MemberId(postId, memberId);
     }
+
+    public void scrapStudioRoomPost(
+        String memberId,
+        String scrapperGender,
+        Long postId
+    ) {
+        MemberAccount memberAccount = memberAccountRepository.getReferenceById(memberId);
+        StudioRoomPost studioRoomPost = studioRoomPostRepository
+            .findById(postId)
+            .filter(post -> scrapperGender.equals(post.getPublisherGender()))
+            .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다."));
+
+        Optional<ScrapPost> scrapPost = scrapPostRepository.findByScrappedIdAndScrapperMemberId(
+            postId, memberId);
+
+        if (scrapPost.isEmpty()) {
+            scrapPostRepository.save(ScrapPost.of(memberAccount, studioRoomPost));
+            return;
+        }
+
+        scrapPost.get().toggleScrap();
+    }
+
 }

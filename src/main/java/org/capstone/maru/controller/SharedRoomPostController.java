@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.annotation.RequestQueryString;
@@ -55,6 +54,7 @@ public class SharedRoomPostController {
     ) {
         Page<StudioRoomPostResponse> result = sharedRoomPostService
             .searchStudioRoomPosts(
+                principal.memberId(),
                 principal.gender(),
                 searchFilterRequest,
                 searchKeyWords,
@@ -71,7 +71,8 @@ public class SharedRoomPostController {
         @PathVariable("postId") Long postId
     ) {
         StudioRoomPostDetailResponse result = StudioRoomPostDetailResponse.from(
-            sharedRoomPostService.getStudioRoomPostDetail(postId, principal.gender())
+            sharedRoomPostService.getStudioRoomPostDetail(principal.memberId(), postId,
+                principal.gender())
         );
 
         return ResponseEntity.ok(APIResponse.success(result));
@@ -114,5 +115,15 @@ public class SharedRoomPostController {
             .orElse("/");
 
         response.sendRedirect(redirectURL);
+    }
+
+    @PostMapping("/studio/{postId}/scrap")
+    public ResponseEntity<APIResponse> scrapStudioRoomPost(
+        @AuthenticationPrincipal MemberPrincipal principal,
+        @PathVariable("postId") Long postId
+    ) {
+        sharedRoomPostService.scrapStudioRoomPost(principal.memberId(), principal.gender(), postId);
+
+        return ResponseEntity.ok(APIResponse.success());
     }
 }

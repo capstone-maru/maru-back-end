@@ -3,17 +3,12 @@ package org.capstone.maru.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.gavlyukovskiy.boot.jdbc.decorator.DataSourceDecoratorAutoConfiguration;
-import java.time.LocalDate;
 import java.util.List;
 import org.capstone.maru.config.P6spyConfig;
 import org.capstone.maru.config.TestJpaConfig;
-import org.capstone.maru.domain.Address;
 import org.capstone.maru.domain.MemberAccount;
-import org.capstone.maru.domain.RoomInfo;
 import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.domain.constant.Gender;
-import org.capstone.maru.domain.constant.RentalType;
-import org.capstone.maru.domain.constant.RoomType;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
