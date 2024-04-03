@@ -134,8 +134,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             phoneNumber,
             null,
             true,
-            MemberCard.of(null, List.of()),
-            MemberCard.of(null, List.of()),
+            MemberCard.of(null, "", List.of()),
+            MemberCard.of(null, "", List.of()),
             new HashSet<>(),
             new HashSet<>(),
             ProfileImage.defaultImage()

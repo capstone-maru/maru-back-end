@@ -23,11 +23,18 @@ public class MemberCard {
     @Column(name = "member_card_id", nullable = false)
     private Long id;
 
+    /*
+        회원 희망 지역
+     */
+    @Column(name = "location", nullable = false, length = 50)
+    private String location;
+
     @Convert(converter = MemberFeaturesConverter.class)
     private List<String> memberFeatures;
 
-    public MemberCard(Long memberCardId, List<String> memberFeatures) {
+    public MemberCard(Long memberCardId, String location, List<String> memberFeatures) {
         this.id = memberCardId;
+        this.location = location;
         this.memberFeatures = memberFeatures;
     }
 
@@ -35,7 +42,7 @@ public class MemberCard {
         this.memberFeatures = memberFeatures;
     }
 
-    public static MemberCard of(Long memberCardId, List<String> memberFeatures) {
-        return new MemberCard(memberCardId, memberFeatures);
+    public static MemberCard of(Long memberCardId, String location, List<String> memberFeatures) {
+        return new MemberCard(memberCardId, location, memberFeatures);
     }
 }
