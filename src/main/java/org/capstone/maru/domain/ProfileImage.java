@@ -26,8 +26,15 @@ public class ProfileImage extends Image {
         return new ProfileImage(fileName, createdBy);
     }
 
-    public static ProfileImage defaultImage() {
-        return new ProfileImage("images/default.jpg", "system");
+    /*
+     * 기본 이미지를 생성합니다.
+     * 이때 확장자를 포람하여 저장합니다.
+     * 파일 이름만 저장하게되면 확장자를 알 수 없기 때문에,
+     *
+     * 유형 없이 저장 할 수 있지만, 권장인지는 모르겠습니다.
+     */
+    public static ProfileImage defaultImage(String memberId) {
+        return new ProfileImage(memberId + "default.png", "system");
     }
 
     // -- Equals & Hash -- //

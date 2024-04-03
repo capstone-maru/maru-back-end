@@ -62,13 +62,13 @@ public class MemberAccountService {
 
         if (memberAccount.isEmpty()) {
 
-            MemberCard myCard = MemberCard.of(null, List.of());
-            MemberCard mateCard = MemberCard.of(null, List.of());
+            MemberCard myCard = MemberCard.of(null, "", List.of());
+            MemberCard mateCard = MemberCard.of(null, "", List.of());
 
             Set<Follow> followers = new HashSet<>();
             Set<Follow> followings = new HashSet<>();
 
-            ProfileImage profileImage = ProfileImage.defaultImage();
+            ProfileImage profileImage = ProfileImage.defaultImage(memberId);
 
             MemberAccount member = MemberAccount.of(
                 memberId,

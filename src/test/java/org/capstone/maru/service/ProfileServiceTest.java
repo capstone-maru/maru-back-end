@@ -50,7 +50,7 @@ class ProfileServiceTest {
         when(memberAccountService.searchMemberAccount(memberId)).thenReturn(memberAccount);
 
         // then
-        MemberProfileDto memberProfile = sut.getMemberProfile(memberId, memberPrincipal);
+        MemberProfileDto memberProfile = sut.getMemberProfile(memberId);
 
         assertThat(memberProfile).isNotNull();
         assertThat(memberProfile.myCard().id()).isEqualTo(1L);
@@ -60,6 +60,7 @@ class ProfileServiceTest {
     private MemberCard createMyCard() {
         return MemberCard.of(
             1L,
+            "",
             List.of("feature1", "feature2", "feature3")
         );
     }
@@ -67,6 +68,7 @@ class ProfileServiceTest {
     private MemberCard createMateCard() {
         return MemberCard.of(
             2L,
+            "",
             List.of("feature1", "feature2", "feature3")
         );
     }
@@ -85,7 +87,7 @@ class ProfileServiceTest {
             createMateCard(),
             new HashSet<>(),
             new HashSet<>(),
-            ProfileImage.defaultImage()
+            ProfileImage.defaultImage("test@mail.com")
         );
     }
 

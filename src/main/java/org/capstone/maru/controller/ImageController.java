@@ -2,6 +2,7 @@ package org.capstone.maru.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.dto.ImageDto;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.service.S3FileService;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +21,14 @@ public class ImageController {
 
     @GetMapping("/upload")
     public ResponseEntity<APIResponse> uploadFile(@RequestParam("extension") String extension) {
-        String preSignedUrl = s3FileService.getPreSignedUrlForUpload(extension);
+        ImageDto data = s3FileService.getPreSignedUrlForUpload(extension);
 
-        return ResponseEntity.ok(APIResponse.success(preSignedUrl));
+        return ResponseEntity.ok(APIResponse.success(data));
     }
 
     @GetMapping("/load")
     public ResponseEntity<APIResponse> loadFile(@RequestParam("fileName") String fileName) {
-        String preSignedUrl = s3FileService.getPreSignedUrlForLoad("images", fileName);
+        String preSignedUrl = s3FileService.getPreSignedUrlForLoad(fileName);
 
         return ResponseEntity.ok(APIResponse.success(preSignedUrl));
     }
