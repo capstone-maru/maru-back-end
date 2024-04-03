@@ -7,10 +7,10 @@ import org.capstone.maru.dto.response.AuthResponse;
 
 @Builder
 public record MemberProfileDto(
+    AuthResponse authResponse,
     String profileImage,
     MemberCardDto myCard,
-    MemberCardDto mateCard,
-    AuthResponse authResponse
+    MemberCardDto mateCard
 ) {
 
     public static MemberProfileDto from(String imgURL, MemberCard myCard,
