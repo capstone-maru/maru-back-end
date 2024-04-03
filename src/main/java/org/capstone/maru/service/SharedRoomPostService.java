@@ -16,6 +16,7 @@ import org.capstone.maru.repository.MemberAccountRepository;
 import org.capstone.maru.repository.RoomImageRepository;
 import org.capstone.maru.repository.ScrapPostRepository;
 import org.capstone.maru.repository.StudioRoomPostRepository;
+import org.capstone.maru.repository.projection.ScrapPostView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,8 @@ public class SharedRoomPostService {
         String searchKeyWords,
         Pageable pageable
     ) {
-        List<ScrapPost> scrapPosts = scrapPostRepository.findByScrapperMemberId(memberId);
+        List<ScrapPostView> scrapPostViews = scrapPostRepository.findScrapViewByScrapperMemberId(
+            memberId);
 
         if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
             return studioRoomPostRepository
@@ -49,7 +51,7 @@ public class SharedRoomPostService {
                 .map(studioRoomPost ->
                     StudioRoomPostDto.from(
                         studioRoomPost,
-                        scrapPosts
+                        scrapPostViews
                     )
                 );
         }
@@ -60,7 +62,7 @@ public class SharedRoomPostService {
                 .map(studioRoomPost ->
                     StudioRoomPostDto.from(
                         studioRoomPost,
-                        scrapPosts
+                        scrapPostViews
                     )
                 );
         }
@@ -75,7 +77,7 @@ public class SharedRoomPostService {
             .map(studioRoomPost ->
                 StudioRoomPostDto.from(
                     studioRoomPost,
-                    scrapPosts
+                    scrapPostViews
                 )
             );
     }
@@ -83,20 +85,13 @@ public class SharedRoomPostService {
     @Transactional(readOnly = true)
     public StudioRoomPostDetailDto getStudioRoomPostDetail(String memberId, Long postId,
         String gender) {
-        Optional<ScrapPost> scrapPost = scrapPostRepository.findByScrappedIdAndScrapperMemberId(
-            postId, memberId);
-
-        final Boolean isScrapped;
-
-        if (scrapPost.isPresent()) {
-            isScrapped = scrapPost.get().getIsScrapped();
-        } else {
-            isScrapped = false;
-        }
+        final Boolean isScrapped = scrapPostRepository
+            .findScrapViewByScrappedIdAndScrapperMemberId(postId, memberId)
+            .map(ScrapPostView::getIsScrapped)
+            .orElse(false);
 
         return studioRoomPostRepository
-            .findById(postId)
-            .filter(studioRoomPost -> studioRoomPost.getPublisherGender().equals(gender))
+            .findByIdAndPublisherGender(postId, gender)
             .map(studioRoomPost -> StudioRoomPostDetailDto.from(studioRoomPost, isScrapped))
             .orElseThrow(() -> new IllegalArgumentException("그런 게시물은 존재하지 않습니다."));
     }
@@ -131,13 +126,12 @@ public class SharedRoomPostService {
 
     public void scrapStudioRoomPost(
         String memberId,
-        String scrapperGender,
+        String gender,
         Long postId
     ) {
         MemberAccount memberAccount = memberAccountRepository.getReferenceById(memberId);
         StudioRoomPost studioRoomPost = studioRoomPostRepository
-            .findById(postId)
-            .filter(post -> scrapperGender.equals(post.getPublisherGender()))
+            .findByIdAndPublisherGender(postId, gender)
             .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다."));
 
         Optional<ScrapPost> scrapPost = scrapPostRepository.findByScrappedIdAndScrapperMemberId(
