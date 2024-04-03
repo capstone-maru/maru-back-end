@@ -42,8 +42,8 @@ public class SharedRoomPostService {
         String searchKeyWords,
         Pageable pageable
     ) {
-        List<ScrapPostView> scrapPostViews = scrapPostRepository.findScrapViewByScrapperMemberId(
-            memberId);
+        List<ScrapPostView> scrapPostViews = scrapPostRepository
+            .findScrapViewByScrapperMemberId(memberId);
 
         if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
             return studioRoomPostRepository
@@ -90,9 +90,13 @@ public class SharedRoomPostService {
             .map(ScrapPostView::getIsScrapped)
             .orElse(false);
 
+        final Long scrapCount = scrapPostRepository.countByScrappedIdAndIsScrapped(postId);
+
         return studioRoomPostRepository
             .findByIdAndPublisherGender(postId, gender)
-            .map(studioRoomPost -> StudioRoomPostDetailDto.from(studioRoomPost, isScrapped))
+            .map(studioRoomPost -> StudioRoomPostDetailDto
+                .from(studioRoomPost, isScrapped, scrapCount)
+            )
             .orElseThrow(() -> new IllegalArgumentException("그런 게시물은 존재하지 않습니다."));
     }
 

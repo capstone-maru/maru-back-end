@@ -19,4 +19,7 @@ public interface ScrapPostRepository extends JpaRepository<ScrapPost, Long> {
 
     @Query("select sp.isScrapped as isScrapped, sp.scrapped.id as scrappedId from ScrapPost sp where sp.scrapper.memberId = :scrapperMemberId")
     List<ScrapPostView> findScrapViewByScrapperMemberId(String scrapperMemberId);
+
+    @Query("select count(sp) from ScrapPost sp where sp.scrapped.id = :scrappedId and sp.isScrapped = true")
+    long countByScrappedIdAndIsScrapped(Long scrappedId);
 }
