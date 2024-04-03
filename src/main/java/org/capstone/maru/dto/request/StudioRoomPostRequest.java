@@ -8,8 +8,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.capstone.maru.annotation.ImageFilesConstraints;
 import org.capstone.maru.domain.Address;
 import org.capstone.maru.domain.Address.CITY;
@@ -18,7 +16,6 @@ import org.capstone.maru.domain.constant.RoomType;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 public record StudioRoomPostRequest(
     String imageFilesData,
@@ -60,11 +57,12 @@ public record StudioRoomPostRequest(
         this.locationInfoData = LocationData.fromJson(locationData);
     }
 
-    public StudioRoomPostDto toBaseStudioRoomPostDto() {
+    public StudioRoomPostDto toBaseStudioRoomPostDto(String publisherGender) {
         return StudioRoomPostDto
             .builder()
             .title(postInfoData.title)
             .content(postInfoData.content)
+            .publisherGender(publisherGender)
             .build();
     }
 
