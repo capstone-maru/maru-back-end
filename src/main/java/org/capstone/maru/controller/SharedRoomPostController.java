@@ -84,7 +84,9 @@ public class SharedRoomPostController {
         @Valid @ModelAttribute StudioRoomPostRequest studioRoomPostRequest,
         HttpServletRequest request, HttpServletResponse response
     ) throws IOException {
-        StudioRoomPostDto studioRoomPostDto = studioRoomPostRequest.toBaseStudioRoomPostDto();
+        StudioRoomPostDto studioRoomPostDto = studioRoomPostRequest.toBaseStudioRoomPostDto(
+            principal.gender()
+        );
         List<RoomImageDto> roomImagesDto = studioRoomPostRequest.toRoomImagesDto();
         RoomInfoDto roomInfoDto = studioRoomPostRequest.toRoomInfoDto();
 
