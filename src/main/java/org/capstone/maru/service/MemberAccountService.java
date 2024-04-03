@@ -68,7 +68,7 @@ public class MemberAccountService {
             Set<Follow> followers = new HashSet<>();
             Set<Follow> followings = new HashSet<>();
 
-            ProfileImage profileImage = ProfileImage.defaultImage();
+            ProfileImage profileImage = ProfileImage.defaultImage(memberId);
 
             MemberAccount member = MemberAccount.of(
                 memberId,
