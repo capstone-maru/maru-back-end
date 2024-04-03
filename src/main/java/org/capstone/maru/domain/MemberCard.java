@@ -42,7 +42,12 @@ public class MemberCard {
         this.memberFeatures = memberFeatures;
     }
 
+    public void updateLocation(String location) {
+        this.location = location;
+    }
+
     public static MemberCard of(Long memberCardId, String location, List<String> memberFeatures) {
         return new MemberCard(memberCardId, location, memberFeatures);
     }
+
 }

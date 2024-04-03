@@ -31,7 +31,7 @@ public class ProfileService {
     private final ProfileImageRepository profileImageRepository;
 
     @Transactional
-    public MemberCardDto updateMyCard(String memberId, List<String> myFeatures) {
+    public MemberCardDto updateMyCard(String memberId, String location, List<String> myFeatures) {
         log.info("updateMyCard - memberId: {}, myFeatures: {}", memberId, myFeatures);
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
@@ -39,6 +39,7 @@ public class ProfileService {
 
         memberAccount.updateInitialized(myFeatures);
         myCard.updateMemberFeatures(myFeatures);
+        myCard.updateLocation(location);
 
         return MemberCardDto.from(myCard);
     }
