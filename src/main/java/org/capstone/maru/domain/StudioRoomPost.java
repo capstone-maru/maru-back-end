@@ -11,8 +11,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,9 +28,9 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 public class StudioRoomPost extends SharedRoomPost {
 
-    @OneToMany(mappedBy = "studioRoomPost", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "studioRoomPost", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("createdAt DESC")
-    private final Set<RoomImage> roomImages = new LinkedHashSet<>();
+    private final List<RoomImage> roomImages = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "publisher_id", nullable = false)
@@ -67,7 +67,6 @@ public class StudioRoomPost extends SharedRoomPost {
     // -- 비지니스 로직 -- //
     public void addRoomImage(RoomImage roomImage) {
         this.roomImages.add(roomImage);
-        roomImage.updateRoomPost(this);
     }
 
     // -- Equals & Hash -- //
