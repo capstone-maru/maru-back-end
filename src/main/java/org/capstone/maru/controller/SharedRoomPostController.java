@@ -81,40 +81,35 @@ public class SharedRoomPostController {
     @PostMapping("/studio")
     public void postNewStudioRoomPost(
         @AuthenticationPrincipal MemberPrincipal principal,
-        @Valid @ModelAttribute StudioRoomPostRequest studioRoomPostRequest,
-        HttpServletRequest request, HttpServletResponse response
-    ) throws IOException {
-        StudioRoomPostDto studioRoomPostDto = studioRoomPostRequest.toBaseStudioRoomPostDto();
+        @Valid @ModelAttribute StudioRoomPostRequest studioRoomPostRequest
+    ) {
+        StudioRoomPostDto studioRoomPostDto = studioRoomPostRequest.toBaseStudioRoomPostDto(
+            principal.gender()
+        );
         List<RoomImageDto> roomImagesDto = studioRoomPostRequest.toRoomImagesDto();
         RoomInfoDto roomInfoDto = studioRoomPostRequest.toRoomInfoDto();
 
         sharedRoomPostService.saveStudioRoomPost(
             principal.memberId(), studioRoomPostDto, roomImagesDto, roomInfoDto
         );
-
-        // 성공하면 프론트에서 redirect 하라는 곳으로 redirect 시키기
-        String redirectURL = CookieUtils
-            .resolveCookie(request, REDIRECT_URL_PARAM_COOKIE_NAME)
-            .map(Cookie::getValue)
-            .orElse("/");
-
-        response.sendRedirect(redirectURL);
     }
 
     @DeleteMapping("/studio/{postId}")
     public void deleteStudioRoomPost(
         @AuthenticationPrincipal MemberPrincipal principal,
-        @PathVariable("postId") Long postId,
-        HttpServletRequest request, HttpServletResponse response
-    ) throws IOException {
+        @PathVariable("postId") Long postId
+    ) {
         sharedRoomPostService.deleteStudioRoomPost(postId, principal.memberId());
+    }
 
-        String redirectURL = CookieUtils
-            .resolveCookie(request, REDIRECT_URL_PARAM_COOKIE_NAME)
-            .map(Cookie::getValue)
-            .orElse("/");
+    @PostMapping("/studio/{postId}/scrap")
+    public ResponseEntity<APIResponse> scrapStudioRoomPost(
+        @AuthenticationPrincipal MemberPrincipal principal,
+        @PathVariable("postId") Long postId
+    ) {
+        sharedRoomPostService.scrapStudioRoomPost(principal.memberId(), principal.gender(), postId);
 
-        response.sendRedirect(redirectURL);
+        return ResponseEntity.ok(APIResponse.success());
     }
 
     @PostMapping("/studio/{postId}/scrap")

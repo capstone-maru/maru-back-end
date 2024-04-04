@@ -63,7 +63,8 @@ public record StudioRoomPostDto(
             .build();
     }
 
-    public StudioRoomPost toEntity(MemberAccount publisherAccountEntity, RoomInfo roomInfoEntity) {
+    public StudioRoomPost toEntity(MemberAccount publisherAccountEntity,
+        RoomInfo roomInfoEntity) {
         return StudioRoomPost.of(
             title,
             content,
