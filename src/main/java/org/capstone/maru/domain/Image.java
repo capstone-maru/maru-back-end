@@ -25,7 +25,7 @@ import lombok.ToString;
 public abstract class Image extends AuditingFields {
 
     @Id
-    @Column
+    @Column(name = "file_name", nullable = false)
     private String fileName;
 
     // -- 생성자 메서드 -- //
