@@ -2,21 +2,14 @@ package org.capstone.maru.service;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.Headers;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Nonnull;
-import java.io.IOException;
-import java.net.URL;
 import java.util.Date;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.capstone.maru.dto.ImageDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Service
@@ -40,11 +33,16 @@ public class S3FileService {
     }
 
     public String getPreSignedUrlForLoad(String filename) {
+
+        Date expiration = getPreSignedUrlExpiration();
+
+        if (filename.contains("default.png")) {
+            return amazonS3.generatePresignedUrl(bucket, "images/default.png", expiration)
+                .toString();
+        }
         if (StringUtils.isNotBlank(filename)) {
             filename = "images/" + filename;
         }
-
-        Date expiration = getPreSignedUrlExpiration();
 
         return amazonS3.generatePresignedUrl(bucket, filename, expiration)
             .toString();
