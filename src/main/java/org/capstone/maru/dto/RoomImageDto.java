@@ -29,11 +29,7 @@ public record RoomImageDto(
             .build();
     }
 
-    public RoomImage toEntityWithoutStudioRoomPost() {
-        return RoomImage.of(fileName, isThumbnail, order);
-    }
-
-    public RoomImage toEntityWithStudioRoomPost(StudioRoomPost studioRoomPost) {
+    public RoomImage toEntity(StudioRoomPost studioRoomPost) {
         return RoomImage.of(fileName, isThumbnail, order, studioRoomPost);
     }
 

@@ -47,23 +47,15 @@ public class RoomImage extends Image {
         Short orderNumber,
         StudioRoomPost studioRoomPost
     ) {
-        return new RoomImage(
+        RoomImage result = new RoomImage(
             fileName, isThumbnail, orderNumber, studioRoomPost
         );
-    }
 
-    public static RoomImage of(
-        String fileName,
-        Boolean isThumbnail,
-        Short orderNumber
-    ) {
-        return new RoomImage(fileName, isThumbnail, orderNumber, null);
+        studioRoomPost.addRoomImage(result);
+        return result;
     }
 
     // -- 비지니스 로직 -- //
-    public void updateRoomPost(StudioRoomPost studioRoomPost) {
-        this.studioRoomPost = studioRoomPost;
-    }
 
     // -- Equals & Hash -- //
     @Override

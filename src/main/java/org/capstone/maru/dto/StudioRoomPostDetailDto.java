@@ -17,13 +17,16 @@ public record StudioRoomPostDetailDto(
     Set<RoomImageDto> roomImages,
     MemberAccountWithCardsDto publisherAccount,
     RoomInfoDto roomInfo,
+    Boolean isScrapped,
+    Long scrapCount,
     LocalDateTime createdAt,
     String createdBy,
     LocalDateTime modifiedAt,
     String modifiedBy
 ) {
 
-    public static StudioRoomPostDetailDto from(StudioRoomPost entity) {
+    public static StudioRoomPostDetailDto from(StudioRoomPost entity, Boolean isScrapped,
+        Long scrapCount) {
         return StudioRoomPostDetailDto
             .builder()
             .id(entity.getId())
@@ -38,6 +41,8 @@ public record StudioRoomPostDetailDto(
             .publisherGender(entity.getPublisherGender())
             .publisherAccount(MemberAccountWithCardsDto.from(entity.getPublisherAccount()))
             .roomInfo(RoomInfoDto.from(entity.getRoomInfo()))
+            .isScrapped(isScrapped)
+            .scrapCount(scrapCount)
             .createdAt(entity.getCreatedAt())
             .createdBy(entity.getCreatedBy())
             .modifiedAt(entity.getModifiedAt())

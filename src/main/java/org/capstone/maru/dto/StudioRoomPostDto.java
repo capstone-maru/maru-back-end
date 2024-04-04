@@ -1,14 +1,19 @@
 package org.capstone.maru.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
 import java.util.stream.Collectors;
 import lombok.Builder;
 import org.capstone.maru.domain.MemberAccount;
+import org.capstone.maru.domain.RoomImage;
 import org.capstone.maru.domain.RoomInfo;
+import org.capstone.maru.domain.ScrapPost;
 import org.capstone.maru.domain.StudioRoomPost;
+import org.capstone.maru.repository.projection.ScrapPostView;
 
 @Builder
 public record StudioRoomPostDto(
@@ -16,16 +21,18 @@ public record StudioRoomPostDto(
     String title,
     String content,
     String publisherGender,
-    Set<RoomImageDto> roomImages,
+    List<RoomImageDto> roomImages,
     MemberAccountDto publisherAccount,
     RoomInfoDto roomInfo,
+    Boolean isScrapped,
     LocalDateTime createdAt,
     String createdBy,
     LocalDateTime modifiedAt,
     String modifiedBy
 ) {
 
-    public static StudioRoomPostDto from(StudioRoomPost entity) {
+    public static StudioRoomPostDto from(StudioRoomPost entity,
+        List<ScrapPostView> scrapViewEntity) {
         return StudioRoomPostDto
             .builder()
             .id(entity.getId())
@@ -35,11 +42,20 @@ public record StudioRoomPostDto(
                 entity.getRoomImages()
                       .stream()
                       .map(RoomImageDto::from)
-                      .collect(Collectors.toSet())
+                      .toList()
             )
             .publisherGender(entity.getPublisherGender())
             .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))
             .roomInfo(RoomInfoDto.from(entity.getRoomInfo()))
+            .isScrapped(
+                scrapViewEntity
+                    .stream()
+                    .filter(scrapPostView ->
+                        Objects.equals(scrapPostView.getScrappedId(), entity.getId()))
+                    .map(ScrapPostView::getIsScrapped)
+                    .findAny()
+                    .orElse(false)
+            )
             .createdAt(entity.getCreatedAt())
             .createdBy(entity.getCreatedBy())
             .modifiedAt(entity.getModifiedAt())
