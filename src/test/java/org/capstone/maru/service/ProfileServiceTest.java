@@ -60,7 +60,6 @@ class ProfileServiceTest {
     private MemberCard createMyCard() {
         return MemberCard.of(
             1L,
-            "",
             List.of("feature1", "feature2", "feature3")
         );
     }
@@ -68,7 +67,6 @@ class ProfileServiceTest {
     private MemberCard createMateCard() {
         return MemberCard.of(
             2L,
-            "",
             List.of("feature1", "feature2", "feature3")
         );
     }
