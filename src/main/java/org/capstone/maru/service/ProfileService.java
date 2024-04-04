@@ -31,7 +31,7 @@ public class ProfileService {
     private final ProfileImageRepository profileImageRepository;
 
     @Transactional
-    public MemberCardDto updateMyCard(String memberId, List<String> myFeatures) {
+    public MemberCardDto updateMyCard(String memberId, String location, List<String> myFeatures) {
         log.info("updateMyCard - memberId: {}, myFeatures: {}", memberId, myFeatures);
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
@@ -39,18 +39,20 @@ public class ProfileService {
 
         memberAccount.updateInitialized(myFeatures);
         myCard.updateMemberFeatures(myFeatures);
+        myCard.updateLocation(location);
 
         return MemberCardDto.from(myCard);
     }
 
     @Transactional(readOnly = true)
-    public MemberProfileDto getMemberProfile(String memberId, MemberPrincipal memberPrincipal) {
+    public MemberProfileDto getMemberProfile(String memberId) {
+
         log.info("getMyCard - memberId: {}", memberId);
 
-        MemberCard myCard = memberAccountService.searchMemberAccount(memberId).getMyCard();
-        MemberCard mateCard = memberAccountService.searchMemberAccount(memberId).getMateCard();
-        ProfileImage profileImage = memberAccountService.searchMemberAccount(memberId)
-            .getProfileImage();
+        MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
+        MemberCard myCard = memberAccount.getMyCard();
+        MemberCard mateCard = memberAccount.getMateCard();
+        ProfileImage profileImage = memberAccount.getProfileImage();
 
         log.info("myCard: {}", myCard.getMemberFeatures());
         log.info("mateCard: {}", mateCard.getMemberFeatures());
@@ -58,8 +60,7 @@ public class ProfileService {
 
         String imgURL = s3FileService.getPreSignedUrlForLoad(profileImage.getFileName());
 
-        AuthResponse authResponse = AuthResponse.from(memberPrincipal,
-            myCard.getMemberFeatures() == null || myCard.getMemberFeatures().isEmpty());
+        AuthResponse authResponse = AuthResponse.from(memberAccount);
 
         return MemberProfileDto.from(imgURL, myCard, mateCard, authResponse);
     }

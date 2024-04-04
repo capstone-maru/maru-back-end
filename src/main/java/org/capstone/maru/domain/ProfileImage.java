@@ -33,8 +33,8 @@ public class ProfileImage extends Image {
      *
      * 유형 없이 저장 할 수 있지만, 권장인지는 모르겠습니다.
      */
-    public static ProfileImage defaultImage() {
-        return new ProfileImage("default.png", "system");
+    public static ProfileImage defaultImage(String memberId) {
+        return new ProfileImage(memberId + "default.png", "system");
     }
 
     // -- Equals & Hash -- //

@@ -39,8 +39,11 @@ public class ProfileController {
 
         String memberId = memberPrincipal.memberId();
 
-        MemberCardDto result = profileService.updateMyCard(memberId,
-            memberFeatureRequest.myFeatures());
+        MemberCardDto result = profileService.updateMyCard(
+            memberId,
+            memberFeatureRequest.location(),
+            memberFeatureRequest.myFeatures()
+        );
 
         return ResponseEntity.ok(APIResponse.success(result));
     }
@@ -51,7 +54,8 @@ public class ProfileController {
         @PathVariable String memberId
     ) {
         log.info("call getProfile : {}", memberId);
-        MemberProfileDto result = profileService.getMemberProfile(memberId, memberPrincipal);
+
+        MemberProfileDto result = profileService.getMemberProfile(memberId);
 
         return ResponseEntity.ok(APIResponse.success(result));
     }
@@ -114,7 +118,7 @@ public class ProfileController {
         @RequestBody String fileName
     ) {
         log.info("call updateProfileImage : {}", fileName);
-        
+
         profileService.updateProfileImage(memberPrincipal.memberId(), fileName);
 
         return ResponseEntity.ok(APIResponse.success());
