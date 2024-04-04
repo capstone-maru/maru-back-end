@@ -30,9 +30,10 @@ public class ProfileController {
     private final ProfileService profileService;
     private final FollowService followService;
 
-    @PutMapping
-    public ResponseEntity<APIResponse> updateMyProfile(
+    @PutMapping("/{cardId}")
+    public ResponseEntity<APIResponse> updateMemberCard(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+        @PathVariable Long cardId,
         @RequestBody MemberFeatureRequest memberFeatureRequest
     ) {
         log.info("call updateProfile : {}", memberFeatureRequest);
@@ -41,8 +42,9 @@ public class ProfileController {
 
         MemberCardDto result = profileService.updateMyCard(
             memberId,
+            cardId,
             memberFeatureRequest.location(),
-            memberFeatureRequest.myFeatures()
+            memberFeatureRequest.features()
         );
 
         return ResponseEntity.ok(APIResponse.success(result));
@@ -70,7 +72,7 @@ public class ProfileController {
         return ResponseEntity.ok(APIResponse.success(result));
     }
 
-    @PutMapping("/{roomCardId}")
+    @PutMapping("/room/{roomCardId}")
     public ResponseEntity<APIResponse> updateRoomCardProfile(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
         @PathVariable String roomCardId,
@@ -80,7 +82,7 @@ public class ProfileController {
         String memberId = memberPrincipal.memberId();
 
         MemberCardDto result = profileService.updateRoomCard(memberId, roomCardId,
-            memberFeatureRequest.myFeatures());
+            memberFeatureRequest.features());
 
         return ResponseEntity.ok(APIResponse.success(result));
     }
