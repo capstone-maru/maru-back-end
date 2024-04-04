@@ -12,7 +12,9 @@ public record AuthResponse(
     String birthYear,
     String gender,
     String phoneNumber,
-    Boolean initialized
+    Boolean initialized,
+    Long myCardId,
+    Long mateCardId
 ) {
 
     public static AuthResponse from(MemberPrincipal memberPrincipal, Boolean initialized) {
@@ -37,6 +39,8 @@ public record AuthResponse(
             .gender(memberAccount.getGender())
             .phoneNumber(memberAccount.getPhoneNumber())
             .initialized(memberAccount.getInitialized())
+            .myCardId(memberAccount.getMyCard().getId())
+            .mateCardId(memberAccount.getMateCard().getId())
             .build();
     }
 }
