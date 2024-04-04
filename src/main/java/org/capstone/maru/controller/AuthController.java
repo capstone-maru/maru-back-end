@@ -3,6 +3,7 @@ package org.capstone.maru.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.dto.response.AuthResponse;
@@ -40,8 +41,9 @@ public class AuthController {
     @GetMapping("/initial/info")
     public ResponseEntity<APIResponse> initialInfo(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
-        Boolean initialized = memberAccountService.isInitialized(memberPrincipal.memberId());
-        AuthResponse data = AuthResponse.from(memberPrincipal, initialized);
+        MemberAccount memberAccount = memberAccountService.searchMemberAccount(
+            memberPrincipal.memberId());
+        AuthResponse data = AuthResponse.from(memberAccount);
         return ResponseEntity.ok(APIResponse.success(data));
     }
 

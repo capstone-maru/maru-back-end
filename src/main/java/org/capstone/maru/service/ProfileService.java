@@ -31,17 +31,25 @@ public class ProfileService {
     private final ProfileImageRepository profileImageRepository;
 
     @Transactional
-    public MemberCardDto updateMyCard(String memberId, String location, List<String> myFeatures) {
-        log.info("updateMyCard - memberId: {}, myFeatures: {}", memberId, myFeatures);
+    public MemberCardDto updateMyCard(String memberId, Long cardId, String location,
+        List<String> features) {
+        log.info("updateMyCard - memberId: {}, myFeatures: {}", memberId, features);
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
+        MemberCard memberCard = memberCardRepository.findById(cardId)
+            .orElseThrow(() -> new IllegalArgumentException("invaild cardId"));
+
         MemberCard myCard = memberAccount.getMyCard();
+        MemberCard mateCard = memberAccount.getMateCard();
 
-        memberAccount.updateInitialized(myFeatures);
-        myCard.updateMemberFeatures(myFeatures);
-        myCard.updateLocation(location);
+        if (!myCard.equals(memberCard) && !mateCard.equals(memberCard)) {
+            throw new IllegalArgumentException("MemberCard not found");
+        }
 
-        return MemberCardDto.from(myCard);
+        memberCard.updateLocation(location);
+        memberCard.updateMemberFeatures(features);
+
+        return MemberCardDto.from(memberCard);
     }
 
     @Transactional(readOnly = true)
