@@ -81,9 +81,8 @@ public class SharedRoomPostController {
     @PostMapping("/studio")
     public void postNewStudioRoomPost(
         @AuthenticationPrincipal MemberPrincipal principal,
-        @Valid @ModelAttribute StudioRoomPostRequest studioRoomPostRequest,
-        HttpServletRequest request, HttpServletResponse response
-    ) throws IOException {
+        @Valid @ModelAttribute StudioRoomPostRequest studioRoomPostRequest
+    ) {
         StudioRoomPostDto studioRoomPostDto = studioRoomPostRequest.toBaseStudioRoomPostDto(
             principal.gender()
         );
@@ -93,30 +92,14 @@ public class SharedRoomPostController {
         sharedRoomPostService.saveStudioRoomPost(
             principal.memberId(), studioRoomPostDto, roomImagesDto, roomInfoDto
         );
-
-        // 성공하면 프론트에서 redirect 하라는 곳으로 redirect 시키기
-        String redirectURL = CookieUtils
-            .resolveCookie(request, REDIRECT_URL_PARAM_COOKIE_NAME)
-            .map(Cookie::getValue)
-            .orElse("/");
-
-        response.sendRedirect(redirectURL);
     }
 
     @DeleteMapping("/studio/{postId}")
     public void deleteStudioRoomPost(
         @AuthenticationPrincipal MemberPrincipal principal,
-        @PathVariable("postId") Long postId,
-        HttpServletRequest request, HttpServletResponse response
-    ) throws IOException {
+        @PathVariable("postId") Long postId
+    ) {
         sharedRoomPostService.deleteStudioRoomPost(postId, principal.memberId());
-
-        String redirectURL = CookieUtils
-            .resolveCookie(request, REDIRECT_URL_PARAM_COOKIE_NAME)
-            .map(Cookie::getValue)
-            .orElse("/");
-
-        response.sendRedirect(redirectURL);
     }
 
     @PostMapping("/studio/{postId}/scrap")
