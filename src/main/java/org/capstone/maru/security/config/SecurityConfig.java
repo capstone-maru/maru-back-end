@@ -103,7 +103,7 @@ public class SecurityConfig {
                 .logoutUrl("/auth/logout")
                 .addLogoutHandler(logoutHandler)
                 .deleteCookies("JSESSIONID")
-                .logoutSuccessUrl("/").permitAll()
+                .permitAll()
             )
             .exceptionHandling(hc -> hc
                 .authenticationEntryPoint(authEntryPoint)
