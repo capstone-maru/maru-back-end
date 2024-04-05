@@ -32,15 +32,6 @@ public class AuthController {
         return ResponseEntity.ok(APIResponse.success(newAccessToken));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<APIResponse> logout(HttpServletRequest request) {
-        String refreshToken = tokenResolver.resolveTokenOrNull(request);
-
-        // TODO refresh 삭제
-
-        return ResponseEntity.ok(APIResponse.success("로그아웃 성공"));
-    }
-
     /**
      * 로그인한 사용자의 정보를 반환합니다. 이는 첫 로그인시에 요청하므로, 사용자의 정보와 첫 로그인 인지를 반환합니다.
      *
