@@ -111,14 +111,4 @@ public class SharedRoomPostController {
 
         return ResponseEntity.ok(APIResponse.success());
     }
-
-    @PostMapping("/studio/{postId}/scrap")
-    public ResponseEntity<APIResponse> scrapStudioRoomPost(
-        @AuthenticationPrincipal MemberPrincipal principal,
-        @PathVariable("postId") Long postId
-    ) {
-        sharedRoomPostService.scrapStudioRoomPost(principal.memberId(), principal.gender(), postId);
-
-        return ResponseEntity.ok(APIResponse.success());
-    }
 }
