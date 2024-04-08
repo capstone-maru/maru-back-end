@@ -3,9 +3,9 @@ package org.capstone.maru.dto;
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.Builder;
+import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.Follow;
 import org.capstone.maru.domain.MemberAccount;
-import org.capstone.maru.domain.MemberCard;
 import org.capstone.maru.domain.ProfileImage;
 
 @Builder
@@ -40,7 +40,7 @@ public record MemberAccountDto(
             .build();
     }
 
-    public MemberAccount toEntity(MemberCard myCard, MemberCard mateCard, Set<Follow> followers,
+    public MemberAccount toEntity(FeatureCard myCard, FeatureCard mateCard, Set<Follow> followers,
         Set<Follow> followings, ProfileImage profileImage) {
         return MemberAccount.of(
             memberId,

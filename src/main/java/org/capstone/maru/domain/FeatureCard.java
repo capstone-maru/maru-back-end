@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 import java.util.List;
 import java.util.Objects;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.capstone.maru.domain.converter.MemberFeaturesConverter;
@@ -20,7 +19,7 @@ import org.hibernate.annotations.DynamicInsert;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class MemberCard {
+public class FeatureCard {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,9 +34,13 @@ public class MemberCard {
     private String location;
 
     @Convert(converter = MemberFeaturesConverter.class)
+    @Column(name = "member_features", length = 100, nullable = false)
     private List<String> memberFeatures;
 
-    public MemberCard(Long memberCardId, List<String> memberFeatures) {
+    @Column
+    private String cardType;
+
+    public FeatureCard(Long memberCardId, List<String> memberFeatures) {
         this.id = memberCardId;
         this.memberFeatures = memberFeatures;
     }
@@ -50,8 +53,8 @@ public class MemberCard {
         this.location = location;
     }
 
-    public static MemberCard of(Long memberCardId, List<String> memberFeatures) {
-        return new MemberCard(memberCardId, memberFeatures);
+    public static FeatureCard of(Long memberCardId, List<String> memberFeatures) {
+        return new FeatureCard(memberCardId, memberFeatures);
     }
 
     @Override
@@ -59,7 +62,7 @@ public class MemberCard {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof MemberCard that)) {
+        if (!(o instanceof FeatureCard that)) {
             return false;
         }
         return this.getId() != null && this.getId().equals(that.getId());

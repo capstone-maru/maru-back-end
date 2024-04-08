@@ -60,7 +60,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         referencedColumnName = "member_card_id",
         nullable = false
     )
-    private MemberCard myCard;
+    private FeatureCard myCard;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(
@@ -68,7 +68,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         referencedColumnName = "member_card_id",
         nullable = false
     )
-    private MemberCard mateCard;
+    private FeatureCard mateCard;
 
     @OneToMany(mappedBy = "following", cascade = CascadeType.PERSIST)
     private Set<Follow> followers;
@@ -92,8 +92,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         String phoneNumber,
         String createdBy,
         Boolean initialized,
-        MemberCard myCard,
-        MemberCard mateCard,
+        FeatureCard myCard,
+        FeatureCard mateCard,
         Set<Follow> followers,
         Set<Follow> followings,
         ProfileImage profileImage
@@ -134,8 +134,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             phoneNumber,
             null,
             true,
-            MemberCard.of(null, List.of()),
-            MemberCard.of(null, List.of()),
+            FeatureCard.of(null, List.of()),
+            FeatureCard.of(null, List.of()),
             new HashSet<>(),
             new HashSet<>(),
             ProfileImage.defaultImage(memberId)
@@ -151,8 +151,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         String phoneNumber,
         String createdBy,
         Boolean initialized,
-        MemberCard myCard,
-        MemberCard mateCard,
+        FeatureCard myCard,
+        FeatureCard mateCard,
         Set<Follow> followers,
         Set<Follow> followings,
         ProfileImage profileImage
