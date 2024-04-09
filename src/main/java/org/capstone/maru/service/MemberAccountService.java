@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Follow;
 import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.ProfileImage;
+import org.capstone.maru.domain.constant.CardType;
 import org.capstone.maru.exception.RestErrorCode;
 import org.capstone.maru.security.exception.MemberAccountExistentException;
 import org.capstone.maru.domain.MemberAccount;
@@ -62,8 +63,8 @@ public class MemberAccountService {
 
         if (memberAccount.isEmpty()) {
 
-            FeatureCard myCard = FeatureCard.of(null, List.of());
-            FeatureCard mateCard = FeatureCard.of(null, List.of());
+            FeatureCard myCard = FeatureCard.of(null, List.of(), CardType.MEMBER.name());
+            FeatureCard mateCard = FeatureCard.of(null, List.of(), CardType.MEMBER.name());
 
             Set<Follow> followers = new HashSet<>();
             Set<Follow> followings = new HashSet<>();

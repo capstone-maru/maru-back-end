@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.capstone.maru.domain.constant.CardType;
 import org.springframework.data.domain.Persistable;
 
 @Getter
@@ -57,7 +58,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(
         name = "myCardId",
-        referencedColumnName = "member_card_id",
+        referencedColumnName = "feature_card_id",
         nullable = false
     )
     private FeatureCard myCard;
@@ -65,7 +66,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(
         name = "mateCardId",
-        referencedColumnName = "member_card_id",
+        referencedColumnName = "feature_card_id",
         nullable = false
     )
     private FeatureCard mateCard;
@@ -134,8 +135,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             phoneNumber,
             null,
             true,
-            FeatureCard.of(null, List.of()),
-            FeatureCard.of(null, List.of()),
+            FeatureCard.of(null, List.of(), CardType.MEMBER.name()),
+            FeatureCard.of(null, List.of(), CardType.MEMBER.name()),
             new HashSet<>(),
             new HashSet<>(),
             ProfileImage.defaultImage(memberId)

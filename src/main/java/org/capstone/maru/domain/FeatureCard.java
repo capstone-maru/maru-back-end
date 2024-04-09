@@ -23,7 +23,7 @@ public class FeatureCard {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_card_id", nullable = false)
+    @Column(name = "feature_card_id", nullable = false)
     private Long id;
 
     /*
@@ -34,15 +34,16 @@ public class FeatureCard {
     private String location;
 
     @Convert(converter = MemberFeaturesConverter.class)
-    @Column(name = "member_features", length = 100, nullable = false)
+    @Column(name = "features", length = 100, nullable = false)
     private List<String> memberFeatures;
 
-    @Column
+    @Column(name = "card_type", length = 50, nullable = false)
     private String cardType;
 
-    public FeatureCard(Long memberCardId, List<String> memberFeatures) {
+    public FeatureCard(Long memberCardId, List<String> memberFeatures, String cardType) {
         this.id = memberCardId;
         this.memberFeatures = memberFeatures;
+        this.cardType = cardType;
     }
 
     public void updateMemberFeatures(List<String> memberFeatures) {
@@ -53,8 +54,8 @@ public class FeatureCard {
         this.location = location;
     }
 
-    public static FeatureCard of(Long memberCardId, List<String> memberFeatures) {
-        return new FeatureCard(memberCardId, memberFeatures);
+    public static FeatureCard of(Long memberCardId, List<String> memberFeatures, String cardType) {
+        return new FeatureCard(memberCardId, memberFeatures, cardType);
     }
 
     @Override
