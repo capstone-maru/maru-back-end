@@ -2,7 +2,7 @@ package org.capstone.maru.dto;
 
 import java.util.List;
 import lombok.Builder;
-import org.capstone.maru.domain.MemberCard;
+import org.capstone.maru.domain.FeatureCard;
 
 @Builder
 public record MemberCardDto(
@@ -11,7 +11,7 @@ public record MemberCardDto(
     List<String> myFeatures
 ) {
 
-    public static MemberCardDto from(MemberCard entity) {
+    public static MemberCardDto from(FeatureCard entity) {
         return MemberCardDto
             .builder()
             .id(entity.getId())

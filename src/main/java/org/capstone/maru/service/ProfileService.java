@@ -4,15 +4,14 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.MemberAccount;
-import org.capstone.maru.domain.MemberCard;
 import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.response.AuthResponse;
 import org.capstone.maru.repository.MemberCardRepository;
 import org.capstone.maru.repository.ProfileImageRepository;
-import org.capstone.maru.security.principal.MemberPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,20 +35,20 @@ public class ProfileService {
         log.info("updateMyCard - memberId: {}, myFeatures: {}", memberId, features);
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
-        MemberCard memberCard = memberCardRepository.findById(cardId)
+        FeatureCard featureCard = memberCardRepository.findById(cardId)
             .orElseThrow(() -> new IllegalArgumentException("invaild cardId"));
 
-        MemberCard myCard = memberAccount.getMyCard();
-        MemberCard mateCard = memberAccount.getMateCard();
+        FeatureCard myCard = memberAccount.getMyCard();
+        FeatureCard mateCard = memberAccount.getMateCard();
 
-        if (!myCard.equals(memberCard) && !mateCard.equals(memberCard)) {
+        if (!myCard.equals(featureCard) && !mateCard.equals(featureCard)) {
             throw new IllegalArgumentException("MemberCard not found");
         }
 
-        memberCard.updateLocation(location);
-        memberCard.updateMemberFeatures(features);
+        featureCard.updateLocation(location);
+        featureCard.updateMemberFeatures(features);
 
-        return MemberCardDto.from(memberCard);
+        return MemberCardDto.from(featureCard);
     }
 
     @Transactional(readOnly = true)
@@ -58,8 +57,8 @@ public class ProfileService {
         log.info("getMyCard - memberId: {}", memberId);
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
-        MemberCard myCard = memberAccount.getMyCard();
-        MemberCard mateCard = memberAccount.getMateCard();
+        FeatureCard myCard = memberAccount.getMyCard();
+        FeatureCard mateCard = memberAccount.getMateCard();
         ProfileImage profileImage = memberAccount.getProfileImage();
 
         log.info("myCard: {}", myCard.getMemberFeatures());
@@ -92,10 +91,10 @@ public class ProfileService {
     public MemberCardDto getCard(Long cardId) {
         log.info("getCard - cardId: {}", cardId);
 
-        MemberCard memberCard = memberCardRepository.findById(cardId)
+        FeatureCard featureCard = memberCardRepository.findById(cardId)
             .orElseThrow(() -> new IllegalArgumentException("MemberCard not found"));
 
-        return MemberCardDto.from(memberCard);
+        return MemberCardDto.from(featureCard);
 
     }
 
