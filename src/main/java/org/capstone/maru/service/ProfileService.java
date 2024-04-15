@@ -12,6 +12,7 @@ import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.response.AuthResponse;
 import org.capstone.maru.repository.MemberCardRepository;
 import org.capstone.maru.repository.ProfileImageRepository;
+import org.capstone.maru.security.principal.MemberPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,11 +59,16 @@ public class ProfileService {
     }
 
     @Transactional(readOnly = true)
-    public MemberProfileDto getMemberProfile(String memberId) {
+    public MemberProfileDto getMemberProfile(String memberId, String gender) {
 
         log.info("getMyCard - memberId: {}", memberId);
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
+
+        if (memberAccount.getGender().equals(gender)) {
+            throw new IllegalArgumentException("MemberCard not found");
+        }
+
         FeatureCard myCard = memberAccount.getMyCard();
         FeatureCard mateCard = memberAccount.getMateCard();
         ProfileImage profileImage = memberAccount.getProfileImage();
@@ -89,7 +95,6 @@ public class ProfileService {
          * 해당 roomCardId의 글이 존재하는지 확인, 존재하는 경우 그 카드를 가져옵니다.
          * 가져온 카드의 정보를 업데이트하고 저장합니다.
          * */
-
         return MemberCardDto.builder().build();
     }
 
@@ -101,7 +106,6 @@ public class ProfileService {
             .orElseThrow(() -> new IllegalArgumentException("MemberCard not found"));
 
         return MemberCardDto.from(featureCard);
-
     }
 
     /*

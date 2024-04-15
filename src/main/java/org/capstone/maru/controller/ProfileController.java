@@ -70,7 +70,8 @@ public class ProfileController {
     ) {
         log.info("call getProfile : {}", memberId);
 
-        MemberProfileDto result = profileService.getMemberProfile(memberId);
+        MemberProfileDto result = profileService.getMemberProfile(memberId,
+            memberPrincipal.gender());
 
         return ResponseEntity.ok(APIResponse.success(result));
     }
