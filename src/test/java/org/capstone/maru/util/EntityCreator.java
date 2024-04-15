@@ -21,8 +21,7 @@ public class EntityCreator {
     public static FeatureCard createMemberCard(List<String> memberFeatures, int i) {
         return FeatureCard.of(
             null,
-            memberFeatures,
-            CardType.MEMBER.name()
+            memberFeatures
         );
     }
 
@@ -38,7 +37,7 @@ public class EntityCreator {
             "1980" + i % 11,
             i % 2 == 0 ? "MALE" : "FEMALE",
             "010-1234-" + String.format("%04d", i),
-            "tester" + i,
+            "test_" + i,
             true,
             createMemberCard(List.of(), i),
             createMemberCard(List.of(), i),
