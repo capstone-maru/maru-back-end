@@ -232,4 +232,12 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     public void updateProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
     }
+
+    public Boolean updateRecommendOn(Boolean recommendOn) {
+        if (recommendOn == null) {
+            return this.recommendOn;
+        }
+        this.recommendOn = recommendOn;
+        return this.recommendOn;
+    }
 }

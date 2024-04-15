@@ -27,8 +27,8 @@ public class FeatureCard {
     private Long id;
 
     /*
-        회원 희망 지역
-     */
+      회원 희망 지역
+    */
     @Column(name = "location", length = 50)
     @ColumnDefault("'default'")
     private String location;
@@ -47,10 +47,16 @@ public class FeatureCard {
     }
 
     public void updateMemberFeatures(List<String> memberFeatures) {
+        if (memberFeatures == null) {
+            return;
+        }
         this.memberFeatures = memberFeatures;
     }
 
     public void updateLocation(String location) {
+        if (location == null) {
+            return;
+        }
         this.location = location;
     }
 
