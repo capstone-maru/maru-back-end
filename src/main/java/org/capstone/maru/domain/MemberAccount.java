@@ -23,7 +23,13 @@ import org.springframework.data.domain.Persistable;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true, exclude = {"myCard", "mateCard", "followers", "followings"})
+@ToString(callSuper = true, exclude = {
+    "myCard",
+    "mateCard",
+    "followers",
+    "followings",
+    "profileImage"
+})
 @Table(indexes = {
     @Index(columnList = "memberId", unique = true),
     @Index(columnList = "email", unique = true),
@@ -135,8 +141,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             phoneNumber,
             null,
             true,
-            FeatureCard.of(null, List.of(), CardType.MEMBER.name()),
-            FeatureCard.of(null, List.of(), CardType.MEMBER.name()),
+            FeatureCard.of(null, List.of()),
+            FeatureCard.of(null, List.of()),
             new HashSet<>(),
             new HashSet<>(),
             ProfileImage.defaultImage(memberId)
