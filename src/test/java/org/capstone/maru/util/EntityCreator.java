@@ -5,23 +5,24 @@ import java.util.Random;
 import java.util.UUID;
 import org.capstone.maru.domain.Address;
 import org.capstone.maru.domain.Address.CITY;
+import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.MemberAccount;
-import org.capstone.maru.domain.MemberCard;
 import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.domain.RoomImage;
 import org.capstone.maru.domain.RoomInfo;
 import org.capstone.maru.domain.StudioRoomPost;
+import org.capstone.maru.domain.constant.CardType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
 
 public class EntityCreator {
 
     // -- 회원 관련 생성 메서드 -- //
-    public static MemberCard createMemberCard(List<String> memberFeatures, int i) {
-        return MemberCard.of(
+    public static FeatureCard createMemberCard(List<String> memberFeatures, int i) {
+        return FeatureCard.of(
             null,
-            "test location" + i % 11,
-            memberFeatures
+            memberFeatures,
+            CardType.MEMBER.name()
         );
     }
 
