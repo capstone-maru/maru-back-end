@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.capstone.maru.domain.constant.CardType;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.domain.Persistable;
 
 @Getter
@@ -54,6 +55,10 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
 
     @Column(nullable = false)
     private Boolean initialized;
+
+    @Column(nullable = false)
+    @ColumnDefault("'TRUE'")
+    private Boolean recommendOn;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(
@@ -93,6 +98,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         String phoneNumber,
         String createdBy,
         Boolean initialized,
+        Boolean recommendOn,
         FeatureCard myCard,
         FeatureCard mateCard,
         Set<Follow> followers,
@@ -109,6 +115,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         this.modifiedBy = createdBy;
 
         this.initialized = initialized;
+
+        this.recommendOn = recommendOn;
 
         this.myCard = myCard;
         this.mateCard = mateCard;
@@ -135,6 +143,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             phoneNumber,
             null,
             true,
+            true,
             FeatureCard.of(null, List.of(), CardType.MEMBER.name()),
             FeatureCard.of(null, List.of(), CardType.MEMBER.name()),
             new HashSet<>(),
@@ -152,6 +161,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         String phoneNumber,
         String createdBy,
         Boolean initialized,
+        Boolean recommendOn,
         FeatureCard myCard,
         FeatureCard mateCard,
         Set<Follow> followers,
@@ -167,6 +177,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             phoneNumber,
             createdBy,
             initialized,
+            recommendOn,
             myCard,
             mateCard,
             followers,
@@ -208,6 +219,9 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
        true면 user의 특성이 없는 것으로 판단
      */
     public void updateInitialized(List<String> myFeatures) {
+        /*
+        feature 가 없는 경우
+        */
         if (myFeatures == null || myFeatures.isEmpty()) {
             this.initialized = true;
             return;
@@ -217,5 +231,13 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
 
     public void updateProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public Boolean updateRecommendOn(Boolean recommendOn) {
+        if (recommendOn == null) {
+            return this.recommendOn;
+        }
+        this.recommendOn = recommendOn;
+        return this.recommendOn;
     }
 }
