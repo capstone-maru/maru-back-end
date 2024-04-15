@@ -18,7 +18,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.capstone.maru.domain.constant.CardType;
 import org.springframework.data.domain.Persistable;
 
 @Getter

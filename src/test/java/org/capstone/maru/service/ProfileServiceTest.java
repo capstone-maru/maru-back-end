@@ -9,7 +9,6 @@ import java.util.List;
 import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.ProfileImage;
-import org.capstone.maru.domain.constant.CardType;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.repository.MemberAccountRepository;
 import org.capstone.maru.repository.MemberCardRepository;
