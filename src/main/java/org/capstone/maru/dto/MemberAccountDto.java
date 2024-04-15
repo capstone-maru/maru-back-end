@@ -41,7 +41,7 @@ public record MemberAccountDto(
     }
 
     public MemberAccount toEntity(FeatureCard myCard, FeatureCard mateCard, Set<Follow> followers,
-        Set<Follow> followings, ProfileImage profileImage) {
+        Set<Follow> followings, ProfileImage profileImage, Boolean recommendOn) {
         return MemberAccount.of(
             memberId,
             email,
@@ -51,6 +51,7 @@ public record MemberAccountDto(
             phoneNumber,
             createdBy,
             initialized,
+            recommendOn,
             myCard,
             mateCard,
             followers,

@@ -45,6 +45,11 @@ public class ProfileService {
             throw new IllegalArgumentException("MemberCard not found");
         }
 
+        /*
+         initialized 값 변경
+        */
+        memberAccount.updateInitialized(features);
+
         featureCard.updateLocation(location);
         featureCard.updateMemberFeatures(features);
 
