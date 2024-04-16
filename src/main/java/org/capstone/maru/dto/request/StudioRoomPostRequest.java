@@ -9,6 +9,7 @@ import java.util.List;
 import org.capstone.maru.annotation.ImageFilesConstraints;
 import org.capstone.maru.domain.Address;
 import org.capstone.maru.domain.Address.CITY;
+import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
 import org.capstone.maru.dto.MemberCardDto;
@@ -75,6 +76,7 @@ public record StudioRoomPostRequest(
                 )
             )
             .roomType(roomDetailData.roomType)
+            .floorType(roomDetailData.floorType)
             .size(roomDetailData.size)
             .numberOfRoom(roomDetailData.numberOfRoom)
             .numberOfBathRoom(roomDetailData.numberOfBathRoom)
@@ -120,6 +122,8 @@ public record StudioRoomPostRequest(
     public record RoomDetailData(
         @NotNull(message = "방 종류 입력 값이 잘못 되었습니다.")
         RoomType roomType,
+        @NotNull(message = "층 종류 입력 값이 잘못 되었습니다.")
+        FloorType floorType,
         @Min(value = 0, message = "방 크기는 음수 일 수 없습니다.")
         @Max(value = 100, message = "방 크기에 이상치 값이 입력 되었습니다.")
         Short size,
@@ -129,7 +133,7 @@ public record StudioRoomPostRequest(
         @Min(value = 0, message = "화장실 개수는 음수 일 수 없습니다.")
         @Max(value = 10, message = "화장실 개수에 이상치 값이 입력 되었습니다.")
         Short numberOfBathRoom,
-        @NotNull(message = "거실 유무를 작성해야 합니다.")
+        @NotNull(message = "거실 유무 입력 값이 잘못 되었습니다.")
         Boolean hasLivingRoom,
         @Min(value = 0, message = "모집 인원은 음수 일 수 없습니다.")
         @Max(value = 10, message = "모집 인원에 이상치 값이 입력 되었습니다.")

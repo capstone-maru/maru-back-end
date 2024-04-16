@@ -12,8 +12,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
+import org.capstone.maru.domain.converter.FloorTypeConverter;
 import org.capstone.maru.domain.converter.RentalTypeConverter;
 import org.capstone.maru.domain.converter.RoomTypeConverter;
 
@@ -33,6 +35,10 @@ public class RoomInfo {
     @Convert(converter = RoomTypeConverter.class)
     @Column
     private RoomType roomType;
+
+    @Convert(converter = FloorTypeConverter.class)
+    @Column
+    private FloorType floorType;
 
     @Column
     private Short size;
@@ -57,11 +63,12 @@ public class RoomInfo {
     private Short recruitmentCapacity;
 
     // -- 생성 메서드 -- //
-    private RoomInfo(Address address, RoomType roomType, Short size, Short numberOfRoom,
-        Short numberOfBathRoom, Boolean hasLivingRoom, RentalType rentalType, Long expectedPayment,
-        Short recruitmentCapacity) {
+    private RoomInfo(Address address, RoomType roomType, FloorType floorType, Short size,
+        Short numberOfRoom, Short numberOfBathRoom, Boolean hasLivingRoom, RentalType rentalType,
+        Long expectedPayment, Short recruitmentCapacity) {
         this.address = address;
         this.roomType = roomType;
+        this.floorType = floorType;
         this.size = size;
         this.numberOfRoom = numberOfRoom;
         this.numberOfBathRoom = numberOfBathRoom;
@@ -74,6 +81,7 @@ public class RoomInfo {
     public static RoomInfo of(
         Address address,
         RoomType roomType,
+        FloorType floorType,
         Short size,
         Short numberOfRoom,
         Short numberOfBathRoom,
@@ -85,6 +93,7 @@ public class RoomInfo {
         return new RoomInfo(
             address,
             roomType,
+            floorType,
             size,
             numberOfRoom,
             numberOfBathRoom,

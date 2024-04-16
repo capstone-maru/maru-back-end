@@ -11,6 +11,7 @@ import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.domain.RoomImage;
 import org.capstone.maru.domain.RoomInfo;
 import org.capstone.maru.domain.StudioRoomPost;
+import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
 
@@ -91,6 +92,21 @@ public class EntityCreator {
         }
     }
 
+    public static FloorType randomFloorType() {
+        Random random = new Random();
+        switch (random.nextInt(3)) {
+            case 1 -> {
+                return FloorType.GROUND;
+            }
+            case 2 -> {
+                return FloorType.SEMI_BASEMENT;
+            }
+            default -> {
+                return FloorType.PENTHOUSE;
+            }
+        }
+    }
+
     public static RentalType randomRentalType() {
         Random random = new Random();
         if (random.nextInt(2) == 1) {
@@ -103,9 +119,11 @@ public class EntityCreator {
         return RoomInfo.of(
             createAddress(i),
             randomRoomType(),
+            randomFloorType(),
             (short) (i % 20),
             (short) (i % 5),
             (short) (i % 5),
+            i % 2 == 0,
             randomRentalType(),
             (long) (10_0000 * (i % 11) / 2),
             (short) (i % 4)

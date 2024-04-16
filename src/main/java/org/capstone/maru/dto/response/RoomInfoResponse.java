@@ -11,6 +11,7 @@ public record RoomInfoResponse(
     Long id,
     Address address,
     String roomType,
+    String floorType,
     Short size,
     Short numberOfRoom,
     Short numberOfBathRoom,
@@ -26,6 +27,7 @@ public record RoomInfoResponse(
             .id(dto.id())
             .address(dto.address())
             .roomType(dto.roomType().getDescription())
+            .floorType(dto.floorType().getDescription())
             .size(dto.size())
             .numberOfRoom(dto.numberOfRoom())
             .numberOfBathRoom(dto.numberOfBathRoom())
