@@ -118,6 +118,7 @@ public class EntityCreator {
             "test title" + i,
             "test content" + i,
             i % 2 == 0 ? "MALE" : "FEMALE",
+            createMemberCard(List.of(), i),
             createMemberAccount(i % 100),
             createRoomInfo(i)
         );
