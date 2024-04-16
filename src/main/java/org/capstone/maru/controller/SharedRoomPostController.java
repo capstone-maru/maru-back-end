@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.annotation.RequestQueryString;
+import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
@@ -87,11 +88,12 @@ public class SharedRoomPostController {
         StudioRoomPostDto studioRoomPostDto = studioRoomPostRequest.toBaseStudioRoomPostDto(
             principal.gender()
         );
+        MemberCardDto roomMateCardDto = studioRoomPostRequest.toMemberCardDto();
         List<RoomImageDto> roomImagesDto = studioRoomPostRequest.toRoomImagesDto();
         RoomInfoDto roomInfoDto = studioRoomPostRequest.toRoomInfoDto();
 
         sharedRoomPostService.saveStudioRoomPost(
-            principal.memberId(), studioRoomPostDto, roomImagesDto, roomInfoDto
+            principal.memberId(), studioRoomPostDto, roomMateCardDto, roomImagesDto, roomInfoDto
         );
     }
 
