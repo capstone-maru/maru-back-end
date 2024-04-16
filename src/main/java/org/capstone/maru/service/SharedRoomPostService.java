@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.ScrapPost;
 import org.capstone.maru.domain.StudioRoomPost;
+import org.capstone.maru.domain.ViewPost;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
@@ -17,6 +18,7 @@ import org.capstone.maru.repository.MemberAccountRepository;
 import org.capstone.maru.repository.RoomImageRepository;
 import org.capstone.maru.repository.ScrapPostRepository;
 import org.capstone.maru.repository.StudioRoomPostRepository;
+import org.capstone.maru.repository.ViewPostRepository;
 import org.capstone.maru.repository.projection.ScrapPostView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,7 @@ public class SharedRoomPostService {
     private final MemberAccountRepository memberAccountRepository;
     private final RoomImageRepository roomImageRepository;
     private final ScrapPostRepository scrapPostRepository;
+    private final ViewPostRepository viewPostRepository;
 
     @Transactional(readOnly = true)
     public Page<StudioRoomPostDto> searchStudioRoomPosts(
@@ -83,7 +86,6 @@ public class SharedRoomPostService {
             );
     }
 
-    @Transactional(readOnly = true)
     public StudioRoomPostDetailDto getStudioRoomPostDetail(String memberId, Long postId,
         String gender) {
         final Boolean isScrapped = scrapPostRepository
@@ -93,10 +95,13 @@ public class SharedRoomPostService {
 
         final Long scrapCount = scrapPostRepository.countByScrappedIdAndIsScrapped(postId);
 
+        viewPostRepository.save(ViewPost.of(postId));
+        final Long viewCount = viewPostRepository.countViewPostBySharedRoomPostId(postId);
+
         return studioRoomPostRepository
             .findByIdAndPublisherGender(postId, gender)
             .map(studioRoomPost -> StudioRoomPostDetailDto
-                .from(studioRoomPost, isScrapped, scrapCount)
+                .from(studioRoomPost, isScrapped, scrapCount, viewCount)
             )
             .orElseThrow(() -> new IllegalArgumentException("그런 게시물은 존재하지 않습니다."));
     }

@@ -19,6 +19,7 @@ public record StudioRoomPostDetailDto(
     RoomInfoDto roomInfo,
     Boolean isScrapped,
     Long scrapCount,
+    Long viewCount,
     LocalDateTime createdAt,
     String createdBy,
     LocalDateTime modifiedAt,
@@ -26,7 +27,7 @@ public record StudioRoomPostDetailDto(
 ) {
 
     public static StudioRoomPostDetailDto from(StudioRoomPost entity, Boolean isScrapped,
-        Long scrapCount) {
+        Long scrapCount, Long viewCount) {
         return StudioRoomPostDetailDto
             .builder()
             .id(entity.getId())
@@ -43,6 +44,7 @@ public record StudioRoomPostDetailDto(
             .roomInfo(RoomInfoDto.from(entity.getRoomInfo()))
             .isScrapped(isScrapped)
             .scrapCount(scrapCount)
+            .viewCount(viewCount)
             .createdAt(entity.getCreatedAt())
             .createdBy(entity.getCreatedBy())
             .modifiedAt(entity.getModifiedAt())

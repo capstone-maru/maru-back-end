@@ -23,6 +23,7 @@ public record StudioRoomPostDetailResponse(
     RoomInfoResponse roomInfo,
     Boolean isScrapped,
     Long scrapCount,
+    Long viewCount,
     LocalDateTime createdAt,
     String createdBy,
     LocalDateTime modifiedAt,
@@ -46,6 +47,7 @@ public record StudioRoomPostDetailResponse(
             .roomInfo(RoomInfoResponse.from(dto.roomInfo()))
             .isScrapped(dto.isScrapped())
             .scrapCount(dto.scrapCount())
+            .viewCount(dto.viewCount())
             .createdAt(dto.createdAt())
             .createdBy(dto.createdBy())
             .modifiedAt(dto.modifiedAt())
