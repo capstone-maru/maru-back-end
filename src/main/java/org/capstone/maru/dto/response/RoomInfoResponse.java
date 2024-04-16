@@ -13,6 +13,7 @@ public record RoomInfoResponse(
     String roomType,
     Short size,
     Short numberOfRoom,
+    Short numberOfBathRoom,
     Short recruitmentCapacity,
     String rentalType,
     Long expectedPayment
@@ -26,6 +27,7 @@ public record RoomInfoResponse(
             .roomType(dto.roomType().getDescription())
             .size(dto.size())
             .numberOfRoom(dto.numberOfRoom())
+            .numberOfBathRoom(dto.numberOfBathRoom())
             .recruitmentCapacity(dto.recruitmentCapacity())
             .rentalType(dto.rentalType().getDescription())
             .expectedPayment(dto.expectedPayment())

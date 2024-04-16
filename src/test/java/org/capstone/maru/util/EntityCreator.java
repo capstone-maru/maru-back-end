@@ -105,6 +105,7 @@ public class EntityCreator {
             randomRoomType(),
             (short) (i % 20),
             (short) (i % 5),
+            (short) (i % 5),
             randomRentalType(),
             (long) (10_0000 * (i % 11) / 2),
             (short) (i % 4)

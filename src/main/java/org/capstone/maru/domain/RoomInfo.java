@@ -40,11 +40,14 @@ public class RoomInfo {
     @Column
     private Short numberOfRoom;
 
+    @Column
+    private Short numberOfBathRoom;
+
     @Convert(converter = RentalTypeConverter.class)
     @Column
     private RentalType rentalType;
 
-    @Column
+    @Column(nullable = false)
     private Long expectedPayment;
 
     @Column
@@ -52,11 +55,13 @@ public class RoomInfo {
 
     // -- 생성 메서드 -- //
     private RoomInfo(Address address, RoomType roomType, Short size, Short numberOfRoom,
-        RentalType rentalType, Long expectedPayment, Short recruitmentCapacity) {
+        Short numberOfBathRoom, RentalType rentalType, Long expectedPayment,
+        Short recruitmentCapacity) {
         this.address = address;
         this.roomType = roomType;
         this.size = size;
         this.numberOfRoom = numberOfRoom;
+        this.numberOfBathRoom = numberOfBathRoom;
         this.rentalType = rentalType;
         this.expectedPayment = expectedPayment;
         this.recruitmentCapacity = recruitmentCapacity;
@@ -67,6 +72,7 @@ public class RoomInfo {
         RoomType roomType,
         Short size,
         Short numberOfRoom,
+        Short numberOfBathRoom,
         RentalType rentalType,
         Long expectedPayment,
         Short recruitmentCapacity
@@ -76,6 +82,7 @@ public class RoomInfo {
             roomType,
             size,
             numberOfRoom,
+            numberOfBathRoom,
             rentalType,
             expectedPayment,
             recruitmentCapacity
