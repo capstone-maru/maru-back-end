@@ -15,9 +15,6 @@ public record RoomInfoDto(
     Short size,
     Short numberOfRoom,
     RentalType rentalType,
-    Long price,
-    Long monthlyFee,
-    Long managementFee,
     Long expectedPayment,
     Short recruitmentCapacity
 ) {
@@ -31,9 +28,6 @@ public record RoomInfoDto(
             .size(entity.getSize())
             .numberOfRoom(entity.getNumberOfRoom())
             .rentalType(entity.getRentalType())
-            .price(entity.getPrice())
-            .monthlyFee(entity.getMonthlyFee())
-            .managementFee(entity.getManagementFee())
             .expectedPayment(entity.getExpectedPayment())
             .recruitmentCapacity(entity.getRecruitmentCapacity())
             .build();
@@ -46,9 +40,6 @@ public record RoomInfoDto(
             size,
             numberOfRoom,
             rentalType,
-            price,
-            monthlyFee,
-            managementFee,
             expectedPayment,
             recruitmentCapacity
         );

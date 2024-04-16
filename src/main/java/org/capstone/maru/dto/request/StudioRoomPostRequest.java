@@ -78,9 +78,6 @@ public record StudioRoomPostRequest(
             .size(roomDetailData.size)
             .numberOfRoom(roomDetailData.numberOfRoom)
             .rentalType(transactionData.rentalType)
-            .price(transactionData.price)
-            .monthlyFee(transactionData.monthlyFee)
-            .managementFee(transactionData.managementFee)
             .expectedPayment(transactionData.expectedPayment)
             .recruitmentCapacity(roomDetailData.recruitmentCapacity)
             .build();
@@ -111,15 +108,6 @@ public record StudioRoomPostRequest(
     public record TransactionData(
         @NotNull(message = "거래 방식 입력 값이 잘못 되었습니다.")
         RentalType rentalType,
-        @Min(value = 0, message = "보증금/전세는 음수 일 수 없습니다.")
-        @Max(value = 10_0000_0000, message = "보증금/전세에 이상치 값이 입력 되었습니다.")
-        Long price,
-        @Min(value = 0, message = "월세는 음수 일 수 없습니다.")
-        @Max(value = 1000_0000, message = "월세에 이상치 값이 입력 되었습니다.")
-        Long monthlyFee,
-        @Min(value = 0, message = "관리비는 음수 일 수 없습니다.")
-        @Max(value = 100_0000, message = "관리비에 이상치 값이 입력 되었습니다.")
-        Long managementFee,
         @Min(value = 0, message = "희망 금액은 음수 일 수 없습니다.")
         @Max(value = 10_0000_0000, message = "희망 금액에 이상치 값이 입력 되었습니다.")
         Long expectedPayment

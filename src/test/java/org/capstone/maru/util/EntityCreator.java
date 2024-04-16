@@ -106,9 +106,6 @@ public class EntityCreator {
             (short) (i % 20),
             (short) (i % 5),
             randomRentalType(),
-            (long) (500_0000 + (i % 11) * 1000000),
-            (long) (10_0000 * (i % 11)),
-            (long) (10000 * (i % 11)),
             (long) (10_0000 * (i % 11) / 2),
             (short) (i % 4)
         );
