@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Builder;
+import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.StudioRoomPost;
 
 @Builder
@@ -14,8 +15,9 @@ public record StudioRoomPostDetailDto(
     String title,
     String content,
     String publisherGender,
+    MemberCardDto roomMateCard,
     Set<RoomImageDto> roomImages,
-    MemberAccountWithCardsDto publisherAccount,
+    MemberAccountDto publisherAccount,
     RoomInfoDto roomInfo,
     Boolean isScrapped,
     Long scrapCount,
@@ -33,6 +35,7 @@ public record StudioRoomPostDetailDto(
             .id(entity.getId())
             .title(entity.getTitle())
             .content(entity.getContent())
+            .roomMateCard(MemberCardDto.from(entity.getRoomMateCard()))
             .roomImages(
                 entity.getRoomImages()
                       .stream()
@@ -40,7 +43,7 @@ public record StudioRoomPostDetailDto(
                       .collect(Collectors.toSet())
             )
             .publisherGender(entity.getPublisherGender())
-            .publisherAccount(MemberAccountWithCardsDto.from(entity.getPublisherAccount()))
+            .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))
             .roomInfo(RoomInfoDto.from(entity.getRoomInfo()))
             .isScrapped(isScrapped)
             .scrapCount(scrapCount)

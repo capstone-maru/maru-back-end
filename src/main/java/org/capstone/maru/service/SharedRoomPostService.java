@@ -88,16 +88,17 @@ public class SharedRoomPostService {
 
     public StudioRoomPostDetailDto getStudioRoomPostDetail(String memberId, Long postId,
         String gender) {
+        // 스크랩 여부와 스크랩 개수
         final Boolean isScrapped = scrapPostRepository
             .findScrapViewByScrappedIdAndScrapperMemberId(postId, memberId)
             .map(ScrapPostView::getIsScrapped)
             .orElse(false);
-
         final Long scrapCount = scrapPostRepository.countByScrappedIdAndIsScrapped(postId);
 
+        // 조회수 +1 & 게시글 총 조회수
         viewPostRepository.save(ViewPost.of(postId));
         final Long viewCount = viewPostRepository.countViewPostBySharedRoomPostId(postId);
-
+        
         return studioRoomPostRepository
             .findByIdAndPublisherGender(postId, gender)
             .map(studioRoomPost -> StudioRoomPostDetailDto
