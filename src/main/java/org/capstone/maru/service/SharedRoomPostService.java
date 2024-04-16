@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.ScrapPost;
 import org.capstone.maru.domain.StudioRoomPost;
+import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
 import org.capstone.maru.dto.StudioRoomPostDetailDto;
@@ -103,6 +104,7 @@ public class SharedRoomPostService {
     public void saveStudioRoomPost(
         String publisherMemberId,
         StudioRoomPostDto studioRoomPostDto,
+        MemberCardDto roomMateCardDto,
         List<RoomImageDto> roomImagesDto,
         RoomInfoDto roomInfoDto
     ) {
@@ -110,7 +112,7 @@ public class SharedRoomPostService {
             publisherMemberId);
 
         StudioRoomPost studioRoomPost = studioRoomPostDto.toEntity(
-            publisherAccount, roomInfoDto.toEntity()
+            roomMateCardDto.toEntity(), publisherAccount, roomInfoDto.toEntity()
         );
 
         roomImagesDto
