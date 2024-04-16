@@ -69,11 +69,7 @@ public record StudioRoomPostRequest(
             .builder()
             .address(
                 Address.of(locationData.city, locationData.oldAddress,
-                    locationData.roadAddress, locationData.detailAddress,
-                    locationData.stationName,
-                    locationData.stationTime, locationData.busStopTime,
-                    locationData.schoolName, locationData.schoolTime,
-                    locationData.convenienceStoreTime
+                    locationData.roadAddress, locationData.detailAddress
                 )
             )
             .roomType(roomDetailData.roomType)
@@ -150,17 +146,7 @@ public record StudioRoomPostRequest(
         CITY city,
         String oldAddress,
         String roadAddress,
-        String detailAddress,
-        String stationName,
-        @Min(value = 0, message = "시간은 음수 일 수 없습니다.")
-        Short stationTime,
-        @Min(value = 0, message = "시간은 음수 일 수 없습니다.")
-        Short busStopTime,
-        String schoolName,
-        @Min(value = 0, message = "시간은 음수 일 수 없습니다.")
-        Short schoolTime,
-        @Min(value = 0, message = "시간은 음수 일 수 없습니다.")
-        Short convenienceStoreTime
+        String detailAddress
     ) {
 
     }

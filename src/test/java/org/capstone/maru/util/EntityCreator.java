@@ -56,13 +56,7 @@ public class EntityCreator {
             CITY.SEOUL,
             "test old address" + i,
             "test road address" + i,
-            "test detail address" + i,
-            "test station" + i,
-            (short) (i % 60),
-            (short) (i % 60),
-            "test school" + i,
-            (short) (i % 60),
-            (short) (i % 60)
+            "test detail address" + i
         );
     }
 
