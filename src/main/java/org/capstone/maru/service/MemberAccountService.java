@@ -80,6 +80,7 @@ public class MemberAccountService {
                 phoneNumber,
                 memberId,
                 true,
+                true,
                 myCard,
                 mateCard,
                 followers,

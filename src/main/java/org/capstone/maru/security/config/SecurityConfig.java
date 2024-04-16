@@ -61,7 +61,9 @@ public class SecurityConfig {
     ) throws Exception {
         return httpSecurity
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                .requestMatchers(
+                    PathRequest.toStaticResources().atCommonLocations()
+                ).permitAll()
                 .requestMatchers(
                     HttpMethod.GET,
                     "/", "/oauth2/**"
@@ -69,6 +71,10 @@ public class SecurityConfig {
                 .requestMatchers(
                     HttpMethod.POST,
                     "/auth/token/refresh", "/oauth2/**", "/upload"
+                ).permitAll()
+                // ws 연결을 위한 /ws url 모두 허용
+                .requestMatchers(
+                    "/ws"
                 ).permitAll()
                 .anyRequest().authenticated()
             )

@@ -49,7 +49,7 @@ class ProfileServiceTest {
         when(memberAccountService.searchMemberAccount(memberId)).thenReturn(memberAccount);
 
         // then
-        MemberProfileDto memberProfile = sut.getMemberProfile(memberId);
+        MemberProfileDto memberProfile = sut.getMemberProfile(memberId, "MALE");
 
         assertThat(memberProfile).isNotNull();
         assertThat(memberProfile.myCard().id()).isEqualTo(1L);
@@ -79,6 +79,7 @@ class ProfileServiceTest {
             "MALE",
             "010-1234-5678",
             "nickname",
+            true,
             true,
             createMyCard(),
             createMateCard(),

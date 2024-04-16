@@ -38,6 +38,7 @@ public class EntityCreator {
             "010-1234-" + String.format("%04d", i),
             "test_" + i,
             true,
+            true,
             createMemberCard(List.of(), i),
             createMemberCard(List.of(), i),
             null,
