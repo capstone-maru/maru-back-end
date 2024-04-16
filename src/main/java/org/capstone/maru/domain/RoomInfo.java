@@ -43,6 +43,9 @@ public class RoomInfo {
     @Column
     private Short numberOfBathRoom;
 
+    @Column
+    private Boolean hasLivingRoom;
+
     @Convert(converter = RentalTypeConverter.class)
     @Column
     private RentalType rentalType;
@@ -55,13 +58,14 @@ public class RoomInfo {
 
     // -- 생성 메서드 -- //
     private RoomInfo(Address address, RoomType roomType, Short size, Short numberOfRoom,
-        Short numberOfBathRoom, RentalType rentalType, Long expectedPayment,
+        Short numberOfBathRoom, Boolean hasLivingRoom, RentalType rentalType, Long expectedPayment,
         Short recruitmentCapacity) {
         this.address = address;
         this.roomType = roomType;
         this.size = size;
         this.numberOfRoom = numberOfRoom;
         this.numberOfBathRoom = numberOfBathRoom;
+        this.hasLivingRoom = hasLivingRoom;
         this.rentalType = rentalType;
         this.expectedPayment = expectedPayment;
         this.recruitmentCapacity = recruitmentCapacity;
@@ -73,6 +77,7 @@ public class RoomInfo {
         Short size,
         Short numberOfRoom,
         Short numberOfBathRoom,
+        Boolean hasLivingRoom,
         RentalType rentalType,
         Long expectedPayment,
         Short recruitmentCapacity
@@ -83,6 +88,7 @@ public class RoomInfo {
             size,
             numberOfRoom,
             numberOfBathRoom,
+            hasLivingRoom,
             rentalType,
             expectedPayment,
             recruitmentCapacity

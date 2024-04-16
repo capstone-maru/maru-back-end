@@ -78,6 +78,7 @@ public record StudioRoomPostRequest(
             .size(roomDetailData.size)
             .numberOfRoom(roomDetailData.numberOfRoom)
             .numberOfBathRoom(roomDetailData.numberOfBathRoom)
+            .hasLivingRoom(roomDetailData.hasLivingRoom)
             .rentalType(transactionData.rentalType)
             .expectedPayment(transactionData.expectedPayment)
             .recruitmentCapacity(roomDetailData.recruitmentCapacity)
@@ -128,6 +129,8 @@ public record StudioRoomPostRequest(
         @Min(value = 0, message = "화장실 개수는 음수 일 수 없습니다.")
         @Max(value = 10, message = "화장실 개수에 이상치 값이 입력 되었습니다.")
         Short numberOfBathRoom,
+        @NotNull(message = "거실 유무를 작성해야 합니다.")
+        Boolean hasLivingRoom,
         @Min(value = 0, message = "모집 인원은 음수 일 수 없습니다.")
         @Max(value = 10, message = "모집 인원에 이상치 값이 입력 되었습니다.")
         Short recruitmentCapacity

@@ -15,6 +15,7 @@ public record RoomInfoDto(
     Short size,
     Short numberOfRoom,
     Short numberOfBathRoom,
+    Boolean hasLivingRoom,
     RentalType rentalType,
     Long expectedPayment,
     Short recruitmentCapacity
@@ -29,6 +30,7 @@ public record RoomInfoDto(
             .size(entity.getSize())
             .numberOfRoom(entity.getNumberOfRoom())
             .numberOfBathRoom(entity.getNumberOfBathRoom())
+            .hasLivingRoom(entity.getHasLivingRoom())
             .rentalType(entity.getRentalType())
             .expectedPayment(entity.getExpectedPayment())
             .recruitmentCapacity(entity.getRecruitmentCapacity())
@@ -42,6 +44,7 @@ public record RoomInfoDto(
             size,
             numberOfRoom,
             numberOfBathRoom,
+            hasLivingRoom,
             rentalType,
             expectedPayment,
             recruitmentCapacity
