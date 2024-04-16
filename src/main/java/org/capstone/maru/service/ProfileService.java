@@ -65,7 +65,7 @@ public class ProfileService {
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
 
-        if (memberAccount.getGender().equals(gender)) {
+        if (!memberAccount.getGender().equals(gender)) {
             throw new IllegalArgumentException("MemberCard not found");
         }
 
