@@ -12,6 +12,7 @@ import org.capstone.maru.domain.Address.CITY;
 import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
+import org.capstone.maru.domain.jsonb.ExtraOption;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
@@ -84,6 +85,7 @@ public record StudioRoomPostRequest(
             .rentalType(transactionData.rentalType)
             .expectedPayment(transactionData.expectedPayment)
             .recruitmentCapacity(roomDetailData.recruitmentCapacity)
+            .extraOption(roomDetailData.extraOption)
             .build();
     }
 
@@ -137,7 +139,8 @@ public record StudioRoomPostRequest(
         Boolean hasLivingRoom,
         @Min(value = 0, message = "모집 인원은 음수 일 수 없습니다.")
         @Max(value = 10, message = "모집 인원에 이상치 값이 입력 되었습니다.")
-        Short recruitmentCapacity
+        Short recruitmentCapacity,
+        ExtraOption extraOption
     ) {
 
     }

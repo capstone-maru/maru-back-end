@@ -14,6 +14,7 @@ import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
+import org.capstone.maru.domain.jsonb.ExtraOption;
 
 public class EntityCreator {
 
@@ -115,6 +116,16 @@ public class EntityCreator {
         return RentalType.JEONSE;
     }
 
+    public static ExtraOption createExtraOption(int i) {
+        return ExtraOption.of(
+            i % 2 == 0,
+            i % 2 == 1,
+            i % 2 == 0,
+            i % 2 == 1,
+            i % 2 == 0
+        );
+    }
+
     public static RoomInfo createRoomInfo(int i) {
         return RoomInfo.of(
             createAddress(i),
@@ -126,7 +137,8 @@ public class EntityCreator {
             i % 2 == 0,
             randomRentalType(),
             (long) (10_0000 * (i % 11) / 2),
-            (short) (i % 4)
+            (short) (i % 4),
+            createExtraOption(i)
         );
     }
 

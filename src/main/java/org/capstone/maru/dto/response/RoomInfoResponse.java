@@ -4,6 +4,7 @@ import lombok.Builder;
 import org.capstone.maru.domain.Address;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
+import org.capstone.maru.domain.jsonb.ExtraOption;
 import org.capstone.maru.dto.RoomInfoDto;
 
 @Builder
@@ -18,7 +19,8 @@ public record RoomInfoResponse(
     Boolean hasLivingRoom,
     Short recruitmentCapacity,
     String rentalType,
-    Long expectedPayment
+    Long expectedPayment,
+    ExtraOption extraOption
 ) {
 
     public static RoomInfoResponse from(RoomInfoDto dto) {
@@ -35,6 +37,7 @@ public record RoomInfoResponse(
             .recruitmentCapacity(dto.recruitmentCapacity())
             .rentalType(dto.rentalType().getDescription())
             .expectedPayment(dto.expectedPayment())
+            .extraOption(dto.extraOption())
             .build();
     }
 }

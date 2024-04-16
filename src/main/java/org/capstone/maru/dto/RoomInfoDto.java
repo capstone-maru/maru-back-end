@@ -7,6 +7,7 @@ import org.capstone.maru.domain.RoomInfo;
 import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
+import org.capstone.maru.domain.jsonb.ExtraOption;
 
 @Builder
 public record RoomInfoDto(
@@ -20,7 +21,8 @@ public record RoomInfoDto(
     Boolean hasLivingRoom,
     RentalType rentalType,
     Long expectedPayment,
-    Short recruitmentCapacity
+    Short recruitmentCapacity,
+    ExtraOption extraOption
 ) {
 
     public static RoomInfoDto from(RoomInfo entity) {
@@ -37,6 +39,7 @@ public record RoomInfoDto(
             .rentalType(entity.getRentalType())
             .expectedPayment(entity.getExpectedPayment())
             .recruitmentCapacity(entity.getRecruitmentCapacity())
+            .extraOption(entity.getExtraOption())
             .build();
     }
 
@@ -51,7 +54,8 @@ public record RoomInfoDto(
             hasLivingRoom,
             rentalType,
             expectedPayment,
-            recruitmentCapacity
+            recruitmentCapacity,
+            extraOption
         );
     }
 }

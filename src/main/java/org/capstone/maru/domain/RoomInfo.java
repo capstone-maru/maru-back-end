@@ -1,5 +1,6 @@
 package org.capstone.maru.domain;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -7,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.Map;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,6 +20,9 @@ import org.capstone.maru.domain.constant.RoomType;
 import org.capstone.maru.domain.converter.FloorTypeConverter;
 import org.capstone.maru.domain.converter.RentalTypeConverter;
 import org.capstone.maru.domain.converter.RoomTypeConverter;
+import org.capstone.maru.domain.jsonb.ExtraOption;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Getter
 @ToString(callSuper = true)
@@ -62,10 +67,13 @@ public class RoomInfo {
     @Column
     private Short recruitmentCapacity;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    private ExtraOption extraOption;
+
     // -- 생성 메서드 -- //
     private RoomInfo(Address address, RoomType roomType, FloorType floorType, Short size,
         Short numberOfRoom, Short numberOfBathRoom, Boolean hasLivingRoom, RentalType rentalType,
-        Long expectedPayment, Short recruitmentCapacity) {
+        Long expectedPayment, Short recruitmentCapacity, ExtraOption extraOption) {
         this.address = address;
         this.roomType = roomType;
         this.floorType = floorType;
@@ -76,6 +84,7 @@ public class RoomInfo {
         this.rentalType = rentalType;
         this.expectedPayment = expectedPayment;
         this.recruitmentCapacity = recruitmentCapacity;
+        this.extraOption = extraOption;
     }
 
     public static RoomInfo of(
@@ -88,7 +97,8 @@ public class RoomInfo {
         Boolean hasLivingRoom,
         RentalType rentalType,
         Long expectedPayment,
-        Short recruitmentCapacity
+        Short recruitmentCapacity,
+        ExtraOption extraOption
     ) {
         return new RoomInfo(
             address,
@@ -100,7 +110,8 @@ public class RoomInfo {
             hasLivingRoom,
             rentalType,
             expectedPayment,
-            recruitmentCapacity
+            recruitmentCapacity,
+            extraOption
         );
     }
 
