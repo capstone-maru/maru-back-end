@@ -95,7 +95,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     private ProfileImage profileImage;
 
     // 연관관계 table
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<MemberRoom> chatRooms;
 
     private MemberAccount(

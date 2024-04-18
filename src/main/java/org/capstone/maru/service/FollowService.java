@@ -44,6 +44,7 @@ public class FollowService {
                 follow -> follow.getFollowing().getNickname()
             ));
         log.info("followingList: {}", followingList);
+
         return FollowingDto.from(followingList);
     }
 }

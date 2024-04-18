@@ -1,6 +1,11 @@
 package org.capstone.maru.service;
 
+import static java.util.stream.Collectors.toList;
+import static org.capstone.maru.domain.QChatRoom.chatRoom;
+
 import jakarta.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Chat;
@@ -25,18 +30,18 @@ public class ChatService {
     private final MemberRoomRepository memberRoomRepository;
 
     @Transactional
-    public ChatRoom createChatRoom(MemberPrincipal memberPrincipal, String name) {
-
-        MemberAccount memberAccount = memberAccountRepository.findById(memberPrincipal.memberId())
-            .orElseThrow(() -> new IllegalArgumentException("Member not found"));
-
+    public ChatRoom createChatRoom(String publisher, String name, List<String> members) {
+        members.add(publisher);
         ChatRoom room = ChatRoom.createRoom(name);
 
-        MemberRoom memberRoom = MemberRoom.createMemberRoom(memberAccount, room);
-
-        log.info("ChatRoom created : {}, {}", room.getId(), room.getName());
-
-        memberRoomRepository.save(memberRoom);
+        /*
+        채팅방 생성시 멤버들을 추가해준다.
+         */
+        members.forEach(member -> {
+            MemberAccount memberAccount = memberAccountRepository.findById(member).get();
+            MemberRoom memberRoom = MemberRoom.createMemberRoom(memberAccount, room);
+            memberRoomRepository.save(memberRoom);
+        });
 
         return chatRoomRepository.save(room);
     }
@@ -45,5 +50,36 @@ public class ChatService {
     public Chat createChat(Long roomId, String sender, String message) {
         ChatRoom room = chatRoomRepository.findById(roomId).get();
         return Chat.createChat(room, sender, message);
+    }
+
+    /*
+    채팅방의 멤버 보여주기
+     */
+    @Transactional
+    public void showChatRoomMember(Long roomId) {
+        ChatRoom room = chatRoomRepository.findById(roomId).get();
+        log.info("room : {}", room.getRoomMembers());
+    }
+
+    /*
+    채팅방에 멤버 추가하기
+     */
+    @Transactional
+    public void addChatRoomMember(Long roomId, String memberId) {
+        ChatRoom room = chatRoomRepository.findById(roomId).get();
+        MemberAccount memberAccount = memberAccountRepository.findById(memberId).get();
+
+        MemberRoom memberRoom = MemberRoom.createMemberRoom(memberAccount, room);
+
+        memberRoomRepository.save(memberRoom);
+    }
+
+    public List<String> showChatRoom(String memberId) {
+        MemberAccount memberAccount = memberAccountRepository.findById(memberId).get();
+        log.info("memberAccount : {}", memberAccount.getChatRooms().get(0).getId());
+
+        return memberAccount.getChatRooms().stream().map(
+            chatRoom -> chatRoom.getChatRoom().getName()
+        ).toList();
     }
 }

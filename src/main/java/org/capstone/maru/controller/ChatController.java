@@ -1,9 +1,12 @@
 package org.capstone.maru.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Chat;
 import org.capstone.maru.domain.ChatRoom;
+import org.capstone.maru.domain.MemberAccount;
+import org.capstone.maru.domain.MemberRoom;
 import org.capstone.maru.dto.request.ChatMessageRequest;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.ChatService;
@@ -14,6 +17,8 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -23,14 +28,28 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    @GetMapping("/chatRoom/{roomName}")
+    @PostMapping("/chatRoom/{roomName}")
     public ChatRoom chatRoom(
         @PathVariable String roomName,
-        @AuthenticationPrincipal MemberPrincipal memberPrincipal
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+        @RequestBody List<String> members
     ) {
         log.info("memberPrincipal : {}", memberPrincipal.memberId());
-        
-        return chatService.createChatRoom(memberPrincipal, roomName);
+
+        return chatService.createChatRoom(memberPrincipal.memberId(), roomName, members);
+    }
+
+    @GetMapping("/chatRoom/{roomId}")
+    public void showChatRoomMember(@PathVariable Long roomId) {
+        chatService.showChatRoomMember(roomId);
+    }
+
+    @GetMapping("/chatRoom")
+    public List<String> showChatRoom(@AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        List<String> data = chatService.showChatRoom(memberPrincipal.memberId());
+
+        log.info("data : {}", data);
+        return data;
     }
 
     @MessageMapping("/{roomId}") //여기로 전송되면 메서드 호출 -> WebSocketConfig prefixes 에서 적용한건 앞에 생략
@@ -50,6 +69,7 @@ public class ChatController {
 
         //채팅 저장
         Chat chat = chatService.createChat(roomId, message.sender(), message.message());
+
         return ChatMessageRequest.builder()
             .roomId(roomId)
             .sender(chat.getSender())

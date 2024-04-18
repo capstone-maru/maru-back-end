@@ -25,7 +25,7 @@ public class ChatRoom {
     private String name;
 
     // 채팅방 참여자
-    @OneToMany(mappedBy = "chatRoom", orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.EAGER)
     private List<MemberRoom> roomMembers;
 
     @Builder
