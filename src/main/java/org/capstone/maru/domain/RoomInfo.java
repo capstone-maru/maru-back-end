@@ -1,6 +1,7 @@
 package org.capstone.maru.domain;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.JsonElement;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -21,6 +22,7 @@ import org.capstone.maru.domain.converter.FloorTypeConverter;
 import org.capstone.maru.domain.converter.RentalTypeConverter;
 import org.capstone.maru.domain.converter.RoomTypeConverter;
 import org.capstone.maru.domain.jsonb.ExtraOption;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -28,6 +30,7 @@ import org.hibernate.type.SqlTypes;
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@DynamicUpdate
 public class RoomInfo {
 
     @Id
@@ -68,6 +71,7 @@ public class RoomInfo {
     private Short recruitmentCapacity;
 
     @JdbcTypeCode(SqlTypes.JSON)
+    @Embedded
     private ExtraOption extraOption;
 
     // -- 생성 메서드 -- //
