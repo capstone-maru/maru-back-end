@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Follow;
 import org.capstone.maru.domain.FeatureCard;
+import org.capstone.maru.domain.MemberRoom;
 import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.domain.constant.CardType;
 import org.capstone.maru.exception.RestErrorCode;
@@ -71,6 +72,8 @@ public class MemberAccountService {
 
             ProfileImage profileImage = ProfileImage.defaultImage(memberId);
 
+            List<MemberRoom> chatRooms = List.of();
+
             MemberAccount member = MemberAccount.of(
                 memberId,
                 email,
@@ -80,12 +83,12 @@ public class MemberAccountService {
                 phoneNumber,
                 memberId,
                 true,
-                true,
                 myCard,
                 mateCard,
                 followers,
                 followings,
-                profileImage
+                profileImage,
+                chatRooms
             );
 
             return MemberAccountDto.from(

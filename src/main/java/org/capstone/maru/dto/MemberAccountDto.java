@@ -1,11 +1,13 @@
 package org.capstone.maru.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import lombok.Builder;
 import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.Follow;
 import org.capstone.maru.domain.MemberAccount;
+import org.capstone.maru.domain.MemberRoom;
 import org.capstone.maru.domain.ProfileImage;
 
 @Builder
@@ -41,7 +43,7 @@ public record MemberAccountDto(
     }
 
     public MemberAccount toEntity(FeatureCard myCard, FeatureCard mateCard, Set<Follow> followers,
-        Set<Follow> followings, ProfileImage profileImage, Boolean recommendOn) {
+        Set<Follow> followings, ProfileImage profileImage, List<MemberRoom> chatRooms) {
         return MemberAccount.of(
             memberId,
             email,
@@ -51,12 +53,12 @@ public record MemberAccountDto(
             phoneNumber,
             createdBy,
             initialized,
-            recommendOn,
             myCard,
             mateCard,
             followers,
             followings,
-            profileImage
+            profileImage,
+            chatRooms
         );
     }
 }

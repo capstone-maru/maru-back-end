@@ -5,11 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Chat;
 import org.capstone.maru.domain.ChatRoom;
 import org.capstone.maru.dto.request.ChatMessageRequest;
+import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.ChatService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,8 +24,13 @@ public class ChatController {
     private final ChatService chatService;
 
     @GetMapping("/chatRoom/{roomName}")
-    public ChatRoom chatRoom(@PathVariable String roomName) {
-        return chatService.createChatRoom(roomName);
+    public ChatRoom chatRoom(
+        @PathVariable String roomName,
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal
+    ) {
+        log.info("memberPrincipal : {}", memberPrincipal.memberId());
+        
+        return chatService.createChatRoom(memberPrincipal, roomName);
     }
 
     @MessageMapping("/{roomId}") //여기로 전송되면 메서드 호출 -> WebSocketConfig prefixes 에서 적용한건 앞에 생략
