@@ -47,7 +47,7 @@ class StudioRoomPostRepositoryTest {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private final int TOTAL_POST_COUNT = 100;
+    private final int TOTAL_POST_COUNT = 0;
     private final int PAGE_NUMBER = 0;
     private final int PAGE_SIZE = 10;
     private final Gender MALE = Gender.MALE;

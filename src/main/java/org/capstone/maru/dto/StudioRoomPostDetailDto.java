@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import org.capstone.maru.domain.MemberAccount;
+import org.capstone.maru.domain.Participation;
 import org.capstone.maru.domain.StudioRoomPost;
 
 @Builder
@@ -16,6 +17,7 @@ public record StudioRoomPostDetailDto(
     String content,
     String publisherGender,
     MemberCardDto roomMateCard,
+    List<MemberAccountDto> participants,
     Set<RoomImageDto> roomImages,
     MemberAccountDto publisherAccount,
     RoomInfoDto roomInfo,
@@ -28,7 +30,8 @@ public record StudioRoomPostDetailDto(
     String modifiedBy
 ) {
 
-    public static StudioRoomPostDetailDto from(StudioRoomPost entity, Boolean isScrapped,
+    public static StudioRoomPostDetailDto from(StudioRoomPost entity,
+        Boolean isScrapped,
         Long scrapCount, Long viewCount) {
         return StudioRoomPostDetailDto
             .builder()
@@ -36,6 +39,13 @@ public record StudioRoomPostDetailDto(
             .title(entity.getTitle())
             .content(entity.getContent())
             .roomMateCard(MemberCardDto.from(entity.getRoomMateCard()))
+            .participants(
+                entity.getSharedRoomPostRecruits()
+                      .stream()
+                      .map(Participation::getRecruitedMemberAccount)
+                      .map(MemberAccountDto::from)
+                      .toList()
+            )
             .roomImages(
                 entity.getRoomImages()
                       .stream()

@@ -5,6 +5,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.MemberAccount;
+import org.capstone.maru.domain.Participation;
 import org.capstone.maru.domain.ScrapPost;
 import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.domain.ViewPost;
@@ -15,10 +16,11 @@ import org.capstone.maru.dto.StudioRoomPostDetailDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.repository.MemberAccountRepository;
-import org.capstone.maru.repository.RoomImageRepository;
+import org.capstone.maru.repository.ParticipationRepository;
 import org.capstone.maru.repository.ScrapPostRepository;
 import org.capstone.maru.repository.StudioRoomPostRepository;
 import org.capstone.maru.repository.ViewPostRepository;
+import org.capstone.maru.repository.projection.ParticipantsView;
 import org.capstone.maru.repository.projection.ScrapPostView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +36,7 @@ public class SharedRoomPostService {
 
     private final StudioRoomPostRepository studioRoomPostRepository;
     private final MemberAccountRepository memberAccountRepository;
-    private final RoomImageRepository roomImageRepository;
+    private final ParticipationRepository participationRepository;
     private final ScrapPostRepository scrapPostRepository;
     private final ViewPostRepository viewPostRepository;
 
@@ -98,11 +100,12 @@ public class SharedRoomPostService {
         // 조회수 +1 & 게시글 총 조회수
         viewPostRepository.save(ViewPost.of(postId));
         final Long viewCount = viewPostRepository.countViewPostBySharedRoomPostId(postId);
-        
+
         return studioRoomPostRepository
             .findByIdAndPublisherGender(postId, gender)
             .map(studioRoomPost -> StudioRoomPostDetailDto
-                .from(studioRoomPost, isScrapped, scrapCount, viewCount)
+                .from(studioRoomPost, isScrapped, scrapCount,
+                    viewCount)
             )
             .orElseThrow(() -> new IllegalArgumentException("그런 게시물은 존재하지 않습니다."));
     }
@@ -111,6 +114,7 @@ public class SharedRoomPostService {
         String publisherMemberId,
         StudioRoomPostDto studioRoomPostDto,
         MemberCardDto roomMateCardDto,
+        List<String> participationMemberIds,
         List<RoomImageDto> roomImagesDto,
         RoomInfoDto roomInfoDto
     ) {
@@ -120,6 +124,11 @@ public class SharedRoomPostService {
         StudioRoomPost studioRoomPost = studioRoomPostDto.toEntity(
             roomMateCardDto.toEntity(), publisherAccount, roomInfoDto.toEntity()
         );
+
+        participationMemberIds
+            .stream()
+            .map(memberAccountRepository::getReferenceById)
+            .forEach(memberAccount -> Participation.of(memberAccount, studioRoomPost));
 
         roomImagesDto
             .forEach(roomImageDto -> roomImageDto.toEntity(studioRoomPost));

@@ -20,6 +20,7 @@ public record StudioRoomPostDetailResponse(
     String title,
     String content,
     List<String> roomMateFeatures,
+    List<ParticipantResponse> participants,
     List<RoomImageResponse> roomImages,
     MemberAccountResponse publisherAccount,
     RoomInfoResponse roomInfo,
@@ -39,6 +40,12 @@ public record StudioRoomPostDetailResponse(
             .title(dto.title())
             .content(dto.content())
             .roomMateFeatures(dto.roomMateCard().myFeatures())
+            .participants(
+                dto.participants()
+                   .stream()
+                   .map(ParticipantResponse::from)
+                   .toList()
+            )
             .roomImages(
                 dto.roomImages()
                    .stream()

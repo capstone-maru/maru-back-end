@@ -24,7 +24,6 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true, exclude = {"publisherAccount", "roomImages", "roomInfo"})
 @DiscriminatorValue("S")
 @Entity
 public class StudioRoomPost extends SharedRoomPost {

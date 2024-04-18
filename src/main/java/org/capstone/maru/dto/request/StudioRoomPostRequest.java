@@ -17,6 +17,7 @@ import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
+import org.hibernate.validator.constraints.Length;
 
 public record StudioRoomPostRequest(
     @ImageFilesConstraints
@@ -29,7 +30,9 @@ public record StudioRoomPostRequest(
     RoomDetailData roomDetailData,
     @Valid
     LocationData locationData,
-    MemberFeatureRequest roomMateCardData
+    MemberFeatureRequest roomMateCardData,
+    @NotNull(message = "참가자를 반드시 넣어주세요.")
+    List<String> participationMemberIds
 ) {
 
     // -- 생성자 -- //
@@ -100,6 +103,7 @@ public record StudioRoomPostRequest(
 
     public record PostData(
         @NotBlank(message = "제목을 작성해야 합니다.")
+        @Length(max = 50, message = "제목은 50자를 넘어갈 수 없습니다.")
         String title,
         @NotBlank(message = "상세 정보를 작성해야 합니다.")
         String content
