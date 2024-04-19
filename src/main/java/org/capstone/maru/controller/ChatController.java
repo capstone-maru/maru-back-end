@@ -28,22 +28,31 @@ public class ChatController {
 
     private final ChatService chatService;
 
+    /*
+    채팅방 생성
+     */
     @PostMapping("/chatRoom/{roomName}")
-    public ChatRoom chatRoom(
+    public Long chatRoom(
         @PathVariable String roomName,
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
         @RequestBody List<String> members
     ) {
         log.info("memberPrincipal : {}", memberPrincipal.memberId());
 
-        return chatService.createChatRoom(memberPrincipal.memberId(), roomName, members);
+        return chatService.createChatRoom(memberPrincipal.memberId(), roomName, members).getId();
     }
 
+    /*
+    채팅방 멤버 보여주기
+     */
     @GetMapping("/chatRoom/{roomId}")
-    public void showChatRoomMember(@PathVariable Long roomId) {
-        chatService.showChatRoomMember(roomId);
+    public List<String> showChatRoomMember(@PathVariable Long roomId) {
+        return chatService.showChatRoomMember(roomId);
     }
 
+    /*
+    채팅방 보여주기
+     */
     @GetMapping("/chatRoom")
     public List<String> showChatRoom(@AuthenticationPrincipal MemberPrincipal memberPrincipal) {
         List<String> data = chatService.showChatRoom(memberPrincipal.memberId());
@@ -51,6 +60,15 @@ public class ChatController {
         log.info("data : {}", data);
         return data;
     }
+
+    /*
+    채팅방에 멤버 추가하기
+     */
+    @PostMapping("/chatRoom/{roomId}/member")
+    public void addChatRoomMember(@PathVariable Long roomId, @RequestBody String memberId) {
+        chatService.addChatRoomMember(roomId, memberId);
+    }
+
 
     @MessageMapping("/{roomId}") //여기로 전송되면 메서드 호출 -> WebSocketConfig prefixes 에서 적용한건 앞에 생략
     @SendTo("/room/{roomId}")

@@ -34,6 +34,8 @@ public class ChatService {
         members.add(publisher);
         ChatRoom room = ChatRoom.createRoom(name);
 
+        chatRoomRepository.save(room);
+
         /*
         채팅방 생성시 멤버들을 추가해준다.
          */
@@ -43,7 +45,7 @@ public class ChatService {
             memberRoomRepository.save(memberRoom);
         });
 
-        return chatRoomRepository.save(room);
+        return room;
     }
 
     @Transactional
@@ -56,13 +58,16 @@ public class ChatService {
     채팅방의 멤버 보여주기
      */
     @Transactional
-    public void showChatRoomMember(Long roomId) {
+    public List<String> showChatRoomMember(Long roomId) {
         ChatRoom room = chatRoomRepository.findById(roomId).get();
-        log.info("room : {}", room.getRoomMembers());
+        return room.getRoomMembers().stream().map(
+            memberRoom -> memberRoom.getMember().getMemberId()
+        ).toList();
     }
 
     /*
     채팅방에 멤버 추가하기
+    친구인 사용자만 추가할 수 있도록
      */
     @Transactional
     public void addChatRoomMember(Long roomId, String memberId) {
