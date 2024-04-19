@@ -12,9 +12,12 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import lombok.AccessLevel;
@@ -25,7 +28,7 @@ import lombok.ToString;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true, exclude = {"roomMateCard"})
+@ToString(callSuper = true, exclude = {"roomMateCard", "sharedRoomPostRecruits"})
 @Table(indexes = {
     @Index(columnList = "id", unique = true),
     @Index(columnList = "title"),
@@ -43,7 +46,7 @@ public abstract class SharedRoomPost extends AuditingFields {
     private Long id;
 
     @Setter
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 50)
     private String title;
 
     @Setter
@@ -57,6 +60,9 @@ public abstract class SharedRoomPost extends AuditingFields {
     @JoinColumn(name = "room_mate_card_id", nullable = false)
     private FeatureCard roomMateCard;
 
+    @OneToMany(mappedBy = "recruitsSharedRoomPost", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private final List<Participation> sharedRoomPostRecruits = new ArrayList<>();
+
 
     // -- 생성자 메서드 -- //
     protected SharedRoomPost(String title, String content, String publisherGender,
@@ -67,6 +73,12 @@ public abstract class SharedRoomPost extends AuditingFields {
         this.roomMateCard = roomMateCard;
     }
 
+    // -- 연관관계 편의 메서드 -- //
+    public void addSharedRoomPostRecruits(Participation participation) {
+        this.sharedRoomPostRecruits.add(participation);
+    }
+
+    // -- 비지니스 로직 -- //
 
     // -- Equals & Hash -- //
     @Override

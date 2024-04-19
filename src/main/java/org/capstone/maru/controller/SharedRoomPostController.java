@@ -91,9 +91,15 @@ public class SharedRoomPostController {
         MemberCardDto roomMateCardDto = studioRoomPostRequest.toMemberCardDto();
         List<RoomImageDto> roomImagesDto = studioRoomPostRequest.toRoomImagesDto();
         RoomInfoDto roomInfoDto = studioRoomPostRequest.toRoomInfoDto();
+        List<String> participationMemberIds = studioRoomPostRequest.participationMemberIds();
 
         sharedRoomPostService.saveStudioRoomPost(
-            principal.memberId(), studioRoomPostDto, roomMateCardDto, roomImagesDto, roomInfoDto
+            principal.memberId(),
+            studioRoomPostDto,
+            roomMateCardDto,
+            participationMemberIds,
+            roomImagesDto,
+            roomInfoDto
         );
     }
 
