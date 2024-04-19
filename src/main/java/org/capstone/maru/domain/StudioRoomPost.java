@@ -28,7 +28,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @DiscriminatorValue("S")
 @Entity
 public class StudioRoomPost extends SharedRoomPost {
-    
+
     @OneToMany(mappedBy = "studioRoomPost", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("orderNumber ASC")
     private final List<RoomImage> roomImages = new ArrayList<>();
@@ -45,10 +45,10 @@ public class StudioRoomPost extends SharedRoomPost {
 
     // -- 생성자 메서드 -- //
     private StudioRoomPost(
-        String title, String content, String publisherGender,
+        String title, String content, String publisherGender, FeatureCard roomMateCard,
         MemberAccount publisherAccount, RoomInfo roomInfo
     ) {
-        super(title, content, publisherGender);
+        super(title, content, publisherGender, roomMateCard);
         this.publisherAccount = publisherAccount;
         this.roomInfo = roomInfo;
     }
@@ -57,11 +57,12 @@ public class StudioRoomPost extends SharedRoomPost {
         String title,
         String content,
         String publisherGender,
+        FeatureCard roomMateCard,
         MemberAccount publisherAccount,
         RoomInfo roomInfo
     ) {
         return new StudioRoomPost(
-            title, content, publisherGender, publisherAccount, roomInfo
+            title, content, publisherGender, roomMateCard, publisherAccount, roomInfo
         );
     }
 

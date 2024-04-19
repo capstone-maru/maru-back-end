@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Builder;
+import org.capstone.maru.dto.MemberAccountDto;
 import org.capstone.maru.dto.StudioRoomPostDetailDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
 
@@ -18,11 +19,13 @@ public record StudioRoomPostDetailResponse(
     Long id,
     String title,
     String content,
+    List<String> roomMateFeatures,
     List<RoomImageResponse> roomImages,
-    MemberAccountWithCardsResponse publisherAccount,
+    MemberAccountResponse publisherAccount,
     RoomInfoResponse roomInfo,
     Boolean isScrapped,
     Long scrapCount,
+    Long viewCount,
     LocalDateTime createdAt,
     String createdBy,
     LocalDateTime modifiedAt,
@@ -35,6 +38,7 @@ public record StudioRoomPostDetailResponse(
             .id(dto.id())
             .title(dto.title())
             .content(dto.content())
+            .roomMateFeatures(dto.roomMateCard().myFeatures())
             .roomImages(
                 dto.roomImages()
                    .stream()
@@ -42,10 +46,11 @@ public record StudioRoomPostDetailResponse(
                    .sorted(Comparator.comparing(RoomImageResponse::order))
                    .toList()
             )
-            .publisherAccount(MemberAccountWithCardsResponse.from(dto.publisherAccount()))
+            .publisherAccount(MemberAccountResponse.from(dto.publisherAccount()))
             .roomInfo(RoomInfoResponse.from(dto.roomInfo()))
             .isScrapped(dto.isScrapped())
             .scrapCount(dto.scrapCount())
+            .viewCount(dto.viewCount())
             .createdAt(dto.createdAt())
             .createdBy(dto.createdBy())
             .modifiedAt(dto.modifiedAt())

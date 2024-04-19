@@ -1,33 +1,31 @@
 package org.capstone.maru.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.capstone.maru.security.principal.MemberPrincipal;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true)
+@ToString(callSuper = true, exclude = {"roomMateCard"})
 @Table(indexes = {
     @Index(columnList = "id", unique = true),
     @Index(columnList = "title"),
@@ -55,12 +53,18 @@ public abstract class SharedRoomPost extends AuditingFields {
     @Column
     private String publisherGender;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "room_mate_card_id", nullable = false)
+    private FeatureCard roomMateCard;
+
 
     // -- 생성자 메서드 -- //
-    protected SharedRoomPost(String title, String content, String publisherGender) {
+    protected SharedRoomPost(String title, String content, String publisherGender,
+        FeatureCard roomMateCard) {
         this.title = title;
         this.content = content;
         this.publisherGender = publisherGender;
+        this.roomMateCard = roomMateCard;
     }
 
 

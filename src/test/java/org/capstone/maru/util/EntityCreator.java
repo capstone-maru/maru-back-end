@@ -11,7 +11,6 @@ import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.domain.RoomImage;
 import org.capstone.maru.domain.RoomInfo;
 import org.capstone.maru.domain.StudioRoomPost;
-import org.capstone.maru.domain.constant.CardType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
 
@@ -21,8 +20,7 @@ public class EntityCreator {
     public static FeatureCard createMemberCard(List<String> memberFeatures, int i) {
         return FeatureCard.of(
             null,
-            memberFeatures,
-            CardType.MEMBER.name()
+            memberFeatures
         );
     }
 
@@ -38,7 +36,8 @@ public class EntityCreator {
             "1980" + i % 11,
             i % 2 == 0 ? "MALE" : "FEMALE",
             "010-1234-" + String.format("%04d", i),
-            "tester" + i,
+            "test_" + i,
+            true,
             true,
             createMemberCard(List.of(), i),
             createMemberCard(List.of(), i),
@@ -120,6 +119,7 @@ public class EntityCreator {
             "test title" + i,
             "test content" + i,
             i % 2 == 0 ? "MALE" : "FEMALE",
+            createMemberCard(List.of(), i),
             createMemberAccount(i % 100),
             createRoomInfo(i)
         );
