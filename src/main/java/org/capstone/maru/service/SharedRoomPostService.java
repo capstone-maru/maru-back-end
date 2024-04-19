@@ -40,6 +40,10 @@ public class SharedRoomPostService {
     private final ScrapPostRepository scrapPostRepository;
     private final ViewPostRepository viewPostRepository;
 
+    private final ViewCountService viewCountService;
+
+    private static final String PREFIX = "studio";
+
     @Transactional(readOnly = true)
     public Page<StudioRoomPostDto> searchStudioRoomPosts(
         String memberId,
@@ -88,6 +92,7 @@ public class SharedRoomPostService {
             );
     }
 
+    @Transactional(readOnly = true)
     public StudioRoomPostDetailDto getStudioRoomPostDetail(String memberId, Long postId,
         String gender) {
         // 스크랩 여부와 스크랩 개수
@@ -98,8 +103,9 @@ public class SharedRoomPostService {
         final Long scrapCount = scrapPostRepository.countByScrappedIdAndIsScrapped(postId);
 
         // 조회수 +1 & 게시글 총 조회수
-        viewPostRepository.save(ViewPost.of(postId));
-        final Long viewCount = viewPostRepository.countViewPostBySharedRoomPostId(postId);
+        viewCountService.increaseValue(PREFIX + String.valueOf(postId));
+        String value = viewCountService.getValue(PREFIX + String.valueOf(postId));
+        Long viewCount = Long.parseLong(value);
 
         return studioRoomPostRepository
             .findByIdAndPublisherGender(postId, gender)
@@ -133,9 +139,11 @@ public class SharedRoomPostService {
         roomImagesDto
             .forEach(roomImageDto -> roomImageDto.toEntity(studioRoomPost));
 
-        studioRoomPostRepository.save(
+        StudioRoomPost result = studioRoomPostRepository.save(
             studioRoomPost
         );
+
+        viewCountService.setValue(PREFIX + String.valueOf(result.getId()), "0");
     }
 
     public void deleteStudioRoomPost(
