@@ -25,6 +25,7 @@ spring:
       - oauth
       - datasource
       - cloud
+      - redis
 
 jwt:
   header: Authorization

@@ -2,6 +2,7 @@ package org.capstone.maru.security.token;
 
 import lombok.RequiredArgsConstructor;
 import org.capstone.maru.security.exception.RefreshTokenNotFoundException;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,8 +13,8 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository repository;
 
-    public void saveRefreshToken(String refreshToken) {
-        repository.save(new RefreshToken(refreshToken));
+    public void saveRefreshToken(String refreshToken, Long ttl) {
+        repository.save(new RefreshToken(refreshToken, ttl));
     }
 
     public void removeRefreshToken(String refreshToken) {

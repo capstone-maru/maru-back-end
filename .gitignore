@@ -204,6 +204,7 @@ gradle-app.setting
 src/main/resources/application-oauth.*
 src/main/resources/application-datasource.*
 src/main/resources/application-cloud.*
+src/main/resources/application-redis.*
 
 ### Initial Dummy Data
 src/main/resources/data.sql
