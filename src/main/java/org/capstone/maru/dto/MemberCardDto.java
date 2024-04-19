@@ -19,4 +19,10 @@ public record MemberCardDto(
             .myFeatures(entity.getMemberFeatures())
             .build();
     }
+
+    public FeatureCard toEntity() {
+        return FeatureCard.of(
+            this.myFeatures
+        );
+    }
 }

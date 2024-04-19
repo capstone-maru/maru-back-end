@@ -9,7 +9,6 @@ import java.util.List;
 import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.ProfileImage;
-import org.capstone.maru.domain.constant.CardType;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.repository.MemberAccountRepository;
 import org.capstone.maru.repository.MemberCardRepository;
@@ -29,6 +28,8 @@ class ProfileServiceTest {
     ProfileService sut;
     @Mock
     MemberAccountService memberAccountService;
+    @Mock
+    S3FileService s3FileService;
 
     @Mock
     MemberCardRepository memberCardRepository;
@@ -58,16 +59,14 @@ class ProfileServiceTest {
     private FeatureCard createMyCard() {
         return FeatureCard.of(
             1L,
-            List.of("feature1", "feature2", "feature3"),
-            CardType.MEMBER.name()
+            List.of("feature1", "feature2", "feature3")
         );
     }
 
     private FeatureCard createMateCard() {
         return FeatureCard.of(
             2L,
-            List.of("feature1", "feature2", "feature3"),
-            CardType.MEMBER.name()
+            List.of("feature1", "feature2", "feature3")
         );
     }
 
