@@ -37,13 +37,13 @@ public class FeatureCard {
     @Column(name = "features", length = 100, nullable = false)
     private List<String> memberFeatures;
 
-    @Column(name = "card_type", length = 50, nullable = false)
-    private String cardType;
-
-    public FeatureCard(Long memberCardId, List<String> memberFeatures, String cardType) {
+    private FeatureCard(Long memberCardId, List<String> memberFeatures) {
         this.id = memberCardId;
         this.memberFeatures = memberFeatures;
-        this.cardType = cardType;
+    }
+
+    private FeatureCard(List<String> memberFeatures) {
+        this.memberFeatures = memberFeatures;
     }
 
     public void updateMemberFeatures(List<String> memberFeatures) {
@@ -60,8 +60,12 @@ public class FeatureCard {
         this.location = location;
     }
 
-    public static FeatureCard of(Long memberCardId, List<String> memberFeatures, String cardType) {
-        return new FeatureCard(memberCardId, memberFeatures, cardType);
+    public static FeatureCard of(Long memberCardId, List<String> memberFeatures) {
+        return new FeatureCard(memberCardId, memberFeatures);
+    }
+
+    public static FeatureCard of(List<String> memberFeatures) {
+        return new FeatureCard(memberFeatures);
     }
 
     @Override

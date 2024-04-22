@@ -11,9 +11,10 @@ import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.domain.RoomImage;
 import org.capstone.maru.domain.RoomInfo;
 import org.capstone.maru.domain.StudioRoomPost;
-import org.capstone.maru.domain.constant.CardType;
+import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
+import org.capstone.maru.domain.jsonb.ExtraOption;
 
 public class EntityCreator {
 
@@ -21,8 +22,7 @@ public class EntityCreator {
     public static FeatureCard createMemberCard(List<String> memberFeatures, int i) {
         return FeatureCard.of(
             null,
-            memberFeatures,
-            CardType.MEMBER.name()
+            memberFeatures
         );
     }
 
@@ -38,7 +38,8 @@ public class EntityCreator {
             "1980" + i % 11,
             i % 2 == 0 ? "MALE" : "FEMALE",
             "010-1234-" + String.format("%04d", i),
-            "tester" + i,
+            "test_" + i,
+            true,
             true,
             createMemberCard(List.of(), i),
             createMemberCard(List.of(), i),
@@ -55,13 +56,7 @@ public class EntityCreator {
             CITY.SEOUL,
             "test old address" + i,
             "test road address" + i,
-            "test detail address" + i,
-            "test station" + i,
-            (short) (i % 60),
-            (short) (i % 60),
-            "test school" + i,
-            (short) (i % 60),
-            (short) (i % 60)
+            "test detail address" + i
         );
     }
 
@@ -92,6 +87,21 @@ public class EntityCreator {
         }
     }
 
+    public static FloorType randomFloorType() {
+        Random random = new Random();
+        switch (random.nextInt(3)) {
+            case 1 -> {
+                return FloorType.GROUND;
+            }
+            case 2 -> {
+                return FloorType.SEMI_BASEMENT;
+            }
+            default -> {
+                return FloorType.PENTHOUSE;
+            }
+        }
+    }
+
     public static RentalType randomRentalType() {
         Random random = new Random();
         if (random.nextInt(2) == 1) {
@@ -100,18 +110,29 @@ public class EntityCreator {
         return RentalType.JEONSE;
     }
 
+    public static ExtraOption createExtraOption(int i) {
+        return ExtraOption.of(
+            i % 2 == 0,
+            i % 2 == 1,
+            i % 2 == 0,
+            i % 2 == 1,
+            i % 2 == 0
+        );
+    }
+
     public static RoomInfo createRoomInfo(int i) {
         return RoomInfo.of(
             createAddress(i),
             randomRoomType(),
+            randomFloorType(),
             (short) (i % 20),
             (short) (i % 5),
+            (short) (i % 5),
+            i % 2 == 0,
             randomRentalType(),
-            (long) (500_0000 + (i % 11) * 1000000),
-            (long) (10_0000 * (i % 11)),
-            (long) (10000 * (i % 11)),
             (long) (10_0000 * (i % 11) / 2),
-            (short) (i % 4)
+            (short) (i % 4),
+            createExtraOption(i)
         );
     }
 
@@ -120,6 +141,7 @@ public class EntityCreator {
             "test title" + i,
             "test content" + i,
             i % 2 == 0 ? "MALE" : "FEMALE",
+            createMemberCard(List.of(), i),
             createMemberAccount(i % 100),
             createRoomInfo(i)
         );

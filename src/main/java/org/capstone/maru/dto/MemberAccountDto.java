@@ -18,6 +18,7 @@ public record MemberAccountDto(
     String birthYear,
     String gender,
     String phoneNumber,
+    String profileImage,
     LocalDateTime createdAt,
     String createdBy,
     LocalDateTime modifiedAt,
@@ -34,6 +35,7 @@ public record MemberAccountDto(
             .birthYear(entity.getBirthYear())
             .gender(entity.getGender())
             .phoneNumber(entity.getPhoneNumber())
+            .profileImage(entity.getProfileImage().getFileName())
             .createdAt(entity.getCreatedAt())
             .createdBy(entity.getCreatedBy())
             .modifiedAt(entity.getModifiedAt())

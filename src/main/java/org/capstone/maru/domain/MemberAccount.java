@@ -20,7 +20,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.capstone.maru.domain.constant.CardType;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.domain.Persistable;
@@ -29,7 +28,13 @@ import org.springframework.data.domain.Persistable;
 @DynamicInsert
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true, exclude = {"myCard", "mateCard", "followers", "followings"})
+@ToString(callSuper = true, exclude = {
+    "myCard",
+    "mateCard",
+    "followers",
+    "followings",
+    "profileImage"
+})
 @Table(indexes = {
     @Index(columnList = "memberId", unique = true),
     @Index(columnList = "email", unique = true),
@@ -153,8 +158,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             phoneNumber,
             null,
             true,
-            FeatureCard.of(null, List.of(), CardType.MEMBER.name()),
-            FeatureCard.of(null, List.of(), CardType.MEMBER.name()),
+            FeatureCard.of(null, List.of()),
+            FeatureCard.of(null, List.of()),
             new HashSet<>(),
             new HashSet<>(),
             ProfileImage.defaultImage(memberId),
