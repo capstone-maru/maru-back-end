@@ -6,14 +6,14 @@ import org.capstone.maru.dto.MemberAccountDto;
 @Builder
 public record ParticipantResponse(
     String memberId,
-    String profileImage
+    String profileImageFileName
 ) {
 
     public static ParticipantResponse from(MemberAccountDto participantDto) {
         return ParticipantResponse
             .builder()
             .memberId(participantDto.memberId())
-            .profileImage(participantDto.profileImage())
+            .profileImageFileName(participantDto.profileImageFileName())
             .build();
     }
 

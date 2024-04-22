@@ -45,9 +45,9 @@ public class StudioRoomPostCustomRepositoryImpl implements StudioRoomPostCustomR
                 inRentalTypes(searchFilterRequest.rentalTypes()),
                 containSearchKeyWords(searchKeyWords)
             )
+            .orderBy(postSort(pageable))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .orderBy(postSort(pageable))
             .fetch();
 
         JPAQuery<Long> countQuery = jpaQueryFactory
