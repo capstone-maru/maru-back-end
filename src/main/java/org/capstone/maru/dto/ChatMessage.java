@@ -1,6 +1,7 @@
 package org.capstone.maru.dto;
 
 import lombok.Builder;
+import org.capstone.maru.dto.request.ChatMessageRequest;
 
 @Builder
 public record ChatMessage(
@@ -14,6 +15,14 @@ public record ChatMessage(
             .roomId(roomId)
             .sender(sender)
             .message(message)
+            .build();
+    }
+
+    public static ChatMessage from(ChatMessageRequest message) {
+        return ChatMessage.builder()
+            .roomId(message.roomId())
+            .sender(message.sender())
+            .message(message.message())
             .build();
     }
 }

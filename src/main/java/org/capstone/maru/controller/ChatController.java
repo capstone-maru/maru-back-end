@@ -7,6 +7,7 @@ import org.capstone.maru.domain.Chat;
 import org.capstone.maru.domain.ChatRoom;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberRoom;
+import org.capstone.maru.dto.ChatMessage;
 import org.capstone.maru.dto.request.ChatMessageRequest;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.ChatService;
@@ -85,13 +86,15 @@ public class ChatController {
         log.info("roomId : {}, sender : {}, message : {}", roomId, message.sender(),
             message.message());
 
+        log.info("roomId : {}, sender : {}, message : {}", roomId, message.sender(),
+            message.message());
         //채팅 저장
-        Chat chat = chatService.createChat(roomId, message.sender(), message.message());
+        chatService.createChat(ChatMessage.from(message));
 
         return ChatMessageRequest.builder()
             .roomId(roomId)
-            .sender(chat.getSender())
-            .message(chat.getMessage())
+            .sender(message.sender())
+            .message(message.message())
             .build();
     }
 }

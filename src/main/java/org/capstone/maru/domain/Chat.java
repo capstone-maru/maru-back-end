@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.capstone.maru.dto.ChatMessage;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
@@ -16,7 +17,7 @@ public class Chat extends AuditingFields {
     private String message;
 
     @Builder
-    public Chat(Long room, String sender, String message) {
+    public Chat(String sender, String message, Long room) {
         this.roomId = room;
         this.message = message;
         this.createdBy = sender;
@@ -30,4 +31,9 @@ public class Chat extends AuditingFields {
             .message(message)
             .build();
     }
+
+    public static Chat from(ChatMessage chatMessage) {
+        return new Chat(chatMessage.sender(), chatMessage.message(), chatMessage.roomId());
+    }
+
 }

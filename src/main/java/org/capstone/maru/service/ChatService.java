@@ -8,14 +8,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.buffer.MessageBuffer;
 import org.capstone.maru.domain.Chat;
 import org.capstone.maru.domain.ChatRoom;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberRoom;
+import org.capstone.maru.dto.ChatMessage;
 import org.capstone.maru.repository.ChatRoomRepository;
 import org.capstone.maru.repository.MemberAccountRepository;
 import org.capstone.maru.repository.MemberRoomRepository;
-import org.capstone.maru.security.principal.MemberPrincipal;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -28,6 +29,8 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
 
     private final MemberRoomRepository memberRoomRepository;
+
+    private final MessageBuffer messageBuffer;
 
     @Transactional
     public ChatRoom createChatRoom(String publisher, String name, List<String> members) {
@@ -47,9 +50,8 @@ public class ChatService {
     }
 
     @Transactional
-    public Chat createChat(Long roomId, String sender, String message) {
-
-        return Chat.createChat(roomId, sender, message);
+    public void createChat(ChatMessage message) {
+        messageBuffer.addMessage(Chat.from(message));
     }
 
     /*
