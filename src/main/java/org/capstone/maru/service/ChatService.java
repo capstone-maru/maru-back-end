@@ -1,11 +1,7 @@
 package org.capstone.maru.service;
 
-import static java.util.stream.Collectors.toList;
-import static org.capstone.maru.domain.QChatRoom.chatRoom;
-
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.buffer.MessageBuffer;
@@ -14,9 +10,9 @@ import org.capstone.maru.domain.ChatRoom;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberRoom;
 import org.capstone.maru.dto.ChatMessage;
-import org.capstone.maru.repository.ChatRoomRepository;
-import org.capstone.maru.repository.MemberAccountRepository;
-import org.capstone.maru.repository.MemberRoomRepository;
+import org.capstone.maru.repository.postgre.ChatRoomRepository;
+import org.capstone.maru.repository.postgre.MemberAccountRepository;
+import org.capstone.maru.repository.postgre.MemberRoomRepository;
 import org.springframework.stereotype.Service;
 
 @Slf4j

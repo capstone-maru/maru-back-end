@@ -1,4 +1,4 @@
-package org.capstone.maru.repository;
+package org.capstone.maru.repository.mongodb;
 
 import org.capstone.maru.domain.Chat;
 import org.springframework.data.mongodb.repository.MongoRepository;

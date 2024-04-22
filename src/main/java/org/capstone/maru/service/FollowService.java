@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Follow;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.dto.FollowingDto;
-import org.capstone.maru.repository.FollowRepository;
+import org.capstone.maru.repository.postgre.FollowRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

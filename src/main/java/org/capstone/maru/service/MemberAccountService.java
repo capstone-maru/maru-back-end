@@ -14,7 +14,7 @@ import org.capstone.maru.exception.RestErrorCode;
 import org.capstone.maru.security.exception.MemberAccountExistentException;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.dto.MemberAccountDto;
-import org.capstone.maru.repository.MemberAccountRepository;
+import org.capstone.maru.repository.postgre.MemberAccountRepository;
 import org.capstone.maru.security.exception.MemberAccountNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

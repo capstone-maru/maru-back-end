@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Chat;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -18,7 +17,7 @@ public class MessageBuffer {
 
     private long lastMessageReceivedTime = System.currentTimeMillis();
     private static final int BUFFER_SIZE = 100; // 버퍼 사이즈
-    private static final long SAVE_INTERVAL_MS = 60000; // 저장 간격 (밀리초) 1초
+    private static final long SAVE_INTERVAL_MS = 30000; // 저장 간격 (밀리초) 1초
 
     private final ConcurrentLinkedQueue<Chat> messageBuffer = new ConcurrentLinkedQueue<>();
 
@@ -30,10 +29,17 @@ public class MessageBuffer {
     }
 
     // 최근 채팅은 redis에서 긁어오기
-    @Scheduled(fixedDelay = SAVE_INTERVAL_MS)
     public void saveBufferedMessagesToDatabase() {
+
+        log.info("saveBufferedMessagesToDatabase, {} : ", messageBuffer.size());
+
+        messageBuffer.forEach(
+            chat -> {
+                log.info("chat : {}", chat);
+            }
+        );
+
         long currentTime = System.currentTimeMillis();
-        log.info("saveBufferedMessagesToDatabase");
         // 버퍼에 있는 메시지를 일괄 저장하는 로직
         if (messageBuffer.size() > BUFFER_SIZE) {
             // 1000개 이상 메시지가 쌓이면 데이터베이스에 저장
