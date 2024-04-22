@@ -48,8 +48,8 @@ public class ChatService {
 
     @Transactional
     public Chat createChat(Long roomId, String sender, String message) {
-        ChatRoom room = chatRoomRepository.findById(roomId).get();
-        return Chat.createChat(room, sender, message);
+
+        return Chat.createChat(roomId, sender, message);
     }
 
     /*
