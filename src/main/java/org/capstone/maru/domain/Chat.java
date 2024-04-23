@@ -12,16 +12,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "chat")
 public class Chat extends AuditingFields {
 
+    private String id;
+
     private Long roomId;
 
     private String message;
 
     @Builder
-    public Chat(String sender, String message, Long room, LocalDateTime createdAt) {
+    public Chat(String id, String sender, String message, Long room, LocalDateTime createdAt) {
+        this.id = id;
         this.roomId = room;
         this.message = message;
         this.createdBy = sender;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = createdAt;
     }
 
     public static Chat createChat(Long room, String sender, String message) {
@@ -32,9 +35,9 @@ public class Chat extends AuditingFields {
             .build();
     }
 
-    public static Chat from(ChatMessage chatMessage, LocalDateTime createdAt) {
-        return new Chat(chatMessage.sender(), chatMessage.message(), chatMessage.roomId(),
-            createdAt);
+    public static Chat from(String id, ChatMessage chatMessage) {
+        return new Chat(id, chatMessage.sender(), chatMessage.message(), chatMessage.roomId(),
+            chatMessage.createdAt());
     }
 
 }
