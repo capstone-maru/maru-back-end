@@ -3,16 +3,12 @@ package org.capstone.maru.controller;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.capstone.maru.dto.ChatMessage;
-import org.capstone.maru.dto.request.ChatMessageRequest;
+import org.capstone.maru.dto.request.ChatPageRequest;
 import org.capstone.maru.dto.request.ChatRoomMemberRequest;
 import org.capstone.maru.dto.request.ChatRoomRequest;
+import org.capstone.maru.dto.response.ChatMessageResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.ChatService;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +28,7 @@ public class ChatController {
     /*
     채팅방 생성
      */
-    @PostMapping()
+    @PostMapping
     public Long chatRoom(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
         @RequestBody ChatRoomRequest roomRequest
@@ -54,10 +50,11 @@ public class ChatController {
     /*
     채팅방 보여주기
      */
-    @GetMapping()
+    @GetMapping
     public List<String> showChatRoom(@AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
         log.info("memberPrincipal : {}", memberPrincipal.memberId());
+
         List<String> data = chatService.showChatRoom(memberPrincipal.memberId());
 
         log.info("data : {}", data);
@@ -77,10 +74,12 @@ public class ChatController {
     /*
     최근 채팅 조회
      */
-    @GetMapping("/chat/{roomId}")
-    public List<String> showChat(@PathVariable String roomId) {
-        log.info("roomId : {}", roomId);
-        List<String> data = chatService.getChatMessages(roomId);
+    @PostMapping("/chat")
+    public List<ChatMessageResponse> showChat(@RequestBody ChatPageRequest chatPageRequest) {
+        log.info("roomId : {}", chatPageRequest.roomId());
+        List<ChatMessageResponse> data = chatService.getChatMessages(chatPageRequest.roomId(),
+            chatPageRequest.size(), chatPageRequest.page());
+
         log.info("{}", data);
         return data;
     }
