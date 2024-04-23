@@ -1,7 +1,8 @@
 package org.capstone.maru.service;
 
+import static org.hibernate.internal.util.collections.ArrayHelper.forEach;
+
 import jakarta.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,10 +14,16 @@ import org.capstone.maru.domain.ChatRoom;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberRoom;
 import org.capstone.maru.dto.ChatMessage;
+import org.capstone.maru.dto.response.ChatMessageResponse;
+import org.capstone.maru.repository.mongodb.ChatRepository;
 import org.capstone.maru.repository.postgre.ChatRoomRepository;
 import org.capstone.maru.repository.postgre.MemberAccountRepository;
 import org.capstone.maru.repository.postgre.MemberRoomRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +33,8 @@ import org.springframework.stereotype.Service;
 public class ChatService {
 
     private static final String CHAT_ROOM_PREFIX = "chat:room:";
+
+    private final ChatRepository chatRepository;
 
     private final MemberAccountRepository memberAccountRepository;
 
@@ -37,43 +46,73 @@ public class ChatService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    public void saveChatMessage(ChatMessage message,
-        LocalDateTime createdAt) {
+    @Transactional
+    public void createChat(ChatMessage message) {
+        String messageId = UUID.randomUUID().toString();
+        saveChatMessage(messageId, message);
+
+        messageBuffer.addMessage(Chat.from(messageId, message));
+    }
+
+    public void saveChatMessage(String messageId, ChatMessage message) {
         // Redis의 Hash 데이터 구조를 사용하여 채팅 메시지 저장
-        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-        String messageId = UUID.randomUUID().toString(); // 메시지 ID를 UUID로 생성
+        ListOperations<String, String> listOperations = redisTemplate.opsForList();
+        // 메시지 ID를 UUID로 생성
         log.info("messageId : {}", messageId);
         String chatKey = CHAT_ROOM_PREFIX + message.roomId();
-        hashOperations.put(chatKey, messageId + ":userId", message.sender());
-        hashOperations.put(chatKey, messageId + ":message", message.message());
-        hashOperations.put(chatKey, messageId + ":createdAt", createdAt.toString());
+
+        listOperations.rightPushAll(chatKey, messageId, message.sender(), message.message(),
+            message.createdAt().toString());
 
         redisTemplate.expire(chatKey, 1, java.util.concurrent.TimeUnit.DAYS); // 1일 뒤 만료
 
     }
 
-    public List<String> getChatMessages(String roomId) {
-        // Redis의 Hash 데이터 구조에서 해당 채팅방의 모든 메시지 조회
-        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-        String chatKey = CHAT_ROOM_PREFIX + roomId;
-        return hashOperations.values(chatKey);
-    }
-
     @Transactional
-    public void createChat(ChatMessage message) {
-        LocalDateTime createdAt = LocalDateTime.now();
-        saveChatMessage(message, createdAt);
-        messageBuffer.addMessage(Chat.from(message, createdAt));
-    }
+    public List<ChatMessageResponse> getChatMessages(Long roomId, int size, int page) {
+        // Redis의 Hash 데이터 구조에서 해당 채팅방의 모든 메시지 조회
+        ListOperations<String, String> hashOperations = redisTemplate.opsForList();
 
+        String chatKey = CHAT_ROOM_PREFIX + roomId.toString();
+        log.info("chatKey : {}", chatKey);
+
+        List<ChatMessageResponse> recentMessage = ChatMessageResponse.from(
+            hashOperations.range(chatKey, 0, -1));
+
+        List<String> messageId = recentMessage.stream().map(
+            ChatMessageResponse::messageId
+        ).toList();
+
+        log.info("messageId : {}", messageId);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        chatRepository.findAllByRoomId(roomId, pageable).stream().map(
+                chat -> {
+                    if (messageId.contains(chat.getId())) {
+                        return null;
+                    } else {
+                        return ChatMessageResponse.builder()
+                            .messageId(chat.getId())
+                            .sender(chat.getCreatedBy())
+                            .message(chat.getMessage())
+                            .createdAt(chat.getCreatedAt())
+                            .build();
+                    }
+                }
+            )
+            .filter(result -> result != null)
+            .forEach(recentMessage::add);
+
+        return recentMessage;
+    }
 
     @Transactional
     public ChatRoom createChatRoom(String publisher, String name, List<String> members) {
         members.add(publisher);
         ChatRoom room = ChatRoom.createRoom(name);
-        /*
-        채팅방 생성시 멤버들을 추가해준다.
-         */
+
+        // 채팅방 생성 후 채팅방에 멤버 추가
         members.forEach(member -> {
             MemberAccount memberAccount = memberAccountRepository.findById(member).get();
             MemberRoom memberRoom = MemberRoom.createMemberRoom(memberAccount, room);
