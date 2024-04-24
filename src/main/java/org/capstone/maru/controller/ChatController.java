@@ -7,6 +7,7 @@ import org.capstone.maru.dto.request.ChatPageRequest;
 import org.capstone.maru.dto.request.ChatRoomMemberRequest;
 import org.capstone.maru.dto.request.ChatRoomRequest;
 import org.capstone.maru.dto.response.APIResponse;
+import org.capstone.maru.dto.response.ChatMemberProfileResponse;
 import org.capstone.maru.dto.response.ChatMessageResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.ChatService;
@@ -37,6 +38,7 @@ public class ChatController {
     ) {
         log.info("memberPrincipal : {}", memberPrincipal.memberId());
 
+        // 채팅방 아이디 반환
         Long data = chatService.createChatRoom(memberPrincipal.memberId(), roomRequest.roomName(),
             roomRequest.members()).getId();
 
@@ -48,7 +50,7 @@ public class ChatController {
      */
     @GetMapping("/{roomId}")
     public ResponseEntity<APIResponse> showChatRoomMember(@PathVariable Long roomId) {
-        List<String> data = chatService.showChatRoomMember(roomId);
+        List<ChatMemberProfileResponse> data = chatService.showChatRoomMember(roomId);
         return ResponseEntity.ok(APIResponse.success(data));
     }
 
@@ -70,7 +72,7 @@ public class ChatController {
     /*
     채팅방에 멤버 추가하기
      */
-    @PostMapping("/{roomId}/member")
+    @PostMapping("/{roomId}/invite")
     public ResponseEntity<APIResponse> addChatRoomMember(@PathVariable Long roomId,
         @RequestBody ChatRoomMemberRequest memberId) {
         log.info("roomId : {}, memberId : {}", roomId, memberId);
