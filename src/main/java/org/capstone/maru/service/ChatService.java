@@ -14,6 +14,7 @@ import org.capstone.maru.domain.ChatRoom;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.MemberRoom;
 import org.capstone.maru.dto.ChatMessage;
+import org.capstone.maru.dto.response.ChatMemberProfileResponse;
 import org.capstone.maru.dto.response.ChatMessageResponse;
 import org.capstone.maru.repository.mongodb.ChatRepository;
 import org.capstone.maru.repository.postgre.ChatRoomRepository;
@@ -45,6 +46,8 @@ public class ChatService {
     private final MessageBuffer messageBuffer;
 
     private final RedisTemplate<String, String> redisTemplate;
+
+    private final S3FileService s3FileService;
 
     @Transactional
     public void createChat(ChatMessage message) {
@@ -126,10 +129,22 @@ public class ChatService {
     채팅방의 멤버 보여주기
      */
     @Transactional
-    public List<String> showChatRoomMember(Long roomId) {
+    public List<ChatMemberProfileResponse> showChatRoomMember(Long roomId) {
         ChatRoom room = chatRoomRepository.findById(roomId).get();
+
         return room.getRoomMembers().stream().map(
-            memberRoom -> memberRoom.getMember().getMemberId()
+            memberRoom -> {
+                MemberAccount memberAccount = memberRoom.getMember();
+
+                String profileImageUrl = s3FileService.getPreSignedUrlForLoad(
+                    memberAccount.getProfileImage().getFileName());
+
+                return ChatMemberProfileResponse.from(
+                    memberAccount.getMemberId(),
+                    memberAccount.getNickname(),
+                    profileImageUrl
+                );
+            }
         ).toList();
 
     }
