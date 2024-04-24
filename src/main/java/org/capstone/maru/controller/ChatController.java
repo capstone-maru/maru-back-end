@@ -14,6 +14,10 @@ import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.ChatService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -94,6 +98,7 @@ public class ChatController {
 
         log.info("{}", data);
         return ResponseEntity.ok(APIResponse.success(data));
+
     }
 }
 
