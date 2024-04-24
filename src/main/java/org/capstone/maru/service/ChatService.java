@@ -1,6 +1,8 @@
 package org.capstone.maru.service;
 
 import jakarta.transaction.Transactional;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -72,6 +74,10 @@ public class ChatService {
 
     @Transactional
     public List<ChatMessageResponse> getChatMessages(Long roomId, int size, int page) {
+
+        Comparator<ChatMessageResponse> comparator = Comparator.comparing(
+            ChatMessageResponse::createdAt).reversed();
+
         // Redis의 Hash 데이터 구조에서 해당 채팅방의 모든 메시지 조회
         ListOperations<String, String> hashOperations = redisTemplate.opsForList();
 
@@ -105,6 +111,8 @@ public class ChatService {
             )
             .filter(Objects::nonNull)
             .forEach(recentMessage::add);
+
+        recentMessage.sort(comparator);
 
         return recentMessage;
     }
