@@ -9,6 +9,7 @@ import org.capstone.maru.dto.request.ChatRoomRequest;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.dto.response.ChatMemberProfileResponse;
 import org.capstone.maru.dto.response.ChatMessageResponse;
+import org.capstone.maru.dto.response.ChatRoomResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.ChatService;
 import org.springframework.http.ResponseEntity;
@@ -63,7 +64,7 @@ public class ChatController {
 
         log.info("memberPrincipal : {}", memberPrincipal.memberId());
 
-        List<String> data = chatService.showChatRoom(memberPrincipal.memberId());
+        List<ChatRoomResponse> data = chatService.showChatRoom(memberPrincipal.memberId());
 
         log.info("data : {}", data);
         return ResponseEntity.ok(APIResponse.success(data));

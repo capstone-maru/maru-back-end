@@ -1,9 +1,8 @@
 package org.capstone.maru.service;
 
-import static org.hibernate.internal.util.collections.ArrayHelper.forEach;
-
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +15,7 @@ import org.capstone.maru.domain.MemberRoom;
 import org.capstone.maru.dto.ChatMessage;
 import org.capstone.maru.dto.response.ChatMemberProfileResponse;
 import org.capstone.maru.dto.response.ChatMessageResponse;
+import org.capstone.maru.dto.response.ChatRoomResponse;
 import org.capstone.maru.repository.mongodb.ChatRepository;
 import org.capstone.maru.repository.postgre.ChatRoomRepository;
 import org.capstone.maru.repository.postgre.MemberAccountRepository;
@@ -23,7 +23,6 @@ import org.capstone.maru.repository.postgre.MemberRoomRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -104,7 +103,7 @@ public class ChatService {
                     }
                 }
             )
-            .filter(result -> result != null)
+            .filter(Objects::nonNull)
             .forEach(recentMessage::add);
 
         return recentMessage;
@@ -171,12 +170,18 @@ public class ChatService {
 
     }
 
-    public List<String> showChatRoom(String memberId) {
+    public List<ChatRoomResponse> showChatRoom(String memberId) {
         MemberAccount memberAccount = memberAccountRepository.findById(memberId).get();
         log.info("memberAccount : {}", memberAccount.getChatRooms().get(0).getId());
 
         return memberAccount.getChatRooms().stream().map(
-            chatRoom -> chatRoom.getChatRoom().getName()
+            chatRoom -> ChatRoomResponse.from(
+                chatRoom.getChatRoom().getId(),
+                chatRoom.getChatRoom().getName(),
+                0,
+                "",
+                ""
+            )
         ).toList();
     }
 }
