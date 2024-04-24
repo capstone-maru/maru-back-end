@@ -27,8 +27,8 @@ public class FeatureCard {
     private Long id;
 
     /*
-        회원 희망 지역
-     */
+      회원 희망 지역
+    */
     @Column(name = "location", length = 50)
     @ColumnDefault("'default'")
     private String location;
@@ -37,25 +37,35 @@ public class FeatureCard {
     @Column(name = "features", length = 100, nullable = false)
     private List<String> memberFeatures;
 
-    @Column(name = "card_type", length = 50, nullable = false)
-    private String cardType;
-
-    public FeatureCard(Long memberCardId, List<String> memberFeatures, String cardType) {
+    private FeatureCard(Long memberCardId, List<String> memberFeatures) {
         this.id = memberCardId;
         this.memberFeatures = memberFeatures;
-        this.cardType = cardType;
+    }
+
+    private FeatureCard(List<String> memberFeatures) {
+        this.memberFeatures = memberFeatures;
     }
 
     public void updateMemberFeatures(List<String> memberFeatures) {
+        if (memberFeatures == null) {
+            return;
+        }
         this.memberFeatures = memberFeatures;
     }
 
     public void updateLocation(String location) {
+        if (location == null) {
+            return;
+        }
         this.location = location;
     }
 
-    public static FeatureCard of(Long memberCardId, List<String> memberFeatures, String cardType) {
-        return new FeatureCard(memberCardId, memberFeatures, cardType);
+    public static FeatureCard of(Long memberCardId, List<String> memberFeatures) {
+        return new FeatureCard(memberCardId, memberFeatures);
+    }
+
+    public static FeatureCard of(List<String> memberFeatures) {
+        return new FeatureCard(memberFeatures);
     }
 
     @Override

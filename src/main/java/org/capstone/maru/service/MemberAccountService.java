@@ -8,13 +8,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Follow;
 import org.capstone.maru.domain.FeatureCard;
+import org.capstone.maru.domain.MemberRoom;
 import org.capstone.maru.domain.ProfileImage;
-import org.capstone.maru.domain.constant.CardType;
 import org.capstone.maru.exception.RestErrorCode;
 import org.capstone.maru.security.exception.MemberAccountExistentException;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.dto.MemberAccountDto;
-import org.capstone.maru.repository.MemberAccountRepository;
+import org.capstone.maru.repository.postgre.MemberAccountRepository;
 import org.capstone.maru.security.exception.MemberAccountNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +29,8 @@ public class MemberAccountService {
 
     @Transactional(readOnly = true)
     public MemberAccountDto searchMember(String memberId) {
-        Optional<MemberAccountDto> memberAccount = memberAccountRepository.findById(memberId)
+        Optional<MemberAccountDto> memberAccount = memberAccountRepository
+            .findById(memberId)
             .map(MemberAccountDto::from);
 
         if (memberAccount.isEmpty()) {
@@ -63,13 +64,15 @@ public class MemberAccountService {
 
         if (memberAccount.isEmpty()) {
 
-            FeatureCard myCard = FeatureCard.of(null, List.of(), CardType.MEMBER.name());
-            FeatureCard mateCard = FeatureCard.of(null, List.of(), CardType.MEMBER.name());
+            FeatureCard myCard = FeatureCard.of(null, List.of());
+            FeatureCard mateCard = FeatureCard.of(null, List.of());
 
             Set<Follow> followers = new HashSet<>();
             Set<Follow> followings = new HashSet<>();
 
             ProfileImage profileImage = ProfileImage.defaultImage(memberId);
+
+            List<MemberRoom> chatRooms = List.of();
 
             MemberAccount member = MemberAccount.of(
                 memberId,
@@ -84,7 +87,8 @@ public class MemberAccountService {
                 mateCard,
                 followers,
                 followings,
-                profileImage
+                profileImage,
+                chatRooms
             );
 
             return MemberAccountDto.from(

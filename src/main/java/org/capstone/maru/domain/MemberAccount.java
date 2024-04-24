@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -18,12 +19,22 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.capstone.maru.domain.constant.CardType;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.domain.Persistable;
 
+@Slf4j
+@DynamicInsert
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true, exclude = {"myCard", "mateCard", "followers", "followings"})
+@ToString(callSuper = true, exclude = {
+    "myCard",
+    "mateCard",
+    "followers",
+    "followings",
+    "profileImage"
+})
 @Table(indexes = {
     @Index(columnList = "memberId", unique = true),
     @Index(columnList = "email", unique = true),
@@ -55,6 +66,10 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @Column(nullable = false)
     private Boolean initialized;
 
+    @Column(nullable = false)
+    @ColumnDefault("'TRUE'")
+    private Boolean recommendOn;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(
         name = "myCardId",
@@ -84,6 +99,10 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     )
     private ProfileImage profileImage;
 
+    // 연관관계 table
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<MemberRoom> chatRooms;
+
     private MemberAccount(
         String memberId,
         String email,
@@ -93,11 +112,13 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         String phoneNumber,
         String createdBy,
         Boolean initialized,
+
         FeatureCard myCard,
         FeatureCard mateCard,
         Set<Follow> followers,
         Set<Follow> followings,
-        ProfileImage profileImage
+        ProfileImage profileImage,
+        List<MemberRoom> chatRooms
     ) {
         this.memberId = memberId;
         this.email = email;
@@ -116,6 +137,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         this.followers = followers;
         this.followings = followings;
         this.profileImage = profileImage;
+
+        this.chatRooms = chatRooms;
     }
 
     public static MemberAccount of(
@@ -135,11 +158,12 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             phoneNumber,
             null,
             true,
-            FeatureCard.of(null, List.of(), CardType.MEMBER.name()),
-            FeatureCard.of(null, List.of(), CardType.MEMBER.name()),
+            FeatureCard.of(null, List.of()),
+            FeatureCard.of(null, List.of()),
             new HashSet<>(),
             new HashSet<>(),
-            ProfileImage.defaultImage(memberId)
+            ProfileImage.defaultImage(memberId),
+            new ArrayList<>()
         );
     }
 
@@ -156,8 +180,11 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         FeatureCard mateCard,
         Set<Follow> followers,
         Set<Follow> followings,
-        ProfileImage profileImage
+        ProfileImage profileImage,
+        List<MemberRoom> chatRooms
     ) {
+        log.info("chatRooms: {}", chatRooms);
+
         return new MemberAccount(
             memberId,
             email,
@@ -171,9 +198,12 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             mateCard,
             followers,
             followings,
-            profileImage
+            profileImage,
+            chatRooms
         );
     }
+
+    // -- equals & hashCode -- //
 
     @Override
     public boolean equals(Object o) {
@@ -208,6 +238,9 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
        true면 user의 특성이 없는 것으로 판단
      */
     public void updateInitialized(List<String> myFeatures) {
+        /*
+        feature 가 없는 경우
+        */
         if (myFeatures == null || myFeatures.isEmpty()) {
             this.initialized = true;
             return;
@@ -217,5 +250,13 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
 
     public void updateProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public Boolean updateRecommendOn(Boolean recommendOn) {
+        if (recommendOn == null) {
+            return this.recommendOn;
+        }
+        this.recommendOn = recommendOn;
+        return this.recommendOn;
     }
 }

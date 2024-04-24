@@ -1,11 +1,13 @@
 package org.capstone.maru.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import lombok.Builder;
 import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.Follow;
 import org.capstone.maru.domain.MemberAccount;
+import org.capstone.maru.domain.MemberRoom;
 import org.capstone.maru.domain.ProfileImage;
 
 @Builder
@@ -16,6 +18,7 @@ public record MemberAccountDto(
     String birthYear,
     String gender,
     String phoneNumber,
+    String profileImage,
     LocalDateTime createdAt,
     String createdBy,
     LocalDateTime modifiedAt,
@@ -32,6 +35,7 @@ public record MemberAccountDto(
             .birthYear(entity.getBirthYear())
             .gender(entity.getGender())
             .phoneNumber(entity.getPhoneNumber())
+            .profileImage(entity.getProfileImage().getFileName())
             .createdAt(entity.getCreatedAt())
             .createdBy(entity.getCreatedBy())
             .modifiedAt(entity.getModifiedAt())
@@ -41,7 +45,7 @@ public record MemberAccountDto(
     }
 
     public MemberAccount toEntity(FeatureCard myCard, FeatureCard mateCard, Set<Follow> followers,
-        Set<Follow> followings, ProfileImage profileImage) {
+        Set<Follow> followings, ProfileImage profileImage, List<MemberRoom> chatRooms) {
         return MemberAccount.of(
             memberId,
             email,
@@ -55,7 +59,8 @@ public record MemberAccountDto(
             mateCard,
             followers,
             followings,
-            profileImage
+            profileImage,
+            chatRooms
         );
     }
 }
