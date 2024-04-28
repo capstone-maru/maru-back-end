@@ -47,4 +47,8 @@ public class FollowService {
 
         return FollowingDto.from(followingList);
     }
+
+    public void unfollowUser(String s, String memberId) {
+        throw new UnsupportedOperationException("아직 구현되지 않은 기능입니다.");
+    }
 }
