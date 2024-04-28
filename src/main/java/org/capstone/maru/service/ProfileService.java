@@ -10,9 +10,8 @@ import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.response.AuthResponse;
-import org.capstone.maru.repository.MemberCardRepository;
-import org.capstone.maru.repository.ProfileImageRepository;
-import org.capstone.maru.security.principal.MemberPrincipal;
+import org.capstone.maru.repository.postgre.MemberCardRepository;
+import org.capstone.maru.repository.postgre.ProfileImageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
