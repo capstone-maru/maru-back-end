@@ -53,6 +53,7 @@ public class ChatService {
     @Transactional
     public void createChat(ChatMessage message) {
         String messageId = UUID.randomUUID().toString();
+
         saveChatMessage(messageId, message);
 
         messageBuffer.addMessage(Chat.from(messageId, message));
@@ -63,13 +64,13 @@ public class ChatService {
         ListOperations<String, String> listOperations = redisTemplate.opsForList();
         // 메시지 ID를 UUID로 생성
         log.info("messageId : {}", messageId);
+
         String chatKey = CHAT_ROOM_PREFIX + message.roomId();
 
         listOperations.rightPushAll(chatKey, messageId, message.sender(), message.message(),
             message.createdAt().toString());
-
+        
         redisTemplate.expire(chatKey, 1, java.util.concurrent.TimeUnit.DAYS); // 1일 뒤 만료
-
     }
 
     @Transactional
@@ -122,12 +123,17 @@ public class ChatService {
         members.add(publisher);
         ChatRoom room = ChatRoom.createRoom(name);
 
+        log.info("room : {}", room.getId());
+
         // 채팅방 생성 후 채팅방에 멤버 추가
         members.forEach(member -> {
             MemberAccount memberAccount = memberAccountRepository.findById(member).get();
+
             MemberRoom memberRoom = MemberRoom.createMemberRoom(memberAccount, room);
             memberRoomRepository.save(memberRoom);
         });
+
+        log.info("finish create chat room");
 
         return chatRoomRepository.save(room);
     }
