@@ -122,12 +122,17 @@ public class ChatService {
         members.add(publisher);
         ChatRoom room = ChatRoom.createRoom(name);
 
+        log.info("room : {}", room.getId());
+
         // 채팅방 생성 후 채팅방에 멤버 추가
         members.forEach(member -> {
             MemberAccount memberAccount = memberAccountRepository.findById(member).get();
+            
             MemberRoom memberRoom = MemberRoom.createMemberRoom(memberAccount, room);
             memberRoomRepository.save(memberRoom);
         });
+
+        log.info("finish create chat room");
 
         return chatRoomRepository.save(room);
     }
