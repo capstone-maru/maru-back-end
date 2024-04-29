@@ -114,6 +114,18 @@ public class ProfileController {
     }
 
     /*
+     * 팔로우 취소
+     */
+    @PostMapping("/{memberId}/unfollow")
+    public ResponseEntity<APIResponse> unfollow(
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+        @PathVariable String memberId
+    ) {
+        followService.unfollowUser(memberPrincipal.memberId(), memberId);
+        return ResponseEntity.ok(APIResponse.success());
+    }
+
+    /*
      * 내가 팔로잉한 사람 조회
      */
     @GetMapping("/follow")
@@ -139,4 +151,5 @@ public class ProfileController {
 
         return ResponseEntity.ok(APIResponse.success());
     }
+
 }

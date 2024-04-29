@@ -43,6 +43,7 @@ public class ChatController {
     ) {
         log.info("memberPrincipal : {}", memberPrincipal.memberId());
 
+        log.info("roomRequest : {}", roomRequest);
         // 채팅방 아이디 반환
         Long data = chatService.createChatRoom(memberPrincipal.memberId(), roomRequest.roomName(),
             roomRequest.members()).getId();
