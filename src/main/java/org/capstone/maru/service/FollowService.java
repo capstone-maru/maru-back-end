@@ -57,7 +57,14 @@ public class FollowService {
         return FollowingDto.from(followingList);
     }
 
-    public void unfollowUser(String s, String memberId) {
-        throw new UnsupportedOperationException("아직 구현되지 않은 기능입니다.");
+    public void unfollowUser(String memberId, String followingMemberId) {
+        MemberAccount followerAccount = memberAccountService.searchMemberAccount(memberId);
+        MemberAccount followingAccount = memberAccountService.searchMemberAccount(
+            followingMemberId);
+
+        Follow follow = followRepository.findByFollowerAndFollowing(followerAccount,
+            followingAccount).orElseThrow(() -> new IllegalArgumentException("팔로우 관계가 존재하지 않습니다."));
+
+        followRepository.delete(follow);
     }
 }
