@@ -33,8 +33,6 @@ public class SocketController {
         log.info("roomId : {}, sender : {}, message : {}", roomId, message.sender(),
             message.message());
 
-        log.info("roomId : {}, sender : {}, message : {}", roomId, message.sender(),
-            message.message());
         //채팅 저장
         chatService.createChat(ChatMessage.from(message));
 
