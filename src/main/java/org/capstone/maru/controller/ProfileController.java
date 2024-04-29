@@ -6,6 +6,7 @@ import org.capstone.maru.dto.FollowingDto;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
+import org.capstone.maru.dto.request.MemberIdRequest;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.FollowService;
@@ -63,18 +64,20 @@ public class ProfileController {
         return ResponseEntity.ok(APIResponse.success(result));
     }
 
-    @GetMapping("/{memberId}")
+
+    @PostMapping
     public ResponseEntity<APIResponse> getMemberProfile(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
-        @PathVariable String memberId
+        @RequestBody MemberIdRequest request
     ) {
-        log.info("call getProfile : {}", memberId);
+        log.info("call getProfile : {}", request.memberId());
 
-        MemberProfileDto result = profileService.getMemberProfile(memberId,
+        MemberProfileDto result = profileService.getMemberProfile(request.memberId(),
             memberPrincipal.gender());
 
         return ResponseEntity.ok(APIResponse.success(result));
     }
+
 
     @GetMapping("/card/{cardId}")
     public ResponseEntity<APIResponse> getCardData(
@@ -104,24 +107,24 @@ public class ProfileController {
     /*
      * 팔로우
      */
-    @PostMapping("/{memberId}/follow")
+    @PostMapping("/follow")
     public ResponseEntity<APIResponse> follow(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
-        @PathVariable String memberId
+        @RequestBody MemberIdRequest request
     ) {
-        followService.followUser(memberPrincipal.memberId(), memberId);
+        followService.followUser(memberPrincipal.memberId(), request.memberId());
         return ResponseEntity.ok(APIResponse.success());
     }
 
     /*
      * 팔로우 취소
      */
-    @PostMapping("/{memberId}/unfollow")
+    @PostMapping("/unfollow")
     public ResponseEntity<APIResponse> unfollow(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
-        @PathVariable String memberId
+        @RequestBody MemberIdRequest request
     ) {
-        followService.unfollowUser(memberPrincipal.memberId(), memberId);
+        followService.unfollowUser(memberPrincipal.memberId(), request.memberId());
         return ResponseEntity.ok(APIResponse.success());
     }
 
