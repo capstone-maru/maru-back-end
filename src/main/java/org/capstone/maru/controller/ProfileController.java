@@ -8,6 +8,7 @@ import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
 import org.capstone.maru.dto.request.MemberIdRequest;
 import org.capstone.maru.dto.response.APIResponse;
+import org.capstone.maru.dto.response.SimpleMemberProfileResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.FollowService;
 import org.capstone.maru.service.ProfileService;
@@ -31,6 +32,22 @@ public class ProfileController {
     private final ProfileService profileService;
     private final FollowService followService;
 
+    /*
+     * 이메일로 사용자 프로필 검색
+     */
+    @GetMapping("/search/{email}")
+    public ResponseEntity<APIResponse> searchProfile(
+        @PathVariable String email
+    ) {
+        log.info("call searchProfile : {}", email);
+
+        SimpleMemberProfileResponse result = profileService.searchProfile(email);
+        return ResponseEntity.ok(APIResponse.success(result));
+    }
+
+    /*
+     * 내 프로필 수정
+     */
     @PutMapping("/{cardId}")
     public ResponseEntity<APIResponse> updateMemberCard(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
@@ -154,5 +171,4 @@ public class ProfileController {
 
         return ResponseEntity.ok(APIResponse.success());
     }
-
 }
