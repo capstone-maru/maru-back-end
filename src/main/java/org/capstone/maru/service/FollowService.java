@@ -1,5 +1,7 @@
 package org.capstone.maru.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class FollowService {
 
     private final MemberAccountService memberAccountService;
+
+    private final S3FileService s3FileService;
 
     private final FollowRepository followRepository;
 
@@ -38,11 +42,16 @@ public class FollowService {
         MemberAccount followerAccount = memberAccountService.searchMemberAccount(follower);
 
         log.info("followerAccount: {}", followerAccount.getFollowings());
-        Map<String, String> followingList = followerAccount
-            .getFollowings().stream().collect(Collectors.toMap(
-                follow -> follow.getFollowing().getMemberId(),
-                follow -> follow.getFollowing().getNickname()
-            ));
+
+        Map<String, List<String>> followingList = followerAccount
+            .getFollowings().stream().collect(
+                Collectors.toMap(
+                    follow -> follow.getFollowing().getMemberId(),
+                    follow -> List.of(
+                        follow.getFollowing().getNickname(),
+                        s3FileService.getPreSignedUrlForLoad(
+                            follow.getFollowing().getProfileImage().getFileName()))));
+
         log.info("followingList: {}", followingList);
 
         return FollowingDto.from(followingList);
