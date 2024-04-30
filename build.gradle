@@ -89,6 +89,9 @@ dependencies {
     //mongodb 설정
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
+    //firebase 설정
+    implementation 'com.google.firebase:firebase-admin'
+
 }
 
 tasks.named('test') {
