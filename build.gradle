@@ -90,7 +90,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
     //firebase 설정
-    implementation 'com.google.firebase:firebase-admin'
+    implementation 'com.google.firebase:firebase-admin:8.1.0'
 
 }
 
