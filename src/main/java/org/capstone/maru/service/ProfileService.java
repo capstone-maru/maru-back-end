@@ -144,8 +144,20 @@ public class ProfileService {
         MemberAccount memberAccount = memberAccountService.searchMemberAccountByEmail(email);
         ProfileImage profileImage = memberAccount.getProfileImage();
         String imgURL = s3FileService.getPreSignedUrlForLoad(profileImage.getFileName());
-        
+
         return SimpleMemberProfileResponse.from(memberAccount.getMemberId(),
             memberAccount.getNickname(), imgURL);
+    }
+
+    public List<SimpleMemberProfileResponse> searchContainByEmail(String word) {
+        List<MemberAccount> memberAccounts = memberAccountService.searchContainByEmail(word);
+
+        return memberAccounts.stream().map(memberAccount -> {
+            ProfileImage profileImage = memberAccount.getProfileImage();
+            String imgURL = s3FileService.getPreSignedUrlForLoad(profileImage.getFileName());
+
+            return SimpleMemberProfileResponse.from(memberAccount.getMemberId(),
+                memberAccount.getNickname(), imgURL);
+        }).toList();
     }
 }

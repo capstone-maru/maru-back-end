@@ -101,5 +101,17 @@ public class ChatController {
         return ResponseEntity.ok(APIResponse.success(data));
 
     }
+
+    /*
+    채팅방 나가기
+     */
+    @PostMapping("/{roomId}/exit")
+    public ResponseEntity<APIResponse> exitChatRoom(@PathVariable Long roomId,
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        log.info("roomId : {}, memberId : {}", roomId, memberPrincipal.memberId());
+        chatService.exitChatRoom(roomId, memberPrincipal.memberId());
+
+        return ResponseEntity.ok(APIResponse.success("success"));
+    }
 }
 

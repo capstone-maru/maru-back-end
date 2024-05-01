@@ -34,7 +34,7 @@ public class SocketController {
             message.message());
 
         //채팅 저장
-        chatService.createChat(ChatMessage.from(message));
+        chatService.createChat(ChatMessage.currentMessageFrom(message));
 
         return ChatMessageRequest.builder()
             .roomId(roomId)

@@ -120,4 +120,8 @@ public class MemberAccountService {
         return memberAccountRepository.findByEmail(email)
             .orElseThrow(() -> new MemberAccountNotFoundException(RestErrorCode.MEMBER_NOT_FOUND));
     }
+
+    public List<MemberAccount> searchContainByEmail(String word) {
+        return memberAccountRepository.findByEmailContaining(word);
+    }
 }

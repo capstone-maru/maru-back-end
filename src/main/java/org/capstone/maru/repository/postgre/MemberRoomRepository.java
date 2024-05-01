@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRoomRepository extends JpaRepository<MemberRoom, Long> {
 
+    MemberRoom findByMemberIdAndChatRoomId(String memberId, Long chatRoomId);
 }

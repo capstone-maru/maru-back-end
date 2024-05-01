@@ -22,7 +22,7 @@ public record ChatMessage(
             .build();
     }
 
-    public static ChatMessage from(ChatMessageRequest message) {
+    public static ChatMessage currentMessageFrom(ChatMessageRequest message) {
         return ChatMessage.builder()
             .roomId(message.roomId())
             .sender(message.sender())
