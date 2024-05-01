@@ -26,6 +26,7 @@ public class ChatHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
 
         log.info("preSend : {}", message);
+
         StompHeaderAccessor headerAccessor = MessageHeaderAccessor.getAccessor(message,
             StompHeaderAccessor.class);
 
@@ -40,10 +41,6 @@ public class ChatHandler implements ChannelInterceptor {
         log.info("authorizationHeader : {}", authorizationHeader);
 
         log.info("stompCommand : {}", headerAccessor.getCommand());
-
-        if (Objects.equals(command, StompCommand.DISCONNECT)) {
-            log.info(authorizationHeader);
-        }
         
         if (!Objects.equals(command, StompCommand.CONNECT)) {
             return message;

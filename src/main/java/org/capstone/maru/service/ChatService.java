@@ -277,4 +277,13 @@ public class ChatService {
 
         return ChatMessageResponse.from(chat);
     }
+
+    /*
+     * 채팅방 나가는 경우
+     */
+    public void exitChatRoom(Long roomId, String memberId) {
+        MemberRoom memberRoom = memberRoomRepository.findByMemberIdAndChatRoomId(memberId, roomId);
+
+        memberRoom.updateLastCheckTime();
+    }
 }
