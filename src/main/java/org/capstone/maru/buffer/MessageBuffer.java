@@ -58,7 +58,6 @@ public class MessageBuffer {
             messageBuffer.clear();
             lastMessageReceivedTime = currentTime;
         }
-
     }
 //
 //    public void removeMessages(Long chatId) {

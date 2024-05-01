@@ -52,6 +52,7 @@ public class MemberAccountService {
         return memberAccount.get();
     }
 
+    @Transactional
     public MemberAccountDto login(
         String memberId,
         String email,
@@ -110,5 +111,17 @@ public class MemberAccountService {
      */
     public Boolean isInitialized(String memberId) {
         return memberAccountRepository.getInitializedById(memberId).getInitialized();
+    }
+
+    /*
+     * 이메일로 회원 찾기
+     */
+    public MemberAccount searchMemberAccountByEmail(String email) {
+        return memberAccountRepository.findByEmail(email)
+            .orElseThrow(() -> new MemberAccountNotFoundException(RestErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    public List<MemberAccount> searchContainByEmail(String word) {
+        return memberAccountRepository.findByEmailContaining(word);
     }
 }

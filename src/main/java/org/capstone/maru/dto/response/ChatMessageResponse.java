@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.domain.Chat;
 import org.capstone.maru.dto.ChatMessage;
 
 @Slf4j
@@ -33,6 +34,15 @@ public record ChatMessageResponse(
 
         log.info("chatMessages : {}", chatMessages);
         return chatMessages;
+    }
+
+    public static ChatMessageResponse from(Chat chat) {
+        return ChatMessageResponse.builder()
+            .messageId(chat.getId())
+            .sender(chat.getCreatedBy())
+            .message(chat.getMessage())
+            .createdAt(chat.getCreatedAt())
+            .build();
     }
 
 }

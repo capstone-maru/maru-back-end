@@ -43,6 +43,7 @@ public class ChatController {
     ) {
         log.info("memberPrincipal : {}", memberPrincipal.memberId());
 
+        log.info("roomRequest : {}", roomRequest);
         // 채팅방 아이디 반환
         Long data = chatService.createChatRoom(memberPrincipal.memberId(), roomRequest.roomName(),
             roomRequest.members()).getId();
@@ -86,19 +87,31 @@ public class ChatController {
         return ResponseEntity.ok(APIResponse.success("success"));
     }
 
-
     /*
     최근 채팅 조회
      */
     @PostMapping("/chat")
     public ResponseEntity<APIResponse> showChat(@RequestBody ChatPageRequest chatPageRequest) {
         log.info("roomId : {}", chatPageRequest.roomId());
+
         List<ChatMessageResponse> data = chatService.getChatMessages(chatPageRequest.roomId(),
             chatPageRequest.size(), chatPageRequest.page());
 
         log.info("{}", data);
         return ResponseEntity.ok(APIResponse.success(data));
 
+    }
+
+    /*
+    채팅방 나가기
+     */
+    @PostMapping("/{roomId}/exit")
+    public ResponseEntity<APIResponse> exitChatRoom(@PathVariable Long roomId,
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+        log.info("roomId : {}, memberId : {}", roomId, memberPrincipal.memberId());
+        chatService.exitChatRoom(roomId, memberPrincipal.memberId());
+
+        return ResponseEntity.ok(APIResponse.success("success"));
     }
 }
 

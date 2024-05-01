@@ -216,4 +216,7 @@ src/main/resources/data.sql
 .jpb/
 .docker-compose.yml
 
+### json file
+src/main/resources/*.json
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,intellij+all,java,gradle
