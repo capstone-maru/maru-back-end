@@ -39,7 +39,7 @@ jobs:
           touch ./application-cloud.yaml
           echo "${{ secrets.APPLICATION_CLOUD }}" > ./application-cloud.yaml
 
-      - name: make application-cloud.yaml
+      - name: make firestore.json
         run: |
           cd ./src/main/resources
           touch ./firestore.json
