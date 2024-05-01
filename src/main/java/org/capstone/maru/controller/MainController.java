@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.security.token.TokenProvider;
-import org.capstone.maru.service.FirestoreService;
+//import org.capstone.maru.service.FirestoreService;
 import org.capstone.maru.service.S3FileService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +24,7 @@ public class MainController {
 
     private final TokenProvider tokenProvider;
 
-    private final FirestoreService firestoreService;
+//    private final FirestoreService firestoreService;
 
     @GetMapping("/")
     public String root() {
@@ -46,9 +46,9 @@ public class MainController {
         );
     }
 
-    @GetMapping("/test2")
-    public void test2() {
-        firestoreService.printAllDocumentsInCollection();
-    }
+//    @GetMapping("/test2")
+//    public void test2() {
+//        firestoreService.printAllDocumentsInCollection();
+//    }
 
 }
