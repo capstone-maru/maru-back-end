@@ -28,7 +28,7 @@ public class MainController {
 
     @GetMapping("/")
     public String root() {
-        return "health check!";
+        return "health check is running!";
     }
 
     @GetMapping("/test")
@@ -50,5 +50,5 @@ public class MainController {
     public void test2() {
         firestoreService.printAllDocumentsInCollection();
     }
-    
+
 }
