@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.capstone.maru.dto.ChatMessage;
+import org.springframework.data.mongodb.core.index.IndexDirection;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
@@ -14,6 +16,7 @@ public class Chat extends AuditingFields {
 
     private String id;
 
+    @Indexed(direction = IndexDirection.ASCENDING)
     private Long roomId;
 
     private String message;

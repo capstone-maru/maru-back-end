@@ -1,5 +1,6 @@
 package org.capstone.maru.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.dto.FollowingDto;
@@ -35,9 +36,9 @@ public class ProfileController {
     /*
      * 이메일로 사용자 프로필 검색
      */
-    @GetMapping("/search/{email}")
+    @PostMapping("/search")
     public ResponseEntity<APIResponse> searchProfile(
-        @PathVariable String email
+        @RequestBody String email
     ) {
         log.info("call searchProfile : {}", email);
 
@@ -170,5 +171,18 @@ public class ProfileController {
         profileService.updateProfileImage(memberPrincipal.memberId(), fileName);
 
         return ResponseEntity.ok(APIResponse.success());
+    }
+
+    /*
+     * 단어가 포함된 사용자 검색 by email
+     */
+    @PostMapping("/search/contain")
+    public ResponseEntity<APIResponse> searchProfileByEmail(
+        @RequestBody String email
+    ) {
+        log.info("call searchProfileByEmail : {}", email);
+
+        List<SimpleMemberProfileResponse> result = profileService.searchContainByEmail(email);
+        return ResponseEntity.ok(APIResponse.success(result));
     }
 }

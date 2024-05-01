@@ -1,6 +1,7 @@
 package org.capstone.maru.dto.response;
 
 import lombok.Builder;
+import org.capstone.maru.domain.ChatRoom;
 
 @Builder
 public record ChatRoomResponse(
@@ -20,6 +21,19 @@ public record ChatRoomResponse(
             .unreadCount(unreadCount)
             .lastMessage(lastMessage)
             .lastMessageTime(lastMessageTime)
+            .build();
+    }
+
+    public static ChatRoomResponse from(ChatRoom chatRoom, int unreadCount,
+        ChatMessageResponse lastMessage) {
+
+        return ChatRoomResponse
+            .builder()
+            .roomId(chatRoom.getId())
+            .roomName(chatRoom.getName())
+            .unreadCount(unreadCount)
+            .lastMessage(lastMessage.message())
+            .lastMessageTime(lastMessage.createdAt().toString())
             .build();
     }
 
