@@ -80,6 +80,8 @@ jobs:
             
             docker rm $(docker ps -aq)
             
+            docker rmi $(docker images -q)
+            
             docker-compose up -d
             
             docker image prune -a -f
