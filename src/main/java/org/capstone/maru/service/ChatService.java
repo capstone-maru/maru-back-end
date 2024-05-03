@@ -84,7 +84,7 @@ public class ChatService {
     채팅방 입장시 채팅방의 메시지 조회
      */
     @Transactional
-    public List<ChatMessageResponse> getChatMessages(Long roomId, int size, int page) {
+    public List<ChatMessageResponse> getChatMessages(Long roomId, Pageable pageable) {
 
         Comparator<ChatMessageResponse> comparator = Comparator.comparing(
             ChatMessageResponse::createdAt).reversed();
@@ -108,8 +108,7 @@ public class ChatService {
         /*
         MongoDB에서 채팅방의 메시지 조회, 최근 메시지가 먼저 조회되도록 정렬
          */
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-
+        
         chatRepository.findAllByRoomId(roomId, pageable).stream().map(
                 chat -> {
                     if (messageId.contains(chat.getId())) {
