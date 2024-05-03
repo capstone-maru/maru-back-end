@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import org.capstone.maru.domain.Address;
-import org.capstone.maru.domain.Address.CITY;
 import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.ProfileImage;
@@ -40,12 +39,12 @@ public class EntityCreator {
             "010-1234-" + String.format("%04d", i),
             "test_" + i,
             true,
-            true,
             createMemberCard(List.of(), i),
             createMemberCard(List.of(), i),
             null,
             null,
-            createProfileImage(i)
+            createProfileImage(i),
+            null
         );
     }
 
@@ -53,10 +52,8 @@ public class EntityCreator {
     // -- 게시글 관련 생성 메서드 -- //
     public static Address createAddress(int i) {
         return Address.of(
-            CITY.SEOUL,
             "test old address" + i,
-            "test road address" + i,
-            "test detail address" + i
+            "test road address" + i
         );
     }
 
