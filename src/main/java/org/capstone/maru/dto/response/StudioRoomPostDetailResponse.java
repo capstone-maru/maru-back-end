@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Builder;
+import org.capstone.maru.domain.jsonb.MemberFeatures;
 import org.capstone.maru.dto.MemberAccountDto;
 import org.capstone.maru.dto.StudioRoomPostDetailDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
@@ -19,7 +20,7 @@ public record StudioRoomPostDetailResponse(
     Long id,
     String title,
     String content,
-    List<String> roomMateFeatures,
+    MemberFeatures roomMateFeatures,
     List<ParticipantResponse> participants,
     List<RoomImageResponse> roomImages,
     MemberAccountResponse publisherAccount,
