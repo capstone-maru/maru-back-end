@@ -282,8 +282,10 @@ public class ChatService {
      * 채팅방 나가는 경우
      */
     public void exitChatRoom(Long roomId, String memberId) {
+        log.info("exitChatRoom : {}, {}", roomId, memberId);
         MemberRoom memberRoom = memberRoomRepository.findByMemberIdAndChatRoomId(memberId, roomId);
 
+        log.info("memberRoom : {}", memberRoom.getId());
         memberRoom.updateLastCheckTime();
     }
 }
