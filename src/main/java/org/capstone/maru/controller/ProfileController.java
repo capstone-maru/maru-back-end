@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.dto.FollowingDto;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
+import org.capstone.maru.dto.request.EmailSearchRequst;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
 import org.capstone.maru.dto.request.MemberIdRequest;
 import org.capstone.maru.dto.response.APIResponse;
@@ -38,11 +39,11 @@ public class ProfileController {
      */
     @PostMapping("/search")
     public ResponseEntity<APIResponse> searchProfile(
-        @RequestBody String email
+        @RequestBody EmailSearchRequst email
     ) {
-        log.info("call searchProfile : {}", email);
+        log.info("call searchProfile : {}", email.email());
 
-        SimpleMemberProfileResponse result = profileService.searchProfile(email);
+        SimpleMemberProfileResponse result = profileService.searchProfile(email.email());
         return ResponseEntity.ok(APIResponse.success(result));
     }
 
