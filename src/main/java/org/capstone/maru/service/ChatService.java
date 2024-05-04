@@ -146,7 +146,9 @@ public class ChatService {
      */
     @Transactional
     public ChatRoom createChatRoom(String publisher, String name, List<String> members) {
+        // 본인도 추가
         members.add(publisher);
+
         ChatRoom room = ChatRoom.createRoom(name);
 
         log.info("room : {}", room.getId());
