@@ -65,8 +65,8 @@ public class MemberAccountService {
 
         if (memberAccount.isEmpty()) {
 
-            FeatureCard myCard = FeatureCard.of(null, List.of());
-            FeatureCard mateCard = FeatureCard.of(null, List.of());
+            FeatureCard myCard = FeatureCard.of(null, null);
+            FeatureCard mateCard = FeatureCard.of(null, null);
 
             Set<Follow> followers = new HashSet<>();
             Set<Follow> followings = new HashSet<>();
@@ -118,7 +118,8 @@ public class MemberAccountService {
      */
     public MemberAccount searchMemberAccountByEmail(String email) {
         return memberAccountRepository.findByEmail(email)
-            .orElseThrow(() -> new MemberAccountNotFoundException(RestErrorCode.MEMBER_NOT_FOUND));
+                                      .orElseThrow(() -> new MemberAccountNotFoundException(
+                                          RestErrorCode.MEMBER_NOT_FOUND));
     }
 
     public List<MemberAccount> searchContainByEmail(String word) {

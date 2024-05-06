@@ -10,8 +10,10 @@ import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import org.capstone.maru.domain.StudioRoomPost;
+import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
+import org.capstone.maru.dto.request.RangeRequest;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -44,11 +46,17 @@ public class StudioRoomPostCustomRepositoryImpl implements
                 eqGender(gender),
                 inRoomTypes(searchFilterRequest.roomTypes()),
                 inRentalTypes(searchFilterRequest.rentalTypes()),
+                eqHasLivingRoom(searchFilterRequest.hasLivingRoom()),
+                eqNumberOfRoom(searchFilterRequest.numberOfRoom()),
+                eqNumberOfBathRoom(searchFilterRequest.numberOfBathRoom()),
+                betweenRoomSize(searchFilterRequest.roomSizeRange()),
+                inFloorTypes(searchFilterRequest.floorTypes()),
+                betweenExpectedPayment(searchFilterRequest.expectedPaymentRange()),
                 containSearchKeyWords(searchKeyWords)
             )
+            .orderBy(postSort(pageable))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
-            .orderBy(postSort(pageable))
             .fetch();
 
         JPAQuery<Long> countQuery = jpaQueryFactory
@@ -58,6 +66,12 @@ public class StudioRoomPostCustomRepositoryImpl implements
                 eqGender(gender),
                 inRoomTypes(searchFilterRequest.roomTypes()),
                 inRentalTypes(searchFilterRequest.rentalTypes()),
+                eqHasLivingRoom(searchFilterRequest.hasLivingRoom()),
+                eqNumberOfRoom(searchFilterRequest.numberOfRoom()),
+                eqNumberOfBathRoom(searchFilterRequest.numberOfBathRoom()),
+                betweenRoomSize(searchFilterRequest.roomSizeRange()),
+                inFloorTypes(searchFilterRequest.floorTypes()),
+                betweenExpectedPayment(searchFilterRequest.expectedPaymentRange()),
                 containSearchKeyWords(searchKeyWords)
             );
 
@@ -110,6 +124,55 @@ public class StudioRoomPostCustomRepositoryImpl implements
         }
 
         return studioRoomPost.roomInfo.rentalType.in(rentalTypes);
+    }
+
+    private BooleanExpression eqHasLivingRoom(Boolean hasLivingRoom) {
+        if (hasLivingRoom == null) {
+            return null;
+        }
+
+        return studioRoomPost.roomInfo.hasLivingRoom.eq(hasLivingRoom);
+    }
+
+    private BooleanExpression eqNumberOfRoom(Short numberOfRoom) {
+        if (numberOfRoom == null) {
+            return null;
+        }
+
+        return studioRoomPost.roomInfo.numberOfRoom.eq(numberOfRoom);
+    }
+
+    private BooleanExpression eqNumberOfBathRoom(Short numberOfBathRoom) {
+        if (numberOfBathRoom == null) {
+            return null;
+        }
+
+        return studioRoomPost.roomInfo.numberOfBathRoom.eq(numberOfBathRoom);
+    }
+
+    private BooleanExpression betweenRoomSize(RangeRequest roomSizeRange) {
+        if (roomSizeRange == null) {
+            return null;
+        }
+
+        return studioRoomPost.roomInfo.size.between(roomSizeRange.start(), roomSizeRange.end());
+    }
+
+    private BooleanExpression inFloorTypes(List<FloorType> floorTypes) {
+        if (floorTypes == null || floorTypes.isEmpty()) {
+            return null;
+        }
+
+        return studioRoomPost.roomInfo.floorType.in(floorTypes);
+    }
+
+    private BooleanExpression betweenExpectedPayment(RangeRequest expectedPaymentRange) {
+        if (expectedPaymentRange == null) {
+            return null;
+        }
+
+        return studioRoomPost.roomInfo.expectedPayment.between(expectedPaymentRange.start(),
+            expectedPaymentRange.end());
     }
 
     private BooleanExpression containSearchKeyWords(String searchKeyWords) {
