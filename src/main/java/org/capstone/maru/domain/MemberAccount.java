@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -103,6 +104,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<MemberRoom> chatRooms;
 
+    @Builder
     private MemberAccount(
         String memberId,
         String email,

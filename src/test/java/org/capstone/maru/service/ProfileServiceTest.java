@@ -80,12 +80,12 @@ class ProfileServiceTest {
             "010-1234-5678",
             "nickname",
             true,
-            true,
             createMyCard(),
             createMateCard(),
             new HashSet<>(),
             new HashSet<>(),
-            ProfileImage.defaultImage("test@mail.com")
+            ProfileImage.defaultImage("test@mail.com"),
+            List.of()
         );
     }
 

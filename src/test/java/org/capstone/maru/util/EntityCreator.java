@@ -31,22 +31,12 @@ public class EntityCreator {
     }
 
     public static MemberAccount createMemberAccount(int i) {
-        return MemberAccount.of(
-            "test_" + i,
-            "test" + i + "@email.com",
-            "tester" + i,
-            "1980" + i % 11,
-            i % 2 == 0 ? "MALE" : "FEMALE",
-            "010-1234-" + String.format("%04d", i),
-            "test_" + i,
-            true,
-            true,
-            createMemberCard(List.of(), i),
-            createMemberCard(List.of(), i),
-            null,
-            null,
-            createProfileImage(i)
-        );
+        return MemberAccount.builder()
+            .memberId("test" + i)
+            .phoneNumber("010-1234-5678")
+            .email("test" + i + "@test.com")
+            .profileImage(createProfileImage(i))
+            .build();
     }
 
 
