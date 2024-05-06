@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Address {
 
-    @Column(nullable = false)
+    @Column
     private String oldAddress; // 지번 주소
 
     @Column(nullable = false)
