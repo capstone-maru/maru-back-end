@@ -153,7 +153,7 @@ class StudioRoomPostRepositoryTest {
         // then
         assertThat(
             studioRoomPostsPage.getContent().get(0).getRoomInfo().getRoomType().getDescription())
-            .containsAnyOf(RoomType.ONE_ROOM_VILLA.getDescription(),
+            .containsAnyOf(RoomType.ONE_ROOM.getDescription(),
                 RoomType.TWO_ROOM_VILLA.getDescription());
         assertThat(
             studioRoomPostsPage.getContent().get(0).getRoomInfo().getRentalType().getDescription())

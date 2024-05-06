@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import org.capstone.maru.annotation.ImageFilesConstraints;
 import org.capstone.maru.domain.Address;
-import org.capstone.maru.domain.Address.CITY;
 import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
@@ -71,9 +70,7 @@ public record StudioRoomPostRequest(
         return RoomInfoDto
             .builder()
             .address(
-                Address.of(locationData.city, locationData.oldAddress,
-                    locationData.roadAddress, locationData.detailAddress
-                )
+                Address.of(locationData.oldAddress, locationData.roadAddress)
             )
             .roomType(roomDetailData.roomType)
             .floorType(roomDetailData.floorType)
@@ -146,11 +143,8 @@ public record StudioRoomPostRequest(
     }
 
     public record LocationData(
-        @NotNull(message = "도시 입력 값이 잘못 되었습니다.")
-        CITY city,
         String oldAddress,
-        String roadAddress,
-        String detailAddress
+        String roadAddress
     ) {
 
     }
