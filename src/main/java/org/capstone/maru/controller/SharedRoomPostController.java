@@ -1,12 +1,6 @@
 package org.capstone.maru.controller;
 
-import static org.capstone.maru.security.cookie.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URL_PARAM_COOKIE_NAME;
-
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +14,6 @@ import org.capstone.maru.dto.request.StudioRoomPostRequest;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.dto.response.StudioRoomPostDetailResponse;
 import org.capstone.maru.dto.response.StudioRoomPostResponse;
-import org.capstone.maru.security.cookie.CookieUtils;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.SharedRoomPostService;
 import org.springframework.data.domain.Page;
@@ -31,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

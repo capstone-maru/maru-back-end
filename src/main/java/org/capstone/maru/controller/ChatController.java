@@ -3,7 +3,7 @@ package org.capstone.maru.controller;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.capstone.maru.dto.request.ChatPageRequest;
+import org.springframework.data.domain.Pageable;
 import org.capstone.maru.dto.request.ChatRoomMemberRequest;
 import org.capstone.maru.dto.request.ChatRoomRequest;
 import org.capstone.maru.dto.response.APIResponse;
@@ -12,6 +12,8 @@ import org.capstone.maru.dto.response.ChatMessageResponse;
 import org.capstone.maru.dto.response.ChatRoomResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.ChatService;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -41,9 +43,7 @@ public class ChatController {
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
         @RequestBody ChatRoomRequest roomRequest
     ) {
-        log.info("memberPrincipal : {}", memberPrincipal.memberId());
-
-        log.info("roomRequest : {}", roomRequest);
+        log.info("roomRequest : {}, memberPrincipal : {}", roomRequest, memberPrincipal.memberId());
         // 채팅방 아이디 반환
         Long data = chatService.createChatRoom(memberPrincipal.memberId(), roomRequest.roomName(),
             roomRequest.members()).getId();
@@ -82,6 +82,7 @@ public class ChatController {
     public ResponseEntity<APIResponse> addChatRoomMember(@PathVariable Long roomId,
         @RequestBody ChatRoomMemberRequest memberId) {
         log.info("roomId : {}, memberId : {}", roomId, memberId);
+
         chatService.addChatRoomMember(roomId, memberId.members());
 
         return ResponseEntity.ok(APIResponse.success("success"));
@@ -90,16 +91,20 @@ public class ChatController {
     /*
     최근 채팅 조회
      */
-    @PostMapping("/chat")
-    public ResponseEntity<APIResponse> showChat(@RequestBody ChatPageRequest chatPageRequest) {
-        log.info("roomId : {}", chatPageRequest.roomId());
+    @GetMapping("/{roomId}/chat")
+    public ResponseEntity<APIResponse> showChat(
+        @PathVariable Long roomId,
+        @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable
+    ) {
+        log.info("roomId : {}", roomId);
+        log.info("pageable : {}", pageable);
 
-        List<ChatMessageResponse> data = chatService.getChatMessages(chatPageRequest.roomId(),
-            chatPageRequest.size(), chatPageRequest.page());
+        List<ChatMessageResponse> data = chatService.getChatMessages(roomId,
+            pageable);
 
         log.info("{}", data);
-        return ResponseEntity.ok(APIResponse.success(data));
 
+        return ResponseEntity.ok(APIResponse.success(data));
     }
 
     /*
@@ -109,6 +114,7 @@ public class ChatController {
     public ResponseEntity<APIResponse> exitChatRoom(@PathVariable Long roomId,
         @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
         log.info("roomId : {}, memberId : {}", roomId, memberPrincipal.memberId());
+
         chatService.exitChatRoom(roomId, memberPrincipal.memberId());
 
         return ResponseEntity.ok(APIResponse.success("success"));
