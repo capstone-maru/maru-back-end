@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -90,6 +91,9 @@ public abstract class SharedRoomPost extends AuditingFields {
     @JoinColumn(name = "room_mate_card_id", nullable = false)
     private FeatureCard roomMateCard;
 
+    @Embedded
+    private Address address;
+
     @OneToMany(
         mappedBy = "recruitsSharedRoomPost",
         cascade = CascadeType.ALL,
@@ -101,12 +105,13 @@ public abstract class SharedRoomPost extends AuditingFields {
 
     // -- 생성자 메서드 -- //
     protected SharedRoomPost(String title, String content, String publisherGender,
-        MemberAccount publisherAccount, FeatureCard roomMateCard) {
+        MemberAccount publisherAccount, FeatureCard roomMateCard, Address address) {
         this.title = title;
         this.content = content;
         this.publisherGender = publisherGender;
         this.publisherAccount = publisherAccount;
         this.roomMateCard = roomMateCard;
+        this.address = address;
     }
 
     // -- 연관관계 편의 메서드 -- //
@@ -151,10 +156,12 @@ public abstract class SharedRoomPost extends AuditingFields {
         existingRoomImages.values().forEach(this::removeRoomImage);
     }
 
-    public void updateSharedRoomPost(String title, String content, FeatureCard roomMateCard) {
+    public void updateSharedRoomPost(String title, String content, FeatureCard roomMateCard,
+        Address address) {
         updateTitle(title);
         updateContent(content);
         updateRoomMateCard(roomMateCard);
+        updateAddress(address);
     }
 
 
@@ -174,6 +181,13 @@ public abstract class SharedRoomPost extends AuditingFields {
 
     private void updateRoomMateCard(FeatureCard roomMateCard) {
         this.roomMateCard.updateFeatureCard(roomMateCard);
+    }
+
+    private void updateAddress(Address address) {
+        if (Objects.equals(address, this.address)) {
+            return;
+        }
+        this.address = address;
     }
 
     public void initParticipants() {

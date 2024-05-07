@@ -12,7 +12,6 @@ import org.capstone.maru.domain.jsonb.ExtraOption;
 @Builder
 public record RoomInfoDto(
     Long id,
-    Address address,
     RoomType roomType,
     FloorType floorType,
     Short size,
@@ -29,7 +28,6 @@ public record RoomInfoDto(
         return RoomInfoDto
             .builder()
             .id(entity.getId())
-            .address(entity.getAddress())
             .roomType(entity.getRoomType())
             .floorType(entity.getFloorType())
             .size(entity.getSize())
@@ -45,7 +43,6 @@ public record RoomInfoDto(
 
     public RoomInfo toEntity() {
         return RoomInfo.of(
-            address,
             roomType,
             floorType,
             size,

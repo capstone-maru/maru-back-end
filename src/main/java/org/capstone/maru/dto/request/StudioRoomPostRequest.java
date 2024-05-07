@@ -41,6 +41,7 @@ public record StudioRoomPostRequest(
             .title(postData.title)
             .content(postData.content)
             .publisherGender(publisherGender)
+            .address(Address.of(locationData.oldAddress, locationData.roadAddress))
             .build();
     }
 
@@ -69,9 +70,6 @@ public record StudioRoomPostRequest(
     public RoomInfoDto toRoomInfoDto() {
         return RoomInfoDto
             .builder()
-            .address(
-                Address.of(locationData.oldAddress, locationData.roadAddress)
-            )
             .roomType(roomDetailData.roomType)
             .floorType(roomDetailData.floorType)
             .size(roomDetailData.size)

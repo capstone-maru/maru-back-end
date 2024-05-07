@@ -34,10 +34,7 @@ public class RoomInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Embedded
-    private Address address;
-
+    
     @Convert(converter = RoomTypeConverter.class)
     @Column
     private RoomType roomType;
@@ -73,10 +70,9 @@ public class RoomInfo {
     private ExtraOption extraOption;
 
     // -- 생성 메서드 -- //
-    private RoomInfo(Address address, RoomType roomType, FloorType floorType, Short size,
+    private RoomInfo(RoomType roomType, FloorType floorType, Short size,
         Short numberOfRoom, Short numberOfBathRoom, Boolean hasLivingRoom, RentalType rentalType,
         Long expectedPayment, Short recruitmentCapacity, ExtraOption extraOption) {
-        this.address = address;
         this.roomType = roomType;
         this.floorType = floorType;
         this.size = size;
@@ -90,7 +86,6 @@ public class RoomInfo {
     }
 
     public static RoomInfo of(
-        Address address,
         RoomType roomType,
         FloorType floorType,
         Short size,
@@ -103,7 +98,6 @@ public class RoomInfo {
         ExtraOption extraOption
     ) {
         return new RoomInfo(
-            address,
             roomType,
             floorType,
             size,
@@ -119,7 +113,6 @@ public class RoomInfo {
 
     // -- 비지니스 로직 -- //
     public void updateRoomInfo(RoomInfoDto dto) {
-        updateAddress(dto.address());
         updateRoomType(dto.roomType());
         updateFloorType(dto.floorType());
         updateSize(dto.size());
@@ -130,13 +123,6 @@ public class RoomInfo {
         updateExpectedPayment(dto.expectedPayment());
         updateRecruitmentCapacity(dto.recruitmentCapacity());
         updateExtraOptions(dto.extraOption());
-    }
-
-    private void updateAddress(Address address) {
-        if (Objects.equals(address, this.address)) {
-            return;
-        }
-        this.address = address;
     }
 
     private void updateRoomType(RoomType roomType) {

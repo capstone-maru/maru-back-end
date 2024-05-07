@@ -2,6 +2,7 @@ package org.capstone.maru.dto.response;
 
 import java.time.LocalDateTime;
 import lombok.Builder;
+import org.capstone.maru.domain.Address;
 import org.capstone.maru.dto.StudioRoomPostDto;
 
 /**
@@ -14,6 +15,7 @@ public record StudioRoomPostResponse(
     String content,
     RoomImageResponse thumbnail,
     MemberAccountResponse publisherAccount,
+    Address address,
     RoomInfoResponse roomInfo,
     Boolean isScrapped,
     LocalDateTime createdAt,
@@ -30,6 +32,7 @@ public record StudioRoomPostResponse(
             .content(dto.content())
             .thumbnail(RoomImageResponse.from(dto.thumbnail()))
             .publisherAccount(MemberAccountResponse.from(dto.publisherAccount()))
+            .address(dto.address())
             .roomInfo(RoomInfoResponse.from(dto.roomInfo()))
             .isScrapped(dto.isScrapped())
             .createdAt(dto.createdAt())

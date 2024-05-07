@@ -17,8 +17,8 @@ public class DormitoryRoomPost extends SharedRoomPost {
     // -- 생성자 메서드 -- //
 
     private DormitoryRoomPost(String title, String content, String publisherGender,
-        MemberAccount publisherAccount, FeatureCard roomMateCard) {
-        super(title, content, publisherGender, publisherAccount, roomMateCard);
+        MemberAccount publisherAccount, FeatureCard roomMateCard, Address address) {
+        super(title, content, publisherGender, publisherAccount, roomMateCard, address);
     }
 
     public static DormitoryRoomPost of(
@@ -26,10 +26,11 @@ public class DormitoryRoomPost extends SharedRoomPost {
         String content,
         String publisherGender,
         MemberAccount publisherAccount,
-        FeatureCard roomMateCard
+        FeatureCard roomMateCard,
+        Address address
     ) {
         return new DormitoryRoomPost(
-            title, content, publisherGender, publisherAccount, roomMateCard
+            title, content, publisherGender, publisherAccount, roomMateCard, address
         );
     }
 
@@ -37,6 +38,6 @@ public class DormitoryRoomPost extends SharedRoomPost {
     public void updateDormitoryRoomPost(
 
     ) {
-        
+
     }
 }

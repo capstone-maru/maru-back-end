@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import lombok.Builder;
+import org.capstone.maru.domain.Address;
 import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.RoomInfo;
@@ -19,6 +20,7 @@ public record StudioRoomPostDto(
     String publisherGender,
     List<RoomImageDto> roomImages,
     MemberAccountDto publisherAccount,
+    Address address,
     RoomInfoDto roomInfo,
     Boolean isScrapped,
     LocalDateTime createdAt,
@@ -36,12 +38,13 @@ public record StudioRoomPostDto(
             .content(entity.getContent())
             .roomImages(
                 entity.getRoomImages()
-                    .stream()
-                    .map(RoomImageDto::from)
-                    .toList()
+                      .stream()
+                      .map(RoomImageDto::from)
+                      .toList()
             )
             .publisherGender(entity.getPublisherGender())
             .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))
+            .address(entity.getAddress())
             .roomInfo(RoomInfoDto.from(entity.getRoomInfo()))
             .isScrapped(
                 scrapViewEntity
@@ -68,8 +71,9 @@ public record StudioRoomPostDto(
             title,
             content,
             publisherGender,
-            roomMateCardEntity,
             publisherAccountEntity,
+            roomMateCardEntity,
+            address,
             roomInfoEntity
         );
     }
