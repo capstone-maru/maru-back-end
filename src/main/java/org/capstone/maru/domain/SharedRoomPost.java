@@ -18,13 +18,17 @@ import jakarta.persistence.Table;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.capstone.maru.dto.MemberAccountDto;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,6 +42,7 @@ import lombok.ToString;
 })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
+@DynamicUpdate
 @Entity
 public abstract class SharedRoomPost extends AuditingFields {
 
@@ -53,15 +58,20 @@ public abstract class SharedRoomPost extends AuditingFields {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @Column
+    @Column(updatable = false)
     private String publisherGender;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "room_mate_card_id", nullable = false)
     private FeatureCard roomMateCard;
 
-    @OneToMany(mappedBy = "recruitsSharedRoomPost", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private final List<Participation> sharedRoomPostRecruits = new ArrayList<>();
+    @OneToMany(
+        mappedBy = "recruitsSharedRoomPost",
+        cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY,
+        orphanRemoval = true
+    )
+    private List<Participation> sharedRoomPostRecruits = new ArrayList<>();
 
 
     // -- 생성자 메서드 -- //
@@ -79,6 +89,41 @@ public abstract class SharedRoomPost extends AuditingFields {
     }
 
     // -- 비지니스 로직 -- //
+    public void updateSharedRoomPost(String title, String content, FeatureCard roomMateCard) {
+        updateTitle(title);
+        updateContent(content);
+        updateRoomMateCard(roomMateCard);
+    }
+
+    private void updateTitle(String title) {
+        if (title.equals(this.title)) {
+            return;
+        }
+        this.title = title;
+    }
+
+    private void updateContent(String content) {
+        if (content.equals(this.content)) {
+            return;
+        }
+        this.content = content;
+    }
+
+    private void updateRoomMateCard(FeatureCard roomMateCard) {
+        this.roomMateCard.updateFeatureCard(roomMateCard);
+    }
+
+    public void initParticipants() {
+        if (this.sharedRoomPostRecruits.isEmpty()) {
+            return;
+        }
+
+        for (Participation participation : this.sharedRoomPostRecruits) {
+            participation.updateSharedRoomPost(null);
+        }
+
+        this.sharedRoomPostRecruits.clear();
+    }
 
     // -- Equals & Hash -- //
     @Override

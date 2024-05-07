@@ -2,6 +2,7 @@ package org.capstone.maru.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,5 +33,23 @@ public class Address {
             oldAddress,
             roadAddress
         );
+    }
+
+    // -- Equals & Hash -- //
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Address address)) {
+            return false;
+        }
+        return Objects.equals(oldAddress, address.oldAddress) && Objects.equals(
+            roadAddress, address.roadAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(oldAddress, roadAddress);
     }
 }

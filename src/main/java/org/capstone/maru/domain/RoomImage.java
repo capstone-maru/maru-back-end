@@ -1,12 +1,8 @@
 package org.capstone.maru.domain;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.util.Objects;
@@ -14,11 +10,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.core.annotation.AnnotationUtils;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true, exclude = {"studioRoomPost"})
+@DynamicUpdate
 @Entity
 public class RoomImage extends Image {
 
@@ -47,15 +44,32 @@ public class RoomImage extends Image {
         Short orderNumber,
         StudioRoomPost studioRoomPost
     ) {
-        RoomImage result = new RoomImage(
-            fileName, isThumbnail, orderNumber, studioRoomPost
+        return new RoomImage(
+            fileName,
+            isThumbnail,
+            orderNumber,
+            studioRoomPost
         );
-
-        studioRoomPost.addRoomImage(result);
-        return result;
     }
 
     // -- 비지니스 로직 -- //
+    public void updateIsThumbNail(Boolean isThumbnail) {
+        if (Objects.equals(this.isThumbnail, isThumbnail)) {
+            return;
+        }
+        this.isThumbnail = isThumbnail;
+    }
+
+    public void updateOrderNumber(Short orderNumber) {
+        if (Objects.equals(this.orderNumber, orderNumber)) {
+            return;
+        }
+        this.orderNumber = orderNumber;
+    }
+
+    public void updateStudioRoomPost(StudioRoomPost studioRoomPost) {
+        this.studioRoomPost = studioRoomPost;
+    }
 
     // -- Equals & Hash -- //
     @Override
