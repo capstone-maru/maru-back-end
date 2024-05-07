@@ -15,7 +15,7 @@ import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.dto.response.StudioRoomPostDetailResponse;
 import org.capstone.maru.dto.response.StudioRoomPostResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
-import org.capstone.maru.service.SharedRoomPostService;
+import org.capstone.maru.service.StudioRoomPostService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/shared/posts")
 public class SharedRoomPostController {
 
-    private final SharedRoomPostService sharedRoomPostService;
+    private final StudioRoomPostService studioRoomPostService;
 
     @GetMapping("/studio")
     public ResponseEntity<APIResponse> studioRoomPosts(
@@ -47,7 +47,7 @@ public class SharedRoomPostController {
         @RequestParam(name = "search", required = false) String searchKeyWords,
         @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
-        Page<StudioRoomPostResponse> result = sharedRoomPostService
+        Page<StudioRoomPostResponse> result = studioRoomPostService
             .searchStudioRoomPosts(
                 principal.memberId(),
                 principal.gender(),
@@ -66,7 +66,7 @@ public class SharedRoomPostController {
         @PathVariable("postId") Long postId
     ) {
         StudioRoomPostDetailResponse result = StudioRoomPostDetailResponse.from(
-            sharedRoomPostService.getStudioRoomPostDetail(principal.memberId(), postId,
+            studioRoomPostService.getStudioRoomPostDetail(principal.memberId(), postId,
                 principal.gender())
         );
 
@@ -86,7 +86,7 @@ public class SharedRoomPostController {
         RoomInfoDto roomInfoDto = studioRoomPostRequest.toRoomInfoDto();
         List<String> participationMemberIds = studioRoomPostRequest.participationMemberIds();
 
-        sharedRoomPostService.saveStudioRoomPost(
+        studioRoomPostService.saveStudioRoomPost(
             principal.memberId(),
             studioRoomPostDto,
             roomMateCardDto,
@@ -110,7 +110,7 @@ public class SharedRoomPostController {
         RoomInfoDto roomInfoDto = studioRoomPostRequest.toRoomInfoDto();
         List<String> participationMemberIds = studioRoomPostRequest.participationMemberIds();
 
-        sharedRoomPostService.updateStudioRoomPost(
+        studioRoomPostService.updateStudioRoomPost(
             postId,
             principal.memberId(),
             studioRoomPostDto,
@@ -126,7 +126,7 @@ public class SharedRoomPostController {
         @AuthenticationPrincipal MemberPrincipal principal,
         @PathVariable("postId") Long postId
     ) {
-        sharedRoomPostService.deleteStudioRoomPost(postId, principal.memberId());
+        studioRoomPostService.deleteStudioRoomPost(postId, principal.memberId());
     }
 
     @PostMapping("/studio/{postId}/scrap")
@@ -134,7 +134,7 @@ public class SharedRoomPostController {
         @AuthenticationPrincipal MemberPrincipal principal,
         @PathVariable("postId") Long postId
     ) {
-        sharedRoomPostService.scrapStudioRoomPost(principal.memberId(), principal.gender(), postId);
+        studioRoomPostService.scrapStudioRoomPost(principal.memberId(), principal.gender(), postId);
 
         return ResponseEntity.ok(APIResponse.success());
     }

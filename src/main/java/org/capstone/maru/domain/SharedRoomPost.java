@@ -1,5 +1,6 @@
 package org.capstone.maru.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
@@ -12,8 +13,10 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 
 import java.util.ArrayList;
@@ -28,11 +31,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.capstone.maru.dto.MemberAccountDto;
+import org.capstone.maru.dto.MemberCardDto;
+import org.capstone.maru.dto.RoomImageDto;
+import org.capstone.maru.dto.RoomInfoDto;
+import org.capstone.maru.dto.StudioRoomPostDto;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true, exclude = {"roomMateCard", "sharedRoomPostRecruits"})
+@ToString(callSuper = true, exclude = {"roomMateCard", "sharedRoomPostRecruits", "roomImages",
+    "publisherAccount"})
 @Table(indexes = {
     @Index(columnList = "id", unique = true),
     @Index(columnList = "title"),
@@ -61,6 +71,21 @@ public abstract class SharedRoomPost extends AuditingFields {
     @Column(updatable = false)
     private String publisherGender;
 
+    @OneToMany(
+        mappedBy = "sharedRoomPost",
+        cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY,
+        orphanRemoval = true
+    )
+    @OrderBy("orderNumber ASC")
+    private final List<RoomImage> roomImages = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "publisher_id", nullable = false, updatable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private MemberAccount publisherAccount;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "room_mate_card_id", nullable = false)
     private FeatureCard roomMateCard;
@@ -71,29 +96,67 @@ public abstract class SharedRoomPost extends AuditingFields {
         fetch = FetchType.LAZY,
         orphanRemoval = true
     )
-    private List<Participation> sharedRoomPostRecruits = new ArrayList<>();
+    private final List<Participation> sharedRoomPostRecruits = new ArrayList<>();
 
 
     // -- 생성자 메서드 -- //
     protected SharedRoomPost(String title, String content, String publisherGender,
-        FeatureCard roomMateCard) {
+        MemberAccount publisherAccount, FeatureCard roomMateCard) {
         this.title = title;
         this.content = content;
         this.publisherGender = publisherGender;
+        this.publisherAccount = publisherAccount;
         this.roomMateCard = roomMateCard;
     }
 
     // -- 연관관계 편의 메서드 -- //
+    private void addRoomImage(RoomImage roomImage) {
+        this.roomImages.add(roomImage);
+    }
+
+    private void removeRoomImage(RoomImage roomImage) {
+        this.roomImages.remove(roomImage);
+        roomImage.updateSharedRoomPost(null);
+    }
+
+    public void addRoomImages(List<RoomImageDto> roomImages) {
+        for (RoomImageDto roomImage : roomImages) {
+            addRoomImage(roomImage.toEntity(this));
+        }
+    }
+
     public void addSharedRoomPostRecruits(Participation participation) {
         this.sharedRoomPostRecruits.add(participation);
     }
 
     // -- 비지니스 로직 -- //
+
+
+    public void updateRoomImages(List<RoomImageDto> roomImages) {
+        Map<String, RoomImage> existingRoomImages = this.roomImages
+            .stream()
+            .collect(Collectors.toMap(RoomImage::getFileName, roomImage -> roomImage));
+
+        for (RoomImageDto dto : roomImages) {
+            if (existingRoomImages.containsKey(dto.fileName())) {
+                RoomImage roomImage = existingRoomImages.get(dto.fileName());
+                roomImage.updateOrderNumber(dto.order());
+                roomImage.updateIsThumbNail(dto.isThumbnail());
+                existingRoomImages.remove(dto.fileName());
+            } else {
+                addRoomImage(dto.toEntity(this));
+            }
+        }
+
+        existingRoomImages.values().forEach(this::removeRoomImage);
+    }
+
     public void updateSharedRoomPost(String title, String content, FeatureCard roomMateCard) {
         updateTitle(title);
         updateContent(content);
         updateRoomMateCard(roomMateCard);
     }
+
 
     private void updateTitle(String title) {
         if (title.equals(this.title)) {

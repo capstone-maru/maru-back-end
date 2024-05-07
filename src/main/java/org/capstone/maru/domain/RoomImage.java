@@ -14,7 +14,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true, exclude = {"studioRoomPost"})
+@ToString(callSuper = true, exclude = {"sharedRoomPost"})
 @DynamicUpdate
 @Entity
 public class RoomImage extends Image {
@@ -26,29 +26,29 @@ public class RoomImage extends Image {
     private Short orderNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "studio_room_post_id", nullable = false)
-    private StudioRoomPost studioRoomPost;
+    @JoinColumn(name = "shared_room_post_id", nullable = false)
+    private SharedRoomPost sharedRoomPost;
 
     // -- 생성자 메서드 -- //
     private RoomImage(String fileName, Boolean isThumbnail, Short orderNumber,
-        StudioRoomPost studioRoomPost) {
+        SharedRoomPost sharedRoomPost) {
         super(fileName);
         this.isThumbnail = isThumbnail;
         this.orderNumber = orderNumber;
-        this.studioRoomPost = studioRoomPost;
+        this.sharedRoomPost = sharedRoomPost;
     }
 
     public static RoomImage of(
         String fileName,
         Boolean isThumbnail,
         Short orderNumber,
-        StudioRoomPost studioRoomPost
+        SharedRoomPost roomPost
     ) {
         return new RoomImage(
             fileName,
             isThumbnail,
             orderNumber,
-            studioRoomPost
+            roomPost
         );
     }
 
@@ -67,8 +67,8 @@ public class RoomImage extends Image {
         this.orderNumber = orderNumber;
     }
 
-    public void updateStudioRoomPost(StudioRoomPost studioRoomPost) {
-        this.studioRoomPost = studioRoomPost;
+    public void updateSharedRoomPost(SharedRoomPost roomPost) {
+        this.sharedRoomPost = roomPost;
     }
 
     // -- Equals & Hash -- //

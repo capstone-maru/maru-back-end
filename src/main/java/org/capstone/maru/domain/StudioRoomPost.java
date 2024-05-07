@@ -38,21 +38,6 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 public class StudioRoomPost extends SharedRoomPost {
 
-    @OneToMany(
-        mappedBy = "studioRoomPost",
-        cascade = CascadeType.ALL,
-        fetch = FetchType.LAZY,
-        orphanRemoval = true
-    )
-    @OrderBy("orderNumber ASC")
-    private final List<RoomImage> roomImages = new ArrayList<>();
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "publisher_id", nullable = false, updatable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    private MemberAccount publisherAccount;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "room_info_id", nullable = false)
     private RoomInfo roomInfo;
@@ -62,8 +47,7 @@ public class StudioRoomPost extends SharedRoomPost {
         String title, String content, String publisherGender, FeatureCard roomMateCard,
         MemberAccount publisherAccount, RoomInfo roomInfo
     ) {
-        super(title, content, publisherGender, roomMateCard);
-        this.publisherAccount = publisherAccount;
+        super(title, content, publisherGender, publisherAccount, roomMateCard);
         this.roomInfo = roomInfo;
     }
 
@@ -80,34 +64,7 @@ public class StudioRoomPost extends SharedRoomPost {
         );
     }
 
-    public static StudioRoomPost of(
-        String title,
-        String content,
-        String publisherGender,
-        FeatureCard roomMateCard,
-        RoomInfo roomInfo
-    ) {
-        return new StudioRoomPost(
-            title, content, publisherGender, roomMateCard, null, roomInfo
-        );
-    }
-
     // -- 비지니스 로직 -- //
-    private void addRoomImage(RoomImage roomImage) {
-        this.roomImages.add(roomImage);
-    }
-
-    private void removeRoomImage(RoomImage roomImage) {
-        this.roomImages.remove(roomImage);
-        roomImage.updateStudioRoomPost(null);
-    }
-
-    public void addRoomImages(List<RoomImageDto> roomImages) {
-        for (RoomImageDto roomImage : roomImages) {
-            addRoomImage(roomImage.toEntity(this));
-        }
-    }
-
     public void updateStudioRoomPost(
         StudioRoomPostDto studioRoomPostDto,
         MemberCardDto roomMateCardDto,
@@ -120,27 +77,9 @@ public class StudioRoomPost extends SharedRoomPost {
             roomMateCardDto.toEntity()
         );
         this.roomInfo.updateRoomInfo(roomInfoDto);
-        updateRoomImages(roomImagesDto);
+        this.updateRoomImages(roomImagesDto);
     }
 
-    private void updateRoomImages(List<RoomImageDto> roomImages) {
-        Map<String, RoomImage> existingRoomImages = this.roomImages
-            .stream()
-            .collect(Collectors.toMap(RoomImage::getFileName, roomImage -> roomImage));
-
-        for (RoomImageDto dto : roomImages) {
-            if (existingRoomImages.containsKey(dto.fileName())) {
-                RoomImage roomImage = existingRoomImages.get(dto.fileName());
-                roomImage.updateOrderNumber(dto.order());
-                roomImage.updateIsThumbNail(dto.isThumbnail());
-                existingRoomImages.remove(dto.fileName());
-            } else {
-                addRoomImage(dto.toEntity(this));
-            }
-        }
-
-        existingRoomImages.values().forEach(this::removeRoomImage);
-    }
 
     // -- Equals & Hash -- //
     @Override

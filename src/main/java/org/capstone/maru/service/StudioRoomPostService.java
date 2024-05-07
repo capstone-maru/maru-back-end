@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class SharedRoomPostService {
+public class StudioRoomPostService {
 
     private final StudioRoomPostRepository studioRoomPostRepository;
     private final MemberAccountRepository memberAccountRepository;
@@ -43,8 +43,6 @@ public class SharedRoomPostService {
     private final ViewPostRepository viewPostRepository;
 
     private final ViewCountService viewCountService;
-
-    private static final String PREFIX = "studio";
 
     @Transactional(readOnly = true)
     public Page<StudioRoomPostDto> searchStudioRoomPosts(
