@@ -128,14 +128,12 @@ public class SharedRoomPostService {
         StudioRoomPost studioRoomPost = studioRoomPostDto.toEntity(
             roomMateCardDto.toEntity(), publisherAccount, roomInfoDto.toEntity()
         );
+        studioRoomPost.addRoomImages(roomImagesDto);
 
         participationMemberIds
             .stream()
             .map(memberAccountRepository::getReferenceById)
             .forEach(memberAccount -> Participation.of(memberAccount, studioRoomPost));
-
-        roomImagesDto
-            .forEach(roomImageDto -> roomImageDto.toEntity(studioRoomPost));
 
         StudioRoomPost result = studioRoomPostRepository.save(
             studioRoomPost
@@ -145,11 +143,41 @@ public class SharedRoomPostService {
         viewCountService.setValue(StudioViewCountCacheKey.from(result.getId()), 0L);
     }
 
+    public void updateStudioRoomPost(
+        Long postId,
+        String publisherMemberId,
+        StudioRoomPostDto studioRoomPostDto,
+        MemberCardDto roomMateCardDto,
+        List<String> participationMemberIds,
+        List<RoomImageDto> roomImagesDto,
+        RoomInfoDto roomInfoDto
+    ) {
+        StudioRoomPost studioRoomPost = studioRoomPostRepository
+            .findByIdAndPublisherAccount_MemberId(postId, publisherMemberId)
+            .orElseThrow(() -> new PostNotFoundException(RestErrorCode.POST_NOT_FOUND));
+
+        studioRoomPost.updateStudioRoomPost(
+            studioRoomPostDto,
+            roomMateCardDto,
+            roomInfoDto,
+            roomImagesDto
+        );
+
+        // TODO: 별로 좋은 코드 같지 않음
+        studioRoomPost.initParticipants();
+        participationMemberIds
+            .stream()
+            .map(memberAccountRepository::getReferenceById)
+            .forEach(memberAccount -> Participation.of(memberAccount, studioRoomPost));
+
+        studioRoomPostRepository.save(studioRoomPost);
+    }
+
     public void deleteStudioRoomPost(
         Long postId,
         String memberId
     ) {
-        studioRoomPostRepository.deleteByIdAndAndPublisherAccount_MemberId(postId, memberId);
+        studioRoomPostRepository.deleteByIdAndPublisherAccount_MemberId(postId, memberId);
     }
 
     public void scrapStudioRoomPost(
