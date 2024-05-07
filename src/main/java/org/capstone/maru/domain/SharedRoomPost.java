@@ -114,6 +114,7 @@ public abstract class SharedRoomPost extends AuditingFields {
         this.address = address;
     }
 
+
     // -- 연관관계 편의 메서드 -- //
     private void addRoomImage(RoomImage roomImage) {
         this.roomImages.add(roomImage);
@@ -134,9 +135,8 @@ public abstract class SharedRoomPost extends AuditingFields {
         this.sharedRoomPostRecruits.add(participation);
     }
 
+
     // -- 비지니스 로직 -- //
-
-
     public void updateRoomImages(List<RoomImageDto> roomImages) {
         Map<String, RoomImage> existingRoomImages = this.roomImages
             .stream()
@@ -163,8 +163,7 @@ public abstract class SharedRoomPost extends AuditingFields {
         updateRoomMateCard(roomMateCard);
         updateAddress(address);
     }
-
-
+    
     private void updateTitle(String title) {
         if (title.equals(this.title)) {
             return;

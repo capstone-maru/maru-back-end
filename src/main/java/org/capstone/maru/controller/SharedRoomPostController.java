@@ -5,16 +5,21 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.annotation.RequestQueryString;
+import org.capstone.maru.dto.DormitoryRoomPostDto;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
+import org.capstone.maru.dto.request.DormitoryRoomPostRequest;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.dto.request.StudioRoomPostRequest;
 import org.capstone.maru.dto.response.APIResponse;
+import org.capstone.maru.dto.response.DormitoryRoomPostDetailResponse;
+import org.capstone.maru.dto.response.DormitoryRoomPostResponse;
 import org.capstone.maru.dto.response.StudioRoomPostDetailResponse;
 import org.capstone.maru.dto.response.StudioRoomPostResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
+import org.capstone.maru.service.DormitoryRoomPostService;
 import org.capstone.maru.service.StudioRoomPostService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SharedRoomPostController {
 
     private final StudioRoomPostService studioRoomPostService;
+    private final DormitoryRoomPostService dormitoryRoomPostService;
 
     @GetMapping("/studio")
     public ResponseEntity<APIResponse> studioRoomPosts(
@@ -138,4 +144,104 @@ public class SharedRoomPostController {
 
         return ResponseEntity.ok(APIResponse.success());
     }
+
+    @GetMapping("/dormitory")
+    public ResponseEntity<APIResponse> dormitoryRoomPosts(
+        @AuthenticationPrincipal MemberPrincipal principal,
+        @RequestQueryString(name = "filter", required = false) SearchFilterRequest searchFilterRequest,
+        @RequestParam(name = "search", required = false) String searchKeyWords,
+        @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
+    ) {
+        Page<DormitoryRoomPostResponse> result = dormitoryRoomPostService
+            .searchDormitoryRoomPosts(
+                principal.memberId(),
+                principal.gender(),
+                searchFilterRequest,
+                searchKeyWords,
+                pageable
+            )
+            .map(DormitoryRoomPostResponse::from);
+
+        return ResponseEntity.ok(APIResponse.success(result));
+    }
+
+    @GetMapping("/dormitory/{postId}")
+    public ResponseEntity<APIResponse> dormitoryRoomPostDetail(
+        @AuthenticationPrincipal MemberPrincipal principal,
+        @PathVariable("postId") Long postId
+    ) {
+        DormitoryRoomPostDetailResponse result = DormitoryRoomPostDetailResponse.from(
+            dormitoryRoomPostService.getDormitoryRoomPostDetail(
+                principal.memberId(),
+                postId,
+                principal.gender()
+            )
+        );
+
+        return ResponseEntity.ok(APIResponse.success(result));
+    }
+
+    @PostMapping("/dormitory")
+    public void postNewDormitoryRoomPost(
+        @AuthenticationPrincipal MemberPrincipal principal,
+        @Valid @RequestBody DormitoryRoomPostRequest dormitoryRoomPostRequest
+    ) {
+        DormitoryRoomPostDto dormitoryRoomPostDto = dormitoryRoomPostRequest.toBaseDormitoryRoomPostDto(
+            principal.gender()
+        );
+        MemberCardDto roomMateCardDto = dormitoryRoomPostRequest.toMemberCardDto();
+        List<RoomImageDto> roomImagesDto = dormitoryRoomPostRequest.toRoomImagesDto();
+        List<String> participationMemberIds = dormitoryRoomPostRequest.participationMemberIds();
+
+        dormitoryRoomPostService.saveDormitoryRoomPost(
+            principal.memberId(),
+            dormitoryRoomPostDto,
+            roomMateCardDto,
+            participationMemberIds,
+            roomImagesDto
+        );
+    }
+
+    @PutMapping("/dormitory/{postId}")
+    public void updateDormitoryRoomPost(
+        @AuthenticationPrincipal MemberPrincipal principal,
+        @PathVariable("postId") Long postId,
+        @Valid @RequestBody DormitoryRoomPostRequest dormitoryRoomPostRequest
+    ) {
+        DormitoryRoomPostDto dormitoryRoomPostDto = dormitoryRoomPostRequest.toBaseDormitoryRoomPostDto(
+            principal.gender()
+        );
+        MemberCardDto roomMateCardDto = dormitoryRoomPostRequest.toMemberCardDto();
+        List<RoomImageDto> roomImagesDto = dormitoryRoomPostRequest.toRoomImagesDto();
+        List<String> participationMemberIds = dormitoryRoomPostRequest.participationMemberIds();
+
+        dormitoryRoomPostService.updateDormitoryRoomPost(
+            postId,
+            principal.memberId(),
+            dormitoryRoomPostDto,
+            roomMateCardDto,
+            participationMemberIds,
+            roomImagesDto
+        );
+    }
+
+    @DeleteMapping("/dormitory/{postId}")
+    public void deleteDormitoryRoomPost(
+        @AuthenticationPrincipal MemberPrincipal principal,
+        @PathVariable("postId") Long postId
+    ) {
+        dormitoryRoomPostService.deleteDormitoryRoomPost(postId, principal.memberId());
+    }
+
+    @PostMapping("/dormitory/{postId}/scrap")
+    public ResponseEntity<APIResponse> scrapDormitoryRoomPost(
+        @AuthenticationPrincipal MemberPrincipal principal,
+        @PathVariable("postId") Long postId
+    ) {
+        dormitoryRoomPostService.scrapDormitoryRoomPost(principal.memberId(), principal.gender(),
+            postId);
+
+        return ResponseEntity.ok(APIResponse.success());
+    }
+
 }

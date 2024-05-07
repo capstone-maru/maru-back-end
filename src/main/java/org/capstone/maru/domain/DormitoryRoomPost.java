@@ -2,9 +2,13 @@ package org.capstone.maru.domain;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.capstone.maru.dto.DormitoryRoomPostDto;
+import org.capstone.maru.dto.MemberCardDto;
+import org.capstone.maru.dto.RoomImageDto;
 import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
@@ -36,8 +40,16 @@ public class DormitoryRoomPost extends SharedRoomPost {
 
     // -- 비지니스 로직 -- //
     public void updateDormitoryRoomPost(
-
+        DormitoryRoomPostDto dormitoryRoomPostDto,
+        MemberCardDto roomMateCardDto,
+        List<RoomImageDto> roomImagesDto
     ) {
-
+        super.updateSharedRoomPost(
+            dormitoryRoomPostDto.title(),
+            dormitoryRoomPostDto.content(),
+            roomMateCardDto.toEntity(),
+            dormitoryRoomPostDto.address()
+        );
+        this.updateRoomImages(roomImagesDto);
     }
 }

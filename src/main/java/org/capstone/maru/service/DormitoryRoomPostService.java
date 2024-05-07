@@ -4,24 +4,23 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.capstone.maru.config.redis.StudioViewCountCacheKey;
+import org.capstone.maru.domain.DormitoryRoomPost;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.Participation;
 import org.capstone.maru.domain.ScrapPost;
-import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.domain.ViewPost;
+import org.capstone.maru.dto.DormitoryRoomPostDetailDto;
+import org.capstone.maru.dto.DormitoryRoomPostDto;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
-import org.capstone.maru.dto.StudioRoomPostDetailDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.exception.PostNotFoundException;
 import org.capstone.maru.exception.RestErrorCode;
+import org.capstone.maru.repository.postgre.DormitoryRoomPostRepository;
 import org.capstone.maru.repository.postgre.MemberAccountRepository;
-import org.capstone.maru.repository.postgre.ParticipationRepository;
 import org.capstone.maru.repository.postgre.ScrapPostRepository;
-import org.capstone.maru.repository.postgre.StudioRoomPostRepository;
 import org.capstone.maru.repository.postgre.ViewPostRepository;
 import org.capstone.maru.repository.postgre.projection.ScrapPostView;
 import org.springframework.data.domain.Page;
@@ -34,18 +33,16 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class StudioRoomPostService {
+public class DormitoryRoomPostService {
 
-    private final StudioRoomPostRepository studioRoomPostRepository;
-    private final MemberAccountRepository memberAccountRepository;
-    private final ParticipationRepository participationRepository;
-    private final ScrapPostRepository scrapPostRepository;
     private final ViewPostRepository viewPostRepository;
 
-    private final ViewCountService viewCountService;
+    private final DormitoryRoomPostRepository dormitoryRoomPostRepository;
+    private final MemberAccountRepository memberAccountRepository;
+    private final ScrapPostRepository scrapPostRepository;
 
     @Transactional(readOnly = true)
-    public Page<StudioRoomPostDto> searchStudioRoomPosts(
+    public Page<DormitoryRoomPostDto> searchDormitoryRoomPosts(
         String memberId,
         String gender,
         SearchFilterRequest searchFilterRequest,
@@ -56,135 +53,102 @@ public class StudioRoomPostService {
             .findScrapViewByScrapperMemberId(memberId);
 
         if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
-            return studioRoomPostRepository
+            return dormitoryRoomPostRepository
                 .findAllByPublisherGender(gender, pageable)
-                .map(studioRoomPost ->
-                    StudioRoomPostDto.from(
-                        studioRoomPost,
+                .map(dormitoryRoomPost ->
+                    DormitoryRoomPostDto.from(
+                        dormitoryRoomPost,
                         scrapPostViews
                     )
                 );
         }
 
-        if (searchFilterRequest == null) {
-            return studioRoomPostRepository
-                .findStudioRoomPostBySearchKeyWords(gender, searchKeyWords, pageable)
-                .map(studioRoomPost ->
-                    StudioRoomPostDto.from(
-                        studioRoomPost,
-                        scrapPostViews
-                    )
-                );
-        }
-
-        return studioRoomPostRepository
-            .findStudioRoomPostByDynamicFilter(
-                gender,
-                searchFilterRequest,
-                searchKeyWords,
-                pageable
-            )
-            .map(studioRoomPost ->
-                StudioRoomPostDto.from(
-                    studioRoomPost,
-                    scrapPostViews
-                )
-            );
+        return null;
     }
 
     @Transactional(readOnly = true)
-    public StudioRoomPostDetailDto getStudioRoomPostDetail(String memberId, Long postId,
+    public DormitoryRoomPostDetailDto getDormitoryRoomPostDetail(String memberId, Long postId,
         String gender) {
-        StudioRoomPost resultEntity = studioRoomPostRepository
+        DormitoryRoomPost resultEntity = dormitoryRoomPostRepository
             .findByIdAndPublisherGender(postId, gender)
             .orElseThrow(() -> new PostNotFoundException(RestErrorCode.POST_NOT_FOUND));
 
-        // 스크랩 여부와 스크랩 개수
         final Boolean isScrapped = scrapPostRepository
             .findScrapViewByScrappedIdAndScrapperMemberId(postId, memberId)
             .map(ScrapPostView::getIsScrapped)
             .orElse(false);
         final Long scrapCount = scrapPostRepository.countByScrappedIdAndIsScrapped(postId);
 
-        // 조회수 +1 & 게시글 총 조회수
-        Long viewCount = viewCountService.increaseValue(StudioViewCountCacheKey.from(postId));
+        // TODO: redis
+        Long viewCount = 0L;
 
-        return StudioRoomPostDetailDto.from(resultEntity, isScrapped, scrapCount, viewCount);
+        return DormitoryRoomPostDetailDto.from(resultEntity, isScrapped, scrapCount, viewCount);
     }
 
-    public void saveStudioRoomPost(
+    public void saveDormitoryRoomPost(
         String publisherMemberId,
-        StudioRoomPostDto studioRoomPostDto,
+        DormitoryRoomPostDto dormitoryRoomPostDto,
         MemberCardDto roomMateCardDto,
         List<String> participationMemberIds,
-        List<RoomImageDto> roomImagesDto,
-        RoomInfoDto roomInfoDto
+        List<RoomImageDto> roomImagesDto
     ) {
         MemberAccount publisherAccount = memberAccountRepository.getReferenceById(
             publisherMemberId);
 
-        StudioRoomPost studioRoomPost = studioRoomPostDto.toEntity(
-            roomMateCardDto.toEntity(), publisherAccount, roomInfoDto.toEntity()
+        DormitoryRoomPost dormitoryRoomPost = dormitoryRoomPostDto.toEntity(
+            roomMateCardDto.toEntity(), publisherAccount
         );
-        studioRoomPost.addRoomImages(roomImagesDto);
+        dormitoryRoomPost.addRoomImages(roomImagesDto);
 
         participationMemberIds
             .stream()
             .map(memberAccountRepository::getReferenceById)
-            .forEach(memberAccount -> Participation.of(memberAccount, studioRoomPost));
+            .forEach(memberAccount -> Participation.of(memberAccount, dormitoryRoomPost));
 
-        StudioRoomPost result = studioRoomPostRepository.save(
-            studioRoomPost
-        );
+        DormitoryRoomPost result = dormitoryRoomPostRepository.save(dormitoryRoomPost);
 
         viewPostRepository.save(ViewPost.of(result.getId(), 0L));
-        viewCountService.setValue(StudioViewCountCacheKey.from(result.getId()), 0L);
+        // TODO: redis
     }
 
-    public void updateStudioRoomPost(
+    public void updateDormitoryRoomPost(
         Long postId,
         String publisherMemberId,
-        StudioRoomPostDto studioRoomPostDto,
+        DormitoryRoomPostDto dormitoryRoomPostDto,
         MemberCardDto roomMateCardDto,
         List<String> participationMemberIds,
-        List<RoomImageDto> roomImagesDto,
-        RoomInfoDto roomInfoDto
+        List<RoomImageDto> roomImagesDto
     ) {
-        StudioRoomPost studioRoomPost = studioRoomPostRepository
+        DormitoryRoomPost dormitoryRoomPost = dormitoryRoomPostRepository
             .findByIdAndPublisherAccount_MemberId(postId, publisherMemberId)
             .orElseThrow(() -> new PostNotFoundException(RestErrorCode.POST_NOT_FOUND));
 
-        studioRoomPost.updateStudioRoomPost(
-            studioRoomPostDto,
+        dormitoryRoomPost.updateDormitoryRoomPost(
+            dormitoryRoomPostDto,
             roomMateCardDto,
-            roomInfoDto,
             roomImagesDto
         );
 
-        // TODO: 별로 좋은 코드 같지 않음
-        studioRoomPost.initParticipants();
+        dormitoryRoomPost.initParticipants();
         participationMemberIds
             .stream()
             .map(memberAccountRepository::getReferenceById)
-            .forEach(memberAccount -> Participation.of(memberAccount, studioRoomPost));
+            .forEach(memberAccount -> Participation.of(memberAccount, dormitoryRoomPost));
 
-        studioRoomPostRepository.save(studioRoomPost);
+        dormitoryRoomPostRepository.save(dormitoryRoomPost);
     }
 
-    public void deleteStudioRoomPost(
-        Long postId,
-        String memberId
-    ) {
-        studioRoomPostRepository.deleteByIdAndPublisherAccount_MemberId(postId, memberId);
+    public void deleteDormitoryRoomPost(Long postId, String memberId) {
+        dormitoryRoomPostRepository.deleteByIdAndPublisherAccount_MemberId(postId, memberId);
     }
 
-    public void scrapStudioRoomPost(
+    public void scrapDormitoryRoomPost(
         String memberId,
         String gender,
         Long postId
     ) {
         MemberAccount memberAccount = memberAccountRepository.getReferenceById(memberId);
-        StudioRoomPost studioRoomPost = studioRoomPostRepository
+        DormitoryRoomPost dormitoryRoomPost = dormitoryRoomPostRepository
             .findByIdAndPublisherGender(postId, gender)
             .orElseThrow(() -> new PostNotFoundException(RestErrorCode.POST_NOT_FOUND));
 
@@ -192,11 +156,10 @@ public class StudioRoomPostService {
             postId, memberId);
 
         if (scrapPost.isEmpty()) {
-            scrapPostRepository.save(ScrapPost.of(memberAccount, studioRoomPost));
+            scrapPostRepository.save(ScrapPost.of(memberAccount, dormitoryRoomPost));
             return;
         }
 
         scrapPost.get().toggleScrap();
     }
-
 }

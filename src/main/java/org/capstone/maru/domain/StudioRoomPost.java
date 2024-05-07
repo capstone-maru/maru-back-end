@@ -39,7 +39,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class StudioRoomPost extends SharedRoomPost {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "room_info_id", nullable = false)
+    @JoinColumn(name = "room_info_id")
     private RoomInfo roomInfo;
 
     // -- 생성자 메서드 -- //
@@ -75,7 +75,7 @@ public class StudioRoomPost extends SharedRoomPost {
             studioRoomPostDto.title(),
             studioRoomPostDto.content(),
             roomMateCardDto.toEntity(),
-            null
+            studioRoomPostDto.address()
         );
         this.roomInfo.updateRoomInfo(roomInfoDto);
         this.updateRoomImages(roomImagesDto);
