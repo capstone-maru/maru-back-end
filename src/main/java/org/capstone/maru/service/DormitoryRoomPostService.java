@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.config.redis.SharedViewCountCacheKey;
 import org.capstone.maru.domain.DormitoryRoomPost;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.Participation;
@@ -40,6 +41,8 @@ public class DormitoryRoomPostService {
     private final DormitoryRoomPostRepository dormitoryRoomPostRepository;
     private final MemberAccountRepository memberAccountRepository;
     private final ScrapPostRepository scrapPostRepository;
+
+    private final ViewCountService viewCountService;
 
     @Transactional(readOnly = true)
     public Page<DormitoryRoomPostDto> searchDormitoryRoomPosts(
@@ -85,8 +88,7 @@ public class DormitoryRoomPostService {
             .orElse(false);
         final Long scrapCount = scrapPostRepository.countByScrappedIdAndIsScrapped(postId);
 
-        // TODO: redis
-        Long viewCount = 0L;
+        Long viewCount = viewCountService.increaseValue(SharedViewCountCacheKey.from(postId));
 
         return DormitoryRoomPostDetailDto.from(resultEntity, isScrapped, scrapCount, viewCount);
     }
@@ -114,7 +116,7 @@ public class DormitoryRoomPostService {
         DormitoryRoomPost result = dormitoryRoomPostRepository.save(dormitoryRoomPost);
 
         viewPostRepository.save(ViewPost.of(result.getId(), 0L));
-        // TODO: redis
+        viewCountService.setValue(SharedViewCountCacheKey.from(result.getId()), 0L);
     }
 
     public void updateDormitoryRoomPost(

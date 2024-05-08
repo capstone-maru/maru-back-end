@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.capstone.maru.config.redis.StudioViewCountCacheKey;
+import org.capstone.maru.config.redis.SharedViewCountCacheKey;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.Participation;
 import org.capstone.maru.domain.ScrapPost;
@@ -107,7 +107,7 @@ public class StudioRoomPostService {
         final Long scrapCount = scrapPostRepository.countByScrappedIdAndIsScrapped(postId);
 
         // 조회수 +1 & 게시글 총 조회수
-        Long viewCount = viewCountService.increaseValue(StudioViewCountCacheKey.from(postId));
+        Long viewCount = viewCountService.increaseValue(SharedViewCountCacheKey.from(postId));
 
         return StudioRoomPostDetailDto.from(resultEntity, isScrapped, scrapCount, viewCount);
     }
@@ -138,7 +138,7 @@ public class StudioRoomPostService {
         );
 
         viewPostRepository.save(ViewPost.of(result.getId(), 0L));
-        viewCountService.setValue(StudioViewCountCacheKey.from(result.getId()), 0L);
+        viewCountService.setValue(SharedViewCountCacheKey.from(result.getId()), 0L);
     }
 
     public void updateStudioRoomPost(
