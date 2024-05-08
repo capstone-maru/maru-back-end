@@ -30,9 +30,7 @@ public class MessageBuffer {
 
     // 최근 채팅은 redis에서 긁어오기
     public void saveBufferedMessagesToDatabase() {
-
-        log.info("saveBufferedMessagesToDatabase, {} : ", messageBuffer.size());
-
+        
         messageBuffer.forEach(
             chat -> {
                 log.info("chat : {}", chat);
