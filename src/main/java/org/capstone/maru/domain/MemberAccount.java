@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.domain.jsonb.MemberFeatures;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.domain.Persistable;
@@ -160,8 +161,8 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
             phoneNumber,
             null,
             true,
-            FeatureCard.of(null, List.of()),
-            FeatureCard.of(null, List.of()),
+            FeatureCard.of(null, null),
+            FeatureCard.of(null, null),
             new HashSet<>(),
             new HashSet<>(),
             ProfileImage.defaultImage(memberId),
@@ -239,11 +240,11 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
        false면 user의 특성이 있는 것으로 판단
        true면 user의 특성이 없는 것으로 판단
      */
-    public void updateInitialized(List<String> myFeatures) {
+    public void updateInitialized(MemberFeatures myFeatures) {
         /*
         feature 가 없는 경우
         */
-        if (myFeatures == null || myFeatures.isEmpty()) {
+        if (myFeatures == null) {
             this.initialized = true;
             return;
         }

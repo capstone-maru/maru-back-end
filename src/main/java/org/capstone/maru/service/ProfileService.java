@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.ProfileImage;
+import org.capstone.maru.domain.jsonb.MemberFeatures;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.response.AuthResponse;
@@ -32,13 +33,17 @@ public class ProfileService {
 
     @Transactional
     public MemberCardDto updateMyCard(String memberId, Long cardId, String location,
-        List<String> features) {
+        MemberFeatures features) {
         log.info("updateMyCard - memberId: {}, myFeatures: {}", memberId, features);
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
 
-        FeatureCard featureCard = memberCardRepository.findById(cardId)
-            .orElseThrow(() -> new IllegalArgumentException("invaild cardId"));
+        FeatureCard featureCard = memberCardRepository
+            .findById(cardId)
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    "invaild cardId")
+            );
 
         FeatureCard myCard = memberAccount.getMyCard();
         FeatureCard mateCard = memberAccount.getMateCard();
@@ -85,9 +90,10 @@ public class ProfileService {
     }
 
     @Transactional
-    public MemberCardDto updateRoomCard(String memberId, String roomCardId, List<String> strings) {
+    public MemberCardDto updateRoomCard(String memberId, String roomCardId,
+        MemberFeatures memberFeatures) {
         log.info("updateRoomCard - memberId: {}, roomCardId: {}, myFeatures: {}", memberId,
-            roomCardId, strings);
+            roomCardId, memberFeatures);
 
         /*
          * TODO
@@ -103,7 +109,9 @@ public class ProfileService {
         log.info("getCard - cardId: {}", cardId);
 
         FeatureCard featureCard = memberCardRepository.findById(cardId)
-            .orElseThrow(() -> new IllegalArgumentException("MemberCard not found"));
+                                                      .orElseThrow(
+                                                          () -> new IllegalArgumentException(
+                                                              "MemberCard not found"));
 
         return MemberCardDto.from(featureCard);
     }
