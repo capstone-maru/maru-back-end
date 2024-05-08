@@ -3,11 +3,14 @@ package org.capstone.maru.repository.postgre;
 import java.util.Optional;
 import org.capstone.maru.domain.DormitoryRoomPost;
 import org.capstone.maru.domain.StudioRoomPost;
+import org.capstone.maru.repository.postgre.querydsl.DormitoryRoomPostCustomRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DormitoryRoomPostRepository extends JpaRepository<DormitoryRoomPost, Long> {
+public interface DormitoryRoomPostRepository extends
+    JpaRepository<DormitoryRoomPost, Long>,
+    DormitoryRoomPostCustomRepository {
 
     Page<DormitoryRoomPost> findAllByPublisherGender(String gender, Pageable pageable);
 

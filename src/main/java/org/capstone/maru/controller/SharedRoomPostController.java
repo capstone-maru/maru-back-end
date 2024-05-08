@@ -148,7 +148,6 @@ public class SharedRoomPostController {
     @GetMapping("/dormitory")
     public ResponseEntity<APIResponse> dormitoryRoomPosts(
         @AuthenticationPrincipal MemberPrincipal principal,
-        @RequestQueryString(name = "filter", required = false) SearchFilterRequest searchFilterRequest,
         @RequestParam(name = "search", required = false) String searchKeyWords,
         @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
@@ -156,7 +155,6 @@ public class SharedRoomPostController {
             .searchDormitoryRoomPosts(
                 principal.memberId(),
                 principal.gender(),
-                searchFilterRequest,
                 searchKeyWords,
                 pageable
             )

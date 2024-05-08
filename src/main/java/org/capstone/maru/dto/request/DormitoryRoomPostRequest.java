@@ -1,14 +1,11 @@
 package org.capstone.maru.dto.request;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import org.capstone.maru.annotation.ImageFilesConstraints;
 import org.capstone.maru.domain.Address;
-import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.dto.DormitoryRoomPostDto;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.RoomImageDto;
@@ -20,8 +17,6 @@ public record DormitoryRoomPostRequest(
     List<@Valid ImageFileData> imageFilesData,
     @Valid
     PostData postData,
-    @Valid
-    TransactionData transactionData,
     @Valid
     LocationData locationData,
     MemberFeatureRequest roomMateCardData,
@@ -70,16 +65,6 @@ public record DormitoryRoomPostRequest(
         String title,
         @NotBlank(message = "상세 정보를 작성해야 합니다.")
         String content
-    ) {
-
-    }
-
-    public record TransactionData(
-        @NotNull(message = "거래 방식 입력 값이 잘못 되었습니다.")
-        RentalType rentalType,
-        @Min(value = 0, message = "희망 금액은 음수 일 수 없습니다.")
-        @Max(value = 10_0000_0000, message = "희망 금액에 이상치 값이 입력 되었습니다.")
-        Long expectedPayment
     ) {
 
     }

@@ -45,14 +45,13 @@ public class DormitoryRoomPostService {
     public Page<DormitoryRoomPostDto> searchDormitoryRoomPosts(
         String memberId,
         String gender,
-        SearchFilterRequest searchFilterRequest,
         String searchKeyWords,
         Pageable pageable
     ) {
         List<ScrapPostView> scrapPostViews = scrapPostRepository
             .findScrapViewByScrapperMemberId(memberId);
 
-        if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
+        if (!StringUtils.hasText(searchKeyWords)) {
             return dormitoryRoomPostRepository
                 .findAllByPublisherGender(gender, pageable)
                 .map(dormitoryRoomPost ->
@@ -63,7 +62,14 @@ public class DormitoryRoomPostService {
                 );
         }
 
-        return null;
+        return dormitoryRoomPostRepository
+            .findDormitoryRoomPostBySearchKeyWords(gender, searchKeyWords, pageable)
+            .map(dormitoryRoomPost ->
+                DormitoryRoomPostDto.from(
+                    dormitoryRoomPost,
+                    scrapPostViews
+                )
+            );
     }
 
     @Transactional(readOnly = true)
