@@ -23,6 +23,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.StringUtils;
 
 import static org.capstone.maru.domain.QStudioRoomPost.studioRoomPost;
+import static org.capstone.maru.domain.QRoomInfo.roomInfo;
 
 public class StudioRoomPostCustomRepositoryImpl implements
     org.capstone.maru.repository.postgre.querydsl.StudioRoomPostCustomRepository {
@@ -42,6 +43,8 @@ public class StudioRoomPostCustomRepositoryImpl implements
     ) {
         List<StudioRoomPost> content = jpaQueryFactory
             .selectFrom(studioRoomPost)
+            .join(studioRoomPost.roomInfo, roomInfo)
+            .fetchJoin()
             .where(
                 eqGender(gender),
                 inRoomTypes(searchFilterRequest.roomTypes()),
