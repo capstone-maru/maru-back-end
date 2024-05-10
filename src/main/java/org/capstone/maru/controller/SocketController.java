@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.dto.ChatMessage;
 import org.capstone.maru.dto.request.ChatMessageRequest;
+import org.capstone.maru.dto.response.ChatListMessageResponse;
 import org.capstone.maru.dto.response.ChatMemberProfileResponse;
 import org.capstone.maru.dto.response.ChatMessageResponse;
 import org.capstone.maru.service.ChatService;
@@ -40,7 +41,7 @@ public class SocketController {
             message.message());
 
         //채팅 저장
-        ChatMessageResponse chatMessageReponse = chatService.createChat(message);
+        ChatMessageResponse chatMessageResponse = chatService.createChat(message);
 
         //채팅방에 있는 사람들 불러오기
         List<ChatMemberProfileResponse> chatRoomMemberProfileList =
@@ -52,10 +53,10 @@ public class SocketController {
         // 채팅방에 있는 사람들에게 메시지 전송 채팅이 도착했다.
         roomMemberIdList.forEach(
             memberId -> simpMessagingTemplate.convertAndSend("/roomList/" + memberId,
-                chatMessageReponse)
+                ChatListMessageResponse.from(chatMessageResponse, roomId))
         );
 
-        return chatMessageReponse;
+        return chatMessageResponse;
     }
 
 }

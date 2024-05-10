@@ -53,7 +53,13 @@ class StudioRoomPostServiceTest {
         Page<StudioRoomPostDto> result = sut.searchStudioRoomPosts(memberId, gender,
             null, null, pageable);
 
+        System.out.println("시점 확인");
         // then
+        result.stream().forEach(
+            test -> {
+                System.out.println(test.roomImages().size());
+            }
+        );
         assertThat(result).isEmpty();
         then(scrapPostRepository).should().findScrapViewByScrapperMemberId(memberId);
         then(studioRoomPostRepository).should().findAllByPublisherGender(gender, pageable);
