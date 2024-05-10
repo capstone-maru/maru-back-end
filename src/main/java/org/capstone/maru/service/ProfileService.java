@@ -70,9 +70,9 @@ public class ProfileService {
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
 
-        if (!memberAccount.getGender().equals(gender)) {
-            throw new IllegalArgumentException("MemberCard not found");
-        }
+//        if (!memberAccount.getGender().equals(gender)) {
+//            throw new IllegalArgumentException("성별이 다릅니다.");
+//        }
 
         FeatureCard myCard = memberAccount.getMyCard();
         FeatureCard mateCard = memberAccount.getMateCard();
@@ -109,9 +109,9 @@ public class ProfileService {
         log.info("getCard - cardId: {}", cardId);
 
         FeatureCard featureCard = memberCardRepository.findById(cardId)
-                                                      .orElseThrow(
-                                                          () -> new IllegalArgumentException(
-                                                              "MemberCard not found"));
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    "MemberCard not found"));
 
         return MemberCardDto.from(featureCard);
     }
