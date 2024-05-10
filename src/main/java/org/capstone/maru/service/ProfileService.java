@@ -70,9 +70,9 @@ public class ProfileService {
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
 
-//        if (!memberAccount.getGender().equals(gender)) {
-//            throw new IllegalArgumentException("성별이 다릅니다.");
-//        }
+        if (!memberAccount.getGender().equals(gender)) {
+            throw new IllegalArgumentException("성별이 다릅니다.");
+        }
 
         FeatureCard myCard = memberAccount.getMyCard();
         FeatureCard mateCard = memberAccount.getMateCard();
