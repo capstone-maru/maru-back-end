@@ -25,10 +25,10 @@ import org.springframework.data.domain.Pageable;
 
 @DisplayName("Service - 게시글")
 @ExtendWith(MockitoExtension.class)
-class SharedRoomPostServiceTest {
+class StudioRoomPostServiceTest {
 
     @InjectMocks
-    private SharedRoomPostService sut;
+    private StudioRoomPostService sut;
 
     @Mock
     private StudioRoomPostRepository studioRoomPostRepository;
@@ -92,7 +92,7 @@ class SharedRoomPostServiceTest {
             .contains(StudioRoomPostDto.from(studioRoomPost, List.of()));
         then(scrapPostRepository).should().findScrapViewByScrapperMemberId(memberId);
         then(studioRoomPostRepository).should()
-            .findStudioRoomPostByDynamicFilter(gender, filterCondition,
-                null, pageable);
+                                      .findStudioRoomPostByDynamicFilter(gender, filterCondition,
+                                          null, pageable);
     }
 }

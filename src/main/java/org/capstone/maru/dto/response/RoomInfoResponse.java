@@ -10,7 +10,6 @@ import org.capstone.maru.dto.RoomInfoDto;
 @Builder
 public record RoomInfoResponse(
     Long id,
-    Address address,
     String roomType,
     String floorType,
     Short size,
@@ -27,7 +26,6 @@ public record RoomInfoResponse(
         return RoomInfoResponse
             .builder()
             .id(dto.id())
-            .address(dto.address())
             .roomType(dto.roomType().getDescription())
             .floorType(dto.floorType().getDescription())
             .size(dto.size())

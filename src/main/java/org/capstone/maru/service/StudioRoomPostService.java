@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.capstone.maru.config.redis.StudioViewCountCacheKey;
+import org.capstone.maru.config.redis.SharedViewCountCacheKey;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.Participation;
 import org.capstone.maru.domain.ScrapPost;
@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class SharedRoomPostService {
+public class StudioRoomPostService {
 
     private final StudioRoomPostRepository studioRoomPostRepository;
     private final MemberAccountRepository memberAccountRepository;
@@ -43,8 +43,6 @@ public class SharedRoomPostService {
     private final ViewPostRepository viewPostRepository;
 
     private final ViewCountService viewCountService;
-
-    private static final String PREFIX = "studio";
 
     @Transactional(readOnly = true)
     public Page<StudioRoomPostDto> searchStudioRoomPosts(
@@ -109,7 +107,7 @@ public class SharedRoomPostService {
         final Long scrapCount = scrapPostRepository.countByScrappedIdAndIsScrapped(postId);
 
         // 조회수 +1 & 게시글 총 조회수
-        Long viewCount = viewCountService.increaseValue(StudioViewCountCacheKey.from(postId));
+        Long viewCount = viewCountService.increaseValue(SharedViewCountCacheKey.from(postId));
 
         return StudioRoomPostDetailDto.from(resultEntity, isScrapped, scrapCount, viewCount);
     }
@@ -128,28 +126,56 @@ public class SharedRoomPostService {
         StudioRoomPost studioRoomPost = studioRoomPostDto.toEntity(
             roomMateCardDto.toEntity(), publisherAccount, roomInfoDto.toEntity()
         );
+        studioRoomPost.addRoomImages(roomImagesDto);
 
         participationMemberIds
             .stream()
             .map(memberAccountRepository::getReferenceById)
             .forEach(memberAccount -> Participation.of(memberAccount, studioRoomPost));
 
-        roomImagesDto
-            .forEach(roomImageDto -> roomImageDto.toEntity(studioRoomPost));
-
         StudioRoomPost result = studioRoomPostRepository.save(
             studioRoomPost
         );
 
         viewPostRepository.save(ViewPost.of(result.getId(), 0L));
-        viewCountService.setValue(StudioViewCountCacheKey.from(result.getId()), 0L);
+        viewCountService.setValue(SharedViewCountCacheKey.from(result.getId()), 0L);
+    }
+
+    public void updateStudioRoomPost(
+        Long postId,
+        String publisherMemberId,
+        StudioRoomPostDto studioRoomPostDto,
+        MemberCardDto roomMateCardDto,
+        List<String> participationMemberIds,
+        List<RoomImageDto> roomImagesDto,
+        RoomInfoDto roomInfoDto
+    ) {
+        StudioRoomPost studioRoomPost = studioRoomPostRepository
+            .findByIdAndPublisherAccount_MemberId(postId, publisherMemberId)
+            .orElseThrow(() -> new PostNotFoundException(RestErrorCode.POST_NOT_FOUND));
+
+        studioRoomPost.updateStudioRoomPost(
+            studioRoomPostDto,
+            roomMateCardDto,
+            roomInfoDto,
+            roomImagesDto
+        );
+
+        // TODO: 별로 좋은 코드 같지 않음
+        studioRoomPost.initParticipants();
+        participationMemberIds
+            .stream()
+            .map(memberAccountRepository::getReferenceById)
+            .forEach(memberAccount -> Participation.of(memberAccount, studioRoomPost));
+
+        studioRoomPostRepository.save(studioRoomPost);
     }
 
     public void deleteStudioRoomPost(
         Long postId,
         String memberId
     ) {
-        studioRoomPostRepository.deleteByIdAndAndPublisherAccount_MemberId(postId, memberId);
+        studioRoomPostRepository.deleteByIdAndPublisherAccount_MemberId(postId, memberId);
     }
 
     public void scrapStudioRoomPost(
@@ -160,7 +186,7 @@ public class SharedRoomPostService {
         MemberAccount memberAccount = memberAccountRepository.getReferenceById(memberId);
         StudioRoomPost studioRoomPost = studioRoomPostRepository
             .findByIdAndPublisherGender(postId, gender)
-            .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다."));
+            .orElseThrow(() -> new PostNotFoundException(RestErrorCode.POST_NOT_FOUND));
 
         Optional<ScrapPost> scrapPost = scrapPostRepository.findByScrappedIdAndScrapperMemberId(
             postId, memberId);
