@@ -32,7 +32,7 @@ public class ViewCountService {
     public ViewCountService(
         @Autowired ViewPostRepository viewPostRepository,
         @Qualifier("sharedViewCountRedisTemplate") RedisTemplate<SharedViewCountCacheKey, Long> studioRedisTemplate,
-        @Qualifier("originalRedisTemplate") RedisTemplate<String, String> redisTemplate
+        @Autowired RedisTemplate<String, String> redisTemplate
     ) {
         this.viewPostRepository = viewPostRepository;
         this.studioOperations = studioRedisTemplate.opsForValue();
