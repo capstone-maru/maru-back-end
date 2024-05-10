@@ -103,7 +103,7 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
 
     // 연관관계 table
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<MemberRoom> chatRooms;
+    private List<MemberRoom> chatRooms = new ArrayList<>();
 
     @Builder
     private MemberAccount(
