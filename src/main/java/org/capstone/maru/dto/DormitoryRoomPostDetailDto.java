@@ -2,17 +2,16 @@ package org.capstone.maru.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import org.capstone.maru.domain.Address;
-import org.capstone.maru.domain.MemberAccount;
+import org.capstone.maru.domain.DormitoryRoomPost;
 import org.capstone.maru.domain.Participation;
 import org.capstone.maru.domain.StudioRoomPost;
 
 @Builder
-public record StudioRoomPostDetailDto(
+public record DormitoryRoomPostDetailDto(
     Long id,
     String title,
     String content,
@@ -22,7 +21,6 @@ public record StudioRoomPostDetailDto(
     Set<RoomImageDto> roomImages,
     MemberAccountDto publisherAccount,
     Address address,
-    RoomInfoDto roomInfo,
     Boolean isScrapped,
     Long scrapCount,
     Long viewCount,
@@ -32,13 +30,13 @@ public record StudioRoomPostDetailDto(
     String modifiedBy
 ) {
 
-    public static StudioRoomPostDetailDto from(
-        StudioRoomPost entity,
+    public static DormitoryRoomPostDetailDto from(
+        DormitoryRoomPost entity,
         Boolean isScrapped,
         Long scrapCount,
         Long viewCount
     ) {
-        return StudioRoomPostDetailDto
+        return DormitoryRoomPostDetailDto
             .builder()
             .id(entity.getId())
             .title(entity.getTitle())
@@ -60,7 +58,6 @@ public record StudioRoomPostDetailDto(
             .publisherGender(entity.getPublisherGender())
             .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))
             .address(entity.getAddress())
-            .roomInfo(RoomInfoDto.from(entity.getRoomInfo()))
             .isScrapped(isScrapped)
             .scrapCount(scrapCount)
             .viewCount(viewCount)

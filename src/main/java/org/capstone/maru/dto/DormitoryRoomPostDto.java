@@ -3,17 +3,15 @@ package org.capstone.maru.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-
 import lombok.Builder;
 import org.capstone.maru.domain.Address;
+import org.capstone.maru.domain.DormitoryRoomPost;
 import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.MemberAccount;
-import org.capstone.maru.domain.RoomInfo;
-import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.repository.postgre.projection.ScrapPostView;
 
 @Builder
-public record StudioRoomPostDto(
+public record DormitoryRoomPostDto(
     Long id,
     String title,
     String content,
@@ -21,7 +19,6 @@ public record StudioRoomPostDto(
     List<RoomImageDto> roomImages,
     MemberAccountDto publisherAccount,
     Address address,
-    RoomInfoDto roomInfo,
     Boolean isScrapped,
     LocalDateTime createdAt,
     String createdBy,
@@ -29,9 +26,9 @@ public record StudioRoomPostDto(
     String modifiedBy
 ) {
 
-    public static StudioRoomPostDto from(StudioRoomPost entity,
+    public static DormitoryRoomPostDto from(DormitoryRoomPost entity,
         List<ScrapPostView> scrapViewEntity) {
-        return StudioRoomPostDto
+        return DormitoryRoomPostDto
             .builder()
             .id(entity.getId())
             .title(entity.getTitle())
@@ -45,7 +42,6 @@ public record StudioRoomPostDto(
             .publisherGender(entity.getPublisherGender())
             .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))
             .address(entity.getAddress())
-            .roomInfo(RoomInfoDto.from(entity.getRoomInfo()))
             .isScrapped(
                 scrapViewEntity
                     .stream()
@@ -62,19 +58,17 @@ public record StudioRoomPostDto(
             .build();
     }
 
-    public StudioRoomPost toEntity(
+    public DormitoryRoomPost toEntity(
         FeatureCard roomMateCardEntity,
-        MemberAccount publisherAccountEntity,
-        RoomInfo roomInfoEntity
+        MemberAccount publisherAccountEntity
     ) {
-        return StudioRoomPost.of(
+        return DormitoryRoomPost.of(
             title,
             content,
             publisherGender,
             publisherAccountEntity,
             roomMateCardEntity,
-            address,
-            roomInfoEntity
+            address
         );
     }
 

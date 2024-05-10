@@ -125,7 +125,6 @@ public class EntityCreator {
 
     public static RoomInfo createRoomInfo(int i) {
         return RoomInfo.of(
-            createAddress(i),
             randomRoomType(),
             randomFloorType(),
             (short) (i % 20),
@@ -144,8 +143,9 @@ public class EntityCreator {
             "test title" + i,
             "test content" + i,
             i % 2 == 0 ? "MALE" : "FEMALE",
-            createMemberCard(createMemberFeatures(i), i),
             createMemberAccount(i % 100),
+            createMemberCard(createMemberFeatures(i), i),
+            createAddress(i),
             createRoomInfo(i)
         );
     }

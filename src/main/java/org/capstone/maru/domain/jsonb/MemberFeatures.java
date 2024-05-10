@@ -3,6 +3,7 @@ package org.capstone.maru.domain.jsonb;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,5 +44,23 @@ public class MemberFeatures implements Serializable {
             mateAge,
             options
         );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MemberFeatures that)) {
+            return false;
+        }
+        return Objects.equals(smoking, that.smoking) && Objects.equals(
+            roomSharingOption, that.roomSharingOption) && Objects.equals(mateAge,
+            that.mateAge) && Objects.equals(options, that.options);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(smoking, roomSharingOption, mateAge, options);
     }
 }
