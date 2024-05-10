@@ -43,10 +43,10 @@ public class RedisConfig {
     }
 
     @Bean
-    RedisTemplate<StudioViewCountCacheKey, Long> studioViewCountRedisTemplate() {
-        RedisTemplate<StudioViewCountCacheKey, Long> redisTemplate = new RedisTemplate<>();
+    RedisTemplate<SharedViewCountCacheKey, Long> sharedViewCountRedisTemplate() {
+        RedisTemplate<SharedViewCountCacheKey, Long> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
-        redisTemplate.setKeySerializer(new StudioViewCountCacheKeySerializer());
+        redisTemplate.setKeySerializer(new SharedViewCountCacheKeySerializer());
         redisTemplate.setValueSerializer(new LongRedisSerializer());
         return redisTemplate;
     }

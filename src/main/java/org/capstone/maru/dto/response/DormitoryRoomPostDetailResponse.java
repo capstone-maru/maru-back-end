@@ -1,23 +1,15 @@
 package org.capstone.maru.dto.response;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import org.capstone.maru.domain.Address;
 import org.capstone.maru.domain.jsonb.MemberFeatures;
-import org.capstone.maru.dto.MemberAccountDto;
-import org.capstone.maru.dto.StudioRoomPostDetailDto;
-import org.capstone.maru.dto.StudioRoomPostDto;
+import org.capstone.maru.dto.DormitoryRoomPostDetailDto;
 
-/**
- * 상세 페이지에서 보는 상세 게시글 response
- */
 @Builder
-public record StudioRoomPostDetailResponse(
+public record DormitoryRoomPostDetailResponse(
     Long id,
     String title,
     String content,
@@ -26,7 +18,6 @@ public record StudioRoomPostDetailResponse(
     List<RoomImageResponse> roomImages,
     MemberAccountResponse publisherAccount,
     Address address,
-    RoomInfoResponse roomInfo,
     Boolean isScrapped,
     Long scrapCount,
     Long viewCount,
@@ -36,8 +27,8 @@ public record StudioRoomPostDetailResponse(
     String modifiedBy
 ) {
 
-    public static StudioRoomPostDetailResponse from(StudioRoomPostDetailDto dto) {
-        return StudioRoomPostDetailResponse
+    public static DormitoryRoomPostDetailResponse from(DormitoryRoomPostDetailDto dto) {
+        return DormitoryRoomPostDetailResponse
             .builder()
             .id(dto.id())
             .title(dto.title())
@@ -58,7 +49,6 @@ public record StudioRoomPostDetailResponse(
             )
             .publisherAccount(MemberAccountResponse.from(dto.publisherAccount()))
             .address(dto.address())
-            .roomInfo(RoomInfoResponse.from(dto.roomInfo()))
             .isScrapped(dto.isScrapped())
             .scrapCount(dto.scrapCount())
             .viewCount(dto.viewCount())
@@ -68,4 +58,5 @@ public record StudioRoomPostDetailResponse(
             .modifiedBy(dto.modifiedBy())
             .build();
     }
+
 }

@@ -50,15 +50,20 @@ public class FeatureCard {
         this.memberFeatures = memberFeatures;
     }
 
+    public void updateFeatureCard(FeatureCard featureCard) {
+        updateMemberFeatures(featureCard.memberFeatures);
+        updateLocation(featureCard.location);
+    }
+
     public void updateMemberFeatures(MemberFeatures memberFeatures) {
-        if (memberFeatures == null) {
+        if (this.memberFeatures.equals(memberFeatures)) {
             return;
         }
         this.memberFeatures = memberFeatures;
     }
 
     public void updateLocation(String location) {
-        if (location == null) {
+        if (location == null || location.equals(this.location)) {
             return;
         }
         this.location = location;
