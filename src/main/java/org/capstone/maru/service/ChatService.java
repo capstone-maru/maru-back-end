@@ -226,8 +226,6 @@ public class ChatService {
             () -> new IllegalArgumentException("존재하지 않는 회원입니다.")
         );
 
-        log.info("memberAccount : {}", memberAccount.getChatRooms().get(0).getId());
-
         return memberAccount.getChatRooms().stream().map(
             chatRoom -> ChatRoomResponse.from(
                 chatRoom.getChatRoom(),
@@ -288,6 +286,16 @@ public class ChatService {
 
         // MongoDB에서 채팅방의 마지막 메시지 조회
         Chat chat = chatRepository.findFirstByRoomIdOrderByCreatedAtDesc(roomId);
+
+        if (chat == null) {
+            return ChatMessageResponse.builder()
+                .messageId("0")
+                .message("")
+                .nickname("initial")
+                .sender("initial")
+                .createdAt(LocalDateTime.now())
+                .build();
+        }
 
         return ChatMessageResponse.from(chat);
     }
