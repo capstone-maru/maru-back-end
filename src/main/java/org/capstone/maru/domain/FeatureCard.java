@@ -56,7 +56,7 @@ public class FeatureCard {
     }
 
     public void updateMemberFeatures(MemberFeatures memberFeatures) {
-        if (this.memberFeatures.equals(memberFeatures)) {
+        if (Objects.equals(this.memberFeatures, memberFeatures)) {
             return;
         }
         this.memberFeatures = memberFeatures;
