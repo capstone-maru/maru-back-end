@@ -1,17 +1,20 @@
 package org.capstone.maru.controller;
 
+import com.univcert.api.UnivCert;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.dto.FollowingDto;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
-import org.capstone.maru.dto.request.EmailSearchRequst;
+import org.capstone.maru.dto.request.CertifyUnivRequest;
+import org.capstone.maru.dto.request.EmailSearchRequest;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
 import org.capstone.maru.dto.request.MemberIdRequest;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.dto.response.SimpleMemberProfileResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
+import org.capstone.maru.service.CertificateService;
 import org.capstone.maru.service.FollowService;
 import org.capstone.maru.service.ProfileService;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +36,14 @@ public class ProfileController {
 
     private final ProfileService profileService;
     private final FollowService followService;
+    private final CertificateService certificateService;
 
     /*
      * 이메일로 사용자 프로필 검색
      */
     @PostMapping("/search")
     public ResponseEntity<APIResponse> searchProfile(
-        @RequestBody EmailSearchRequst email
+        @RequestBody EmailSearchRequest email
     ) {
         log.info("call searchProfile : {}", email.email());
 
@@ -185,5 +189,29 @@ public class ProfileController {
 
         List<SimpleMemberProfileResponse> result = profileService.searchContainByEmail(email);
         return ResponseEntity.ok(APIResponse.success(result));
+    }
+
+    @PostMapping("/certificate")
+    public ResponseEntity<APIResponse> certifySchoolAndEmail(
+        @AuthenticationPrincipal MemberPrincipal principal,
+        @RequestBody CertifyUnivRequest certifyUnivRequest
+    ) {
+        if (certifyUnivRequest.code() == null) {
+            certificateService.certifyUnivAndEmail(
+                certifyUnivRequest.email(),
+                certifyUnivRequest.univName()
+            );
+
+            return ResponseEntity.ok(APIResponse.success());
+        }
+
+        certificateService.certifyCode(
+            principal.memberId(),
+            certifyUnivRequest.email(),
+            certifyUnivRequest.univName(),
+            certifyUnivRequest.code()
+        );
+
+        return ResponseEntity.ok(APIResponse.success());
     }
 }
