@@ -1,6 +1,8 @@
 package org.capstone.maru.domain;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -10,6 +12,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 public class Recommend {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Indexed
