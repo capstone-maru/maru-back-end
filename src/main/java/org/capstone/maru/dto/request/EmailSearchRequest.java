@@ -1,6 +1,6 @@
 package org.capstone.maru.dto.request;
 
-public record EmailSearchRequst(
+public record EmailSearchRequest(
     String email
 ) {
 
