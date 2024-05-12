@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.ProfileImage;
+import org.capstone.maru.domain.Recommend;
 import org.capstone.maru.domain.jsonb.MemberFeatures;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
@@ -14,6 +15,7 @@ import org.capstone.maru.dto.response.AuthResponse;
 import org.capstone.maru.dto.response.SimpleMemberProfileResponse;
 import org.capstone.maru.repository.postgre.MemberCardRepository;
 import org.capstone.maru.repository.postgre.ProfileImageRepository;
+import org.capstone.maru.repository.postgre.RecommendRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,8 @@ public class ProfileService {
     private final MemberCardRepository memberCardRepository;
 
     private final ProfileImageRepository profileImageRepository;
+
+    private final RecommendRepository recommendRepository;
 
     @Transactional
     public MemberCardDto updateMyCard(String memberId, Long cardId, String location,
@@ -167,5 +171,12 @@ public class ProfileService {
             return SimpleMemberProfileResponse.from(memberAccount.getMemberId(),
                 memberAccount.getNickname(), imgURL);
         }).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Recommend> getRecommendMember(String memberId, String cardType) {
+
+        return recommendRepository.findAllByUserIdAndCardType(memberId,
+            cardType);
     }
 }

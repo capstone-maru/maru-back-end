@@ -3,12 +3,14 @@ package org.capstone.maru.controller;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.domain.Recommend;
 import org.capstone.maru.dto.FollowingDto;
 import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.request.EmailSearchRequst;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
 import org.capstone.maru.dto.request.MemberIdRequest;
+import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.dto.response.SimpleMemberProfileResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -184,6 +187,22 @@ public class ProfileController {
         log.info("call searchProfileByEmail : {}", email);
 
         List<SimpleMemberProfileResponse> result = profileService.searchContainByEmail(email);
+        return ResponseEntity.ok(APIResponse.success(result));
+    }
+
+    /*
+    내 메이트 카드 기반 유저 추천 리스트
+     */
+    @GetMapping("/recommend")
+    public ResponseEntity<APIResponse> getRecommendMateCard(
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+        @RequestParam(name = "type") String cardType
+    ) {
+        log.info("call getRecommendMateCard : {}", memberPrincipal.memberId());
+
+        List<Recommend> result = profileService.getRecommendMember(
+            memberPrincipal.memberId(), cardType);
+
         return ResponseEntity.ok(APIResponse.success(result));
     }
 }
