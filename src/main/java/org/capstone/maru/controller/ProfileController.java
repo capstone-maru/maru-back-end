@@ -7,10 +7,12 @@ import org.capstone.maru.domain.Recommend;
 import org.capstone.maru.dto.FollowingDto;
 import org.capstone.maru.dto.FeatureCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
+import org.capstone.maru.dto.SimpleMemberCardDto;
 import org.capstone.maru.dto.request.EmailSearchRequst;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
 import org.capstone.maru.dto.request.MemberIdRequest;
 import org.capstone.maru.dto.response.APIResponse;
+import org.capstone.maru.dto.response.SimpleMemberCardResponse;
 import org.capstone.maru.dto.response.SimpleMemberProfileResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.FollowService;
@@ -199,8 +201,12 @@ public class ProfileController {
     ) {
         log.info("call getRecommendMateCard : {}", memberPrincipal.memberId());
 
-        List<Recommend> result = profileService.getRecommendMember(
+        List<SimpleMemberCardDto> recommendMember = profileService.getRecommendMember(
             memberPrincipal.memberId(), cardType);
+
+        List<SimpleMemberCardResponse> result = recommendMember.stream()
+            .map(SimpleMemberCardResponse::from)
+            .toList();
 
         return ResponseEntity.ok(APIResponse.success(result));
     }

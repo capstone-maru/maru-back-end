@@ -11,6 +11,7 @@ import org.capstone.maru.domain.Recommend;
 import org.capstone.maru.domain.jsonb.MemberFeatures;
 import org.capstone.maru.dto.FeatureCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
+import org.capstone.maru.dto.SimpleMemberCardDto;
 import org.capstone.maru.dto.response.AuthResponse;
 import org.capstone.maru.dto.response.SimpleMemberProfileResponse;
 import org.capstone.maru.repository.postgre.MemberCardRepository;
@@ -174,9 +175,19 @@ public class ProfileService {
     }
 
     @Transactional(readOnly = true)
-    public List<Recommend> getRecommendMember(String memberId, String cardType) {
+    public List<SimpleMemberCardDto> getRecommendMember(String memberId, String cardType) {
 
-        return recommendRepository.findAllByUserIdAndCardType(memberId,
+        List<Recommend> recommendList = recommendRepository.findAllByUserIdAndCardType(memberId,
             cardType);
+
+        return recommendList.stream().map(recommend -> {
+
+            MemberAccount memberAccount = memberAccountService.searchMemberAccount(
+                recommend.getRecommendationId());
+            ProfileImage profileImage = memberAccount.getProfileImage();
+            FeatureCard featureCard = memberAccount.getMyCard();
+
+            return SimpleMemberCardDto.from(memberAccount, featureCard, profileImage);
+        }).toList();
     }
 }
