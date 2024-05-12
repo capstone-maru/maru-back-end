@@ -5,12 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Recommend;
 import org.capstone.maru.dto.FollowingDto;
-import org.capstone.maru.dto.MemberCardDto;
+import org.capstone.maru.dto.FeatureCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.request.EmailSearchRequst;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
 import org.capstone.maru.dto.request.MemberIdRequest;
-import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.dto.response.SimpleMemberProfileResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
@@ -63,7 +62,7 @@ public class ProfileController {
 
         String memberId = memberPrincipal.memberId();
 
-        MemberCardDto result = profileService.updateMyCard(
+        FeatureCardDto result = profileService.updateMyCard(
             memberId,
             cardId,
             memberFeatureRequest.location(),
@@ -106,7 +105,7 @@ public class ProfileController {
         @PathVariable Long cardId
     ) {
         log.info("call getCardData : {}", cardId);
-        MemberCardDto result = profileService.getCard(cardId);
+        FeatureCardDto result = profileService.getCard(cardId);
 
         return ResponseEntity.ok(APIResponse.success(result));
     }
@@ -120,7 +119,7 @@ public class ProfileController {
         log.info("call updateRoomCardProfile : {}", memberFeatureRequest);
         String memberId = memberPrincipal.memberId();
 
-        MemberCardDto result = profileService.updateRoomCard(memberId, roomCardId,
+        FeatureCardDto result = profileService.updateRoomCard(memberId, roomCardId,
             memberFeatureRequest.features());
 
         return ResponseEntity.ok(APIResponse.success(result));

@@ -9,7 +9,7 @@ import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.domain.Recommend;
 import org.capstone.maru.domain.jsonb.MemberFeatures;
-import org.capstone.maru.dto.MemberCardDto;
+import org.capstone.maru.dto.FeatureCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.response.AuthResponse;
 import org.capstone.maru.dto.response.SimpleMemberProfileResponse;
@@ -36,7 +36,7 @@ public class ProfileService {
     private final RecommendRepository recommendRepository;
 
     @Transactional
-    public MemberCardDto updateMyCard(String memberId, Long cardId, String location,
+    public FeatureCardDto updateMyCard(String memberId, Long cardId, String location,
         MemberFeatures features) {
         log.info("updateMyCard - memberId: {}, myFeatures: {}", memberId, features);
 
@@ -64,7 +64,7 @@ public class ProfileService {
         featureCard.updateLocation(location);
         featureCard.updateMemberFeatures(features);
 
-        return MemberCardDto.from(featureCard);
+        return FeatureCardDto.from(featureCard);
     }
 
     @Transactional(readOnly = true)
@@ -94,7 +94,7 @@ public class ProfileService {
     }
 
     @Transactional
-    public MemberCardDto updateRoomCard(String memberId, String roomCardId,
+    public FeatureCardDto updateRoomCard(String memberId, String roomCardId,
         MemberFeatures memberFeatures) {
         log.info("updateRoomCard - memberId: {}, roomCardId: {}, myFeatures: {}", memberId,
             roomCardId, memberFeatures);
@@ -105,11 +105,11 @@ public class ProfileService {
          * 해당 roomCardId의 글이 존재하는지 확인, 존재하는 경우 그 카드를 가져옵니다.
          * 가져온 카드의 정보를 업데이트하고 저장합니다.
          * */
-        return MemberCardDto.builder().build();
+        return FeatureCardDto.builder().build();
     }
 
     @Transactional
-    public MemberCardDto getCard(Long cardId) {
+    public FeatureCardDto getCard(Long cardId) {
         log.info("getCard - cardId: {}", cardId);
 
         FeatureCard featureCard = memberCardRepository.findById(cardId)
@@ -117,7 +117,7 @@ public class ProfileService {
                 () -> new IllegalArgumentException(
                     "MemberCard not found"));
 
-        return MemberCardDto.from(featureCard);
+        return FeatureCardDto.from(featureCard);
     }
 
     /*
