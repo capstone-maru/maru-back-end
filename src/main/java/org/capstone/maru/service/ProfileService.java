@@ -177,7 +177,8 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public List<SimpleMemberCardDto> getRecommendMember(String memberId, String cardType) {
 
-        List<Recommend> recommendList = recommendRepository.findAllByUserIdAndCardType(memberId,
+        List<Recommend> recommendList = recommendRepository.findAllByUserIdAndCardTypeOrderByScoreDesc(
+            memberId,
             cardType);
 
         return recommendList.stream().map(recommend -> {
