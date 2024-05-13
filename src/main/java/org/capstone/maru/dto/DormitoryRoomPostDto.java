@@ -19,6 +19,7 @@ public record DormitoryRoomPostDto(
     List<RoomImageDto> roomImages,
     MemberAccountDto publisherAccount,
     Address address,
+    Short recruitmentCapacity,
     Boolean isScrapped,
     LocalDateTime createdAt,
     String createdBy,
@@ -42,6 +43,7 @@ public record DormitoryRoomPostDto(
             .publisherGender(entity.getPublisherGender())
             .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))
             .address(entity.getAddress())
+            .recruitmentCapacity(entity.getRecruitmentCapacity())
             .isScrapped(
                 scrapViewEntity
                     .stream()
@@ -66,6 +68,7 @@ public record DormitoryRoomPostDto(
             title,
             content,
             publisherGender,
+            recruitmentCapacity,
             publisherAccountEntity,
             roomMateCardEntity,
             address

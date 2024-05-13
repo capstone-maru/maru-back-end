@@ -22,6 +22,7 @@ public record StudioRoomPostDto(
     MemberAccountDto publisherAccount,
     Address address,
     RoomInfoDto roomInfo,
+    Short recruitmentCapacity,
     Boolean isScrapped,
     LocalDateTime createdAt,
     String createdBy,
@@ -46,6 +47,7 @@ public record StudioRoomPostDto(
             .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))
             .address(entity.getAddress())
             .roomInfo(RoomInfoDto.from(entity.getRoomInfo()))
+            .recruitmentCapacity(entity.getRecruitmentCapacity())
             .isScrapped(
                 scrapViewEntity
                     .stream()
@@ -71,6 +73,7 @@ public record StudioRoomPostDto(
             title,
             content,
             publisherGender,
+            recruitmentCapacity,
             publisherAccountEntity,
             roomMateCardEntity,
             address,

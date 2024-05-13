@@ -58,7 +58,7 @@ public record StudioRoomPostDetailResponse(
             )
             .publisherAccount(MemberAccountResponse.from(dto.publisherAccount()))
             .address(dto.address())
-            .roomInfo(RoomInfoResponse.from(dto.roomInfo()))
+            .roomInfo(RoomInfoResponse.from(dto.roomInfo(), dto.recruitmentCapacity()))
             .isScrapped(dto.isScrapped())
             .scrapCount(dto.scrapCount())
             .viewCount(dto.viewCount())

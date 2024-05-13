@@ -20,7 +20,6 @@ public record RoomInfoDto(
     Boolean hasLivingRoom,
     RentalType rentalType,
     Long expectedPayment,
-    Short recruitmentCapacity,
     ExtraOption extraOption
 ) {
 
@@ -36,7 +35,6 @@ public record RoomInfoDto(
             .hasLivingRoom(entity.getHasLivingRoom())
             .rentalType(entity.getRentalType())
             .expectedPayment(entity.getExpectedPayment())
-            .recruitmentCapacity(entity.getRecruitmentCapacity())
             .extraOption(entity.getExtraOption())
             .build();
     }
@@ -51,7 +49,6 @@ public record RoomInfoDto(
             hasLivingRoom,
             rentalType,
             expectedPayment,
-            recruitmentCapacity,
             extraOption
         );
     }
