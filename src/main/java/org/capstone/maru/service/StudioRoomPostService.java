@@ -10,7 +10,7 @@ import org.capstone.maru.domain.Participation;
 import org.capstone.maru.domain.ScrapPost;
 import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.domain.ViewPost;
-import org.capstone.maru.dto.MemberCardDto;
+import org.capstone.maru.dto.FeatureCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
 import org.capstone.maru.dto.StudioRoomPostDetailDto;
@@ -115,7 +115,7 @@ public class StudioRoomPostService {
     public void saveStudioRoomPost(
         String publisherMemberId,
         StudioRoomPostDto studioRoomPostDto,
-        MemberCardDto roomMateCardDto,
+        FeatureCardDto roomMateCardDto,
         List<String> participationMemberIds,
         List<RoomImageDto> roomImagesDto,
         RoomInfoDto roomInfoDto
@@ -145,7 +145,7 @@ public class StudioRoomPostService {
         Long postId,
         String publisherMemberId,
         StudioRoomPostDto studioRoomPostDto,
-        MemberCardDto roomMateCardDto,
+        FeatureCardDto roomMateCardDto,
         List<String> participationMemberIds,
         List<RoomImageDto> roomImagesDto,
         RoomInfoDto roomInfoDto

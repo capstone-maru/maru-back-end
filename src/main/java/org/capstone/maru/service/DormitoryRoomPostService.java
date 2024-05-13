@@ -12,11 +12,8 @@ import org.capstone.maru.domain.ScrapPost;
 import org.capstone.maru.domain.ViewPost;
 import org.capstone.maru.dto.DormitoryRoomPostDetailDto;
 import org.capstone.maru.dto.DormitoryRoomPostDto;
-import org.capstone.maru.dto.MemberCardDto;
+import org.capstone.maru.dto.FeatureCardDto;
 import org.capstone.maru.dto.RoomImageDto;
-import org.capstone.maru.dto.RoomInfoDto;
-import org.capstone.maru.dto.StudioRoomPostDto;
-import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.exception.PostNotFoundException;
 import org.capstone.maru.exception.RestErrorCode;
 import org.capstone.maru.repository.postgre.DormitoryRoomPostRepository;
@@ -96,7 +93,7 @@ public class DormitoryRoomPostService {
     public void saveDormitoryRoomPost(
         String publisherMemberId,
         DormitoryRoomPostDto dormitoryRoomPostDto,
-        MemberCardDto roomMateCardDto,
+        FeatureCardDto roomMateCardDto,
         List<String> participationMemberIds,
         List<RoomImageDto> roomImagesDto
     ) {
@@ -123,7 +120,7 @@ public class DormitoryRoomPostService {
         Long postId,
         String publisherMemberId,
         DormitoryRoomPostDto dormitoryRoomPostDto,
-        MemberCardDto roomMateCardDto,
+        FeatureCardDto roomMateCardDto,
         List<String> participationMemberIds,
         List<RoomImageDto> roomImagesDto
     ) {

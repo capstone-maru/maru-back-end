@@ -12,7 +12,7 @@ import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
 import org.capstone.maru.domain.jsonb.ExtraOption;
-import org.capstone.maru.dto.MemberCardDto;
+import org.capstone.maru.dto.FeatureCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
@@ -45,8 +45,8 @@ public record StudioRoomPostRequest(
             .build();
     }
 
-    public MemberCardDto toMemberCardDto() {
-        return MemberCardDto
+    public FeatureCardDto toMemberCardDto() {
+        return FeatureCardDto
             .builder()
             .location(roomMateCardData.location())
             .myFeatures(roomMateCardData.features())

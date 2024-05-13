@@ -2,12 +2,10 @@ package org.capstone.maru.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import org.capstone.maru.domain.Address;
-import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.Participation;
 import org.capstone.maru.domain.StudioRoomPost;
 
@@ -17,7 +15,7 @@ public record StudioRoomPostDetailDto(
     String title,
     String content,
     String publisherGender,
-    MemberCardDto roomMateCard,
+    FeatureCardDto roomMateCard,
     List<MemberAccountDto> participants,
     Set<RoomImageDto> roomImages,
     MemberAccountDto publisherAccount,
@@ -43,19 +41,19 @@ public record StudioRoomPostDetailDto(
             .id(entity.getId())
             .title(entity.getTitle())
             .content(entity.getContent())
-            .roomMateCard(MemberCardDto.from(entity.getRoomMateCard()))
+            .roomMateCard(FeatureCardDto.from(entity.getRoomMateCard()))
             .participants(
                 entity.getSharedRoomPostRecruits()
-                      .stream()
-                      .map(Participation::getRecruitedMemberAccount)
-                      .map(MemberAccountDto::from)
-                      .toList()
+                    .stream()
+                    .map(Participation::getRecruitedMemberAccount)
+                    .map(MemberAccountDto::from)
+                    .toList()
             )
             .roomImages(
                 entity.getRoomImages()
-                      .stream()
-                      .map(RoomImageDto::from)
-                      .collect(Collectors.toSet())
+                    .stream()
+                    .map(RoomImageDto::from)
+                    .collect(Collectors.toSet())
             )
             .publisherGender(entity.getPublisherGender())
             .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))

@@ -7,7 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.capstone.maru.dto.DormitoryRoomPostDto;
-import org.capstone.maru.dto.MemberCardDto;
+import org.capstone.maru.dto.FeatureCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -41,7 +41,7 @@ public class DormitoryRoomPost extends SharedRoomPost {
     // -- 비지니스 로직 -- //
     public void updateDormitoryRoomPost(
         DormitoryRoomPostDto dormitoryRoomPostDto,
-        MemberCardDto roomMateCardDto,
+        FeatureCardDto roomMateCardDto,
         List<RoomImageDto> roomImagesDto
     ) {
         super.updateSharedRoomPost(
