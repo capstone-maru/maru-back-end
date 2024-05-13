@@ -90,7 +90,9 @@ public class SharedRoomPostController {
         FeatureCardDto roomMateCardDto = studioRoomPostRequest.toMemberCardDto();
         List<RoomImageDto> roomImagesDto = studioRoomPostRequest.toRoomImagesDto();
         RoomInfoDto roomInfoDto = studioRoomPostRequest.toRoomInfoDto();
-        List<String> participationMemberIds = studioRoomPostRequest.participationMemberIds();
+        List<String> participationMemberIds = studioRoomPostRequest
+            .participationData()
+            .participationMemberIds();
 
         studioRoomPostService.saveStudioRoomPost(
             principal.memberId(),
@@ -114,7 +116,9 @@ public class SharedRoomPostController {
         FeatureCardDto roomMateCardDto = studioRoomPostRequest.toMemberCardDto();
         List<RoomImageDto> roomImagesDto = studioRoomPostRequest.toRoomImagesDto();
         RoomInfoDto roomInfoDto = studioRoomPostRequest.toRoomInfoDto();
-        List<String> participationMemberIds = studioRoomPostRequest.participationMemberIds();
+        List<String> participationMemberIds = studioRoomPostRequest
+            .participationData()
+            .participationMemberIds();
 
         studioRoomPostService.updateStudioRoomPost(
             postId,
@@ -189,7 +193,9 @@ public class SharedRoomPostController {
         );
         FeatureCardDto roomMateCardDto = dormitoryRoomPostRequest.toMemberCardDto();
         List<RoomImageDto> roomImagesDto = dormitoryRoomPostRequest.toRoomImagesDto();
-        List<String> participationMemberIds = dormitoryRoomPostRequest.participationMemberIds();
+        List<String> participationMemberIds = dormitoryRoomPostRequest
+            .participationData()
+            .participationMemberIds();
 
         dormitoryRoomPostService.saveDormitoryRoomPost(
             principal.memberId(),
@@ -211,7 +217,9 @@ public class SharedRoomPostController {
         );
         FeatureCardDto roomMateCardDto = dormitoryRoomPostRequest.toMemberCardDto();
         List<RoomImageDto> roomImagesDto = dormitoryRoomPostRequest.toRoomImagesDto();
-        List<String> participationMemberIds = dormitoryRoomPostRequest.participationMemberIds();
+        List<String> participationMemberIds = dormitoryRoomPostRequest
+            .participationData()
+            .participationMemberIds();
 
         dormitoryRoomPostService.updateDormitoryRoomPost(
             postId,

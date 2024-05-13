@@ -133,7 +133,6 @@ public class EntityCreator {
             i % 2 == 0,
             randomRentalType(),
             (long) (10_0000 * (i % 11) / 2),
-            (short) (i % 4),
             createExtraOption(i)
         );
     }
@@ -143,6 +142,7 @@ public class EntityCreator {
             "test title" + i,
             "test content" + i,
             i % 2 == 0 ? "MALE" : "FEMALE",
+            (short) (i % 4),
             createMemberAccount(i % 100),
             createMemberCard(createMemberFeatures(i), i),
             createAddress(i),

@@ -33,7 +33,7 @@ public record StudioRoomPostResponse(
             .thumbnail(RoomImageResponse.from(dto.thumbnail()))
             .publisherAccount(MemberAccountResponse.from(dto.publisherAccount()))
             .address(dto.address())
-            .roomInfo(RoomInfoResponse.from(dto.roomInfo()))
+            .roomInfo(RoomInfoResponse.from(dto.roomInfo(), dto.recruitmentCapacity()))
             .isScrapped(dto.isScrapped())
             .createdAt(dto.createdAt())
             .createdBy(dto.createdBy())

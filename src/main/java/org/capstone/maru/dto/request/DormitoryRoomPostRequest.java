@@ -1,6 +1,8 @@
 package org.capstone.maru.dto.request;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -20,8 +22,8 @@ public record DormitoryRoomPostRequest(
     @Valid
     LocationData locationData,
     MemberFeatureRequest roomMateCardData,
-    @NotNull(message = "참가자를 반드시 넣어주세요.")
-    List<String> participationMemberIds
+    @Valid
+    StudioRoomPostRequest.ParticipationData participationData
 ) {
 
     // -- 생성자 -- //
@@ -32,6 +34,7 @@ public record DormitoryRoomPostRequest(
             .content(postData.content())
             .publisherGender(publisherGender)
             .address(Address.of(locationData.oldAddress(), locationData.roadAddress()))
+            .recruitmentCapacity(participationData.recruitmentCapacity())
             .build();
     }
 
@@ -72,6 +75,16 @@ public record DormitoryRoomPostRequest(
     public record LocationData(
         String oldAddress,
         String roadAddress
+    ) {
+
+    }
+
+    public record ParticipationData(
+        @Min(value = 0, message = "모집 인원은 음수 일 수 없습니다.")
+        @Max(value = 10, message = "모집 인원에 이상치 값이 입력 되었습니다.")
+        Short recruitmentCapacity,
+        @NotNull(message = "참가자를 반드시 넣어주세요.")
+        List<String> participationMemberIds
     ) {
 
     }

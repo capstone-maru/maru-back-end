@@ -68,6 +68,9 @@ public abstract class SharedRoomPost extends AuditingFields {
     @Column(updatable = false)
     private String publisherGender;
 
+    @Column
+    private Short recruitmentCapacity;
+
     @OneToMany(
         mappedBy = "sharedRoomPost",
         cascade = CascadeType.ALL,
@@ -101,10 +104,12 @@ public abstract class SharedRoomPost extends AuditingFields {
 
     // -- 생성자 메서드 -- //
     protected SharedRoomPost(String title, String content, String publisherGender,
+        Short recruitmentCapacity,
         MemberAccount publisherAccount, FeatureCard roomMateCard, Address address) {
         this.title = title;
         this.content = content;
         this.publisherGender = publisherGender;
+        this.recruitmentCapacity = recruitmentCapacity;
         this.publisherAccount = publisherAccount;
         this.roomMateCard = roomMateCard;
         this.address = address;
@@ -153,11 +158,12 @@ public abstract class SharedRoomPost extends AuditingFields {
     }
 
     public void updateSharedRoomPost(String title, String content, FeatureCard roomMateCard,
-        Address address) {
+        Address address, Short recruitmentCapacity) {
         updateTitle(title);
         updateContent(content);
         updateRoomMateCard(roomMateCard);
         updateAddress(address);
+        updateRecruitmentCapacity(recruitmentCapacity);
     }
 
     private void updateTitle(String title) {
@@ -183,6 +189,13 @@ public abstract class SharedRoomPost extends AuditingFields {
             return;
         }
         this.address = address;
+    }
+
+    private void updateRecruitmentCapacity(Short recruitmentCapacity) {
+        if (Objects.equals(this.recruitmentCapacity, recruitmentCapacity)) {
+            return;
+        }
+        this.recruitmentCapacity = recruitmentCapacity;
     }
 
     public void initParticipants() {

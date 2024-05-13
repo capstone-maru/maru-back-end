@@ -19,22 +19,25 @@ import org.hibernate.annotations.DynamicUpdate;
 public class DormitoryRoomPost extends SharedRoomPost {
 
     // -- 생성자 메서드 -- //
-
     private DormitoryRoomPost(String title, String content, String publisherGender,
-        MemberAccount publisherAccount, FeatureCard roomMateCard, Address address) {
-        super(title, content, publisherGender, publisherAccount, roomMateCard, address);
+        Short recruitmentCapacity, MemberAccount publisherAccount, FeatureCard roomMateCard,
+        Address address) {
+        super(title, content, publisherGender, recruitmentCapacity, publisherAccount, roomMateCard,
+            address);
     }
 
     public static DormitoryRoomPost of(
         String title,
         String content,
         String publisherGender,
+        Short recruitmentCapacity,
         MemberAccount publisherAccount,
         FeatureCard roomMateCard,
         Address address
     ) {
         return new DormitoryRoomPost(
-            title, content, publisherGender, publisherAccount, roomMateCard, address
+            title, content, publisherGender, recruitmentCapacity, publisherAccount, roomMateCard,
+            address
         );
     }
 
@@ -48,7 +51,8 @@ public class DormitoryRoomPost extends SharedRoomPost {
             dormitoryRoomPostDto.title(),
             dormitoryRoomPostDto.content(),
             roomMateCardDto.toEntity(),
-            dormitoryRoomPostDto.address()
+            dormitoryRoomPostDto.address(),
+            dormitoryRoomPostDto.recruitmentCapacity()
         );
         this.updateRoomImages(roomImagesDto);
     }

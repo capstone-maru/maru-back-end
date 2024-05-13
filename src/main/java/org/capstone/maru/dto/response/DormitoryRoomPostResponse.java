@@ -13,6 +13,7 @@ public record DormitoryRoomPostResponse(
     RoomImageResponse thumbnail,
     MemberAccountResponse publisherAccount,
     Address address,
+    Short recruitmentCapacity,
     Boolean isScrapped,
     LocalDateTime createdAt,
     String createdBy,
@@ -29,6 +30,7 @@ public record DormitoryRoomPostResponse(
             .thumbnail(RoomImageResponse.from(dto.thumbnail()))
             .publisherAccount(MemberAccountResponse.from(dto.publisherAccount()))
             .address(dto.address())
+            .recruitmentCapacity(dto.recruitmentCapacity())
             .isScrapped(dto.isScrapped())
             .createdAt(dto.createdAt())
             .createdBy(dto.createdBy())
