@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.annotation.RequestQueryString;
 import org.capstone.maru.dto.DormitoryRoomPostDto;
-import org.capstone.maru.dto.MemberCardDto;
+import org.capstone.maru.dto.FeatureCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
@@ -87,7 +87,7 @@ public class SharedRoomPostController {
         StudioRoomPostDto studioRoomPostDto = studioRoomPostRequest.toBaseStudioRoomPostDto(
             principal.gender()
         );
-        MemberCardDto roomMateCardDto = studioRoomPostRequest.toMemberCardDto();
+        FeatureCardDto roomMateCardDto = studioRoomPostRequest.toMemberCardDto();
         List<RoomImageDto> roomImagesDto = studioRoomPostRequest.toRoomImagesDto();
         RoomInfoDto roomInfoDto = studioRoomPostRequest.toRoomInfoDto();
         List<String> participationMemberIds = studioRoomPostRequest.participationMemberIds();
@@ -111,7 +111,7 @@ public class SharedRoomPostController {
         StudioRoomPostDto studioRoomPostDto = studioRoomPostRequest.toBaseStudioRoomPostDto(
             principal.gender()
         );
-        MemberCardDto roomMateCardDto = studioRoomPostRequest.toMemberCardDto();
+        FeatureCardDto roomMateCardDto = studioRoomPostRequest.toMemberCardDto();
         List<RoomImageDto> roomImagesDto = studioRoomPostRequest.toRoomImagesDto();
         RoomInfoDto roomInfoDto = studioRoomPostRequest.toRoomInfoDto();
         List<String> participationMemberIds = studioRoomPostRequest.participationMemberIds();
@@ -187,7 +187,7 @@ public class SharedRoomPostController {
         DormitoryRoomPostDto dormitoryRoomPostDto = dormitoryRoomPostRequest.toBaseDormitoryRoomPostDto(
             principal.gender()
         );
-        MemberCardDto roomMateCardDto = dormitoryRoomPostRequest.toMemberCardDto();
+        FeatureCardDto roomMateCardDto = dormitoryRoomPostRequest.toMemberCardDto();
         List<RoomImageDto> roomImagesDto = dormitoryRoomPostRequest.toRoomImagesDto();
         List<String> participationMemberIds = dormitoryRoomPostRequest.participationMemberIds();
 
@@ -209,7 +209,7 @@ public class SharedRoomPostController {
         DormitoryRoomPostDto dormitoryRoomPostDto = dormitoryRoomPostRequest.toBaseDormitoryRoomPostDto(
             principal.gender()
         );
-        MemberCardDto roomMateCardDto = dormitoryRoomPostRequest.toMemberCardDto();
+        FeatureCardDto roomMateCardDto = dormitoryRoomPostRequest.toMemberCardDto();
         List<RoomImageDto> roomImagesDto = dormitoryRoomPostRequest.toRoomImagesDto();
         List<String> participationMemberIds = dormitoryRoomPostRequest.participationMemberIds();
 

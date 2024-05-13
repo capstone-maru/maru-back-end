@@ -7,12 +7,14 @@ import org.capstone.maru.security.response.OAuth2Response;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.security.response.OAuth2ResponseFactory;
 import org.capstone.maru.service.MemberAccountService;
+import org.capstone.maru.service.RecommendService;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -20,6 +22,8 @@ import org.springframework.stereotype.Service;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberAccountService memberAccountService;
+
+    private final RecommendService recommendService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -50,7 +54,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     ) {
         String memberId = getMemberId(registrationId, extractAttributes);
 
-        return MemberPrincipal.from(
+        MemberPrincipal member = MemberPrincipal.from(
             memberAccountService.login(
                 memberId,
                 extractAttributes.email(),
@@ -61,5 +65,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             ),
             oauth2Attributes
         );
+
+        Mono<String> result = recommendService.updateRecommendation();
+        result.block();
+        
+        return member;
     }
 }

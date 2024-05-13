@@ -31,11 +31,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.capstone.maru.dto.MemberAccountDto;
-import org.capstone.maru.dto.MemberCardDto;
 import org.capstone.maru.dto.RoomImageDto;
-import org.capstone.maru.dto.RoomInfoDto;
-import org.capstone.maru.dto.StudioRoomPostDto;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -163,7 +159,7 @@ public abstract class SharedRoomPost extends AuditingFields {
         updateRoomMateCard(roomMateCard);
         updateAddress(address);
     }
-    
+
     private void updateTitle(String title) {
         if (title.equals(this.title)) {
             return;

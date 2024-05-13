@@ -7,7 +7,7 @@ import java.util.List;
 import org.capstone.maru.annotation.ImageFilesConstraints;
 import org.capstone.maru.domain.Address;
 import org.capstone.maru.dto.DormitoryRoomPostDto;
-import org.capstone.maru.dto.MemberCardDto;
+import org.capstone.maru.dto.FeatureCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.request.StudioRoomPostRequest.ImageFileData;
 import org.hibernate.validator.constraints.Length;
@@ -35,8 +35,8 @@ public record DormitoryRoomPostRequest(
             .build();
     }
 
-    public MemberCardDto toMemberCardDto() {
-        return MemberCardDto
+    public FeatureCardDto toMemberCardDto() {
+        return FeatureCardDto
             .builder()
             .location(roomMateCardData.location())
             .myFeatures(roomMateCardData.features())
