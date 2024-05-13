@@ -1,17 +1,18 @@
 package org.capstone.maru.controller;
 
-import com.univcert.api.UnivCert;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.dto.FollowingDto;
-import org.capstone.maru.dto.MemberCardDto;
+import org.capstone.maru.dto.FeatureCardDto;
 import org.capstone.maru.dto.MemberProfileDto;
 import org.capstone.maru.dto.request.CertifyUnivRequest;
 import org.capstone.maru.dto.request.EmailSearchRequest;
+import org.capstone.maru.dto.SimpleMemberCardDto;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
 import org.capstone.maru.dto.request.MemberIdRequest;
 import org.capstone.maru.dto.response.APIResponse;
+import org.capstone.maru.dto.response.SimpleMemberCardResponse;
 import org.capstone.maru.dto.response.SimpleMemberProfileResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.CertificateService;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -64,7 +66,7 @@ public class ProfileController {
 
         String memberId = memberPrincipal.memberId();
 
-        MemberCardDto result = profileService.updateMyCard(
+        FeatureCardDto result = profileService.updateMyCard(
             memberId,
             cardId,
             memberFeatureRequest.location(),
@@ -107,7 +109,7 @@ public class ProfileController {
         @PathVariable Long cardId
     ) {
         log.info("call getCardData : {}", cardId);
-        MemberCardDto result = profileService.getCard(cardId);
+        FeatureCardDto result = profileService.getCard(cardId);
 
         return ResponseEntity.ok(APIResponse.success(result));
     }
@@ -121,7 +123,7 @@ public class ProfileController {
         log.info("call updateRoomCardProfile : {}", memberFeatureRequest);
         String memberId = memberPrincipal.memberId();
 
-        MemberCardDto result = profileService.updateRoomCard(memberId, roomCardId,
+        FeatureCardDto result = profileService.updateRoomCard(memberId, roomCardId,
             memberFeatureRequest.features());
 
         return ResponseEntity.ok(APIResponse.success(result));
@@ -213,5 +215,25 @@ public class ProfileController {
         );
 
         return ResponseEntity.ok(APIResponse.success());
+    }
+
+    /*
+    내 메이트 카드 기반 유저 추천 리스트
+     */
+    @GetMapping("/recommend")
+    public ResponseEntity<APIResponse> getRecommendMateCard(
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+        @RequestParam(name = "type") String cardType
+    ) {
+        log.info("call getRecommendMateCard : {}", memberPrincipal.memberId());
+
+        List<SimpleMemberCardDto> recommendMember = profileService.getRecommendMember(
+            memberPrincipal.memberId(), cardType);
+
+        List<SimpleMemberCardResponse> result = recommendMember.stream()
+                                                               .map(SimpleMemberCardResponse::from)
+                                                               .toList();
+
+        return ResponseEntity.ok(APIResponse.success(result));
     }
 }

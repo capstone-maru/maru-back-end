@@ -8,7 +8,6 @@ import lombok.Builder;
 import org.capstone.maru.domain.Address;
 import org.capstone.maru.domain.DormitoryRoomPost;
 import org.capstone.maru.domain.Participation;
-import org.capstone.maru.domain.StudioRoomPost;
 
 @Builder
 public record DormitoryRoomPostDetailDto(
@@ -16,7 +15,7 @@ public record DormitoryRoomPostDetailDto(
     String title,
     String content,
     String publisherGender,
-    MemberCardDto roomMateCard,
+    FeatureCardDto roomMateCard,
     List<MemberAccountDto> participants,
     Set<RoomImageDto> roomImages,
     MemberAccountDto publisherAccount,
@@ -41,19 +40,19 @@ public record DormitoryRoomPostDetailDto(
             .id(entity.getId())
             .title(entity.getTitle())
             .content(entity.getContent())
-            .roomMateCard(MemberCardDto.from(entity.getRoomMateCard()))
+            .roomMateCard(FeatureCardDto.from(entity.getRoomMateCard()))
             .participants(
                 entity.getSharedRoomPostRecruits()
-                      .stream()
-                      .map(Participation::getRecruitedMemberAccount)
-                      .map(MemberAccountDto::from)
-                      .toList()
+                    .stream()
+                    .map(Participation::getRecruitedMemberAccount)
+                    .map(MemberAccountDto::from)
+                    .toList()
             )
             .roomImages(
                 entity.getRoomImages()
-                      .stream()
-                      .map(RoomImageDto::from)
-                      .collect(Collectors.toSet())
+                    .stream()
+                    .map(RoomImageDto::from)
+                    .collect(Collectors.toSet())
             )
             .publisherGender(entity.getPublisherGender())
             .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))
