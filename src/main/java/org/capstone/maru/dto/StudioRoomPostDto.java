@@ -30,8 +30,10 @@ public record StudioRoomPostDto(
     String modifiedBy
 ) {
 
-    public static StudioRoomPostDto from(StudioRoomPost entity,
-        List<ScrapPostView> scrapViewEntity) {
+    public static StudioRoomPostDto from(
+        StudioRoomPost entity,
+        List<ScrapPostView> scrapViewEntity
+    ) {
         return StudioRoomPostDto
             .builder()
             .id(entity.getId())
