@@ -19,7 +19,6 @@ import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.exception.PostNotFoundException;
 import org.capstone.maru.exception.RestErrorCode;
 import org.capstone.maru.repository.postgre.MemberAccountRepository;
-import org.capstone.maru.repository.postgre.ParticipationRepository;
 import org.capstone.maru.repository.postgre.ScrapPostRepository;
 import org.capstone.maru.repository.postgre.StudioRoomPostRepository;
 import org.capstone.maru.repository.postgre.ViewPostRepository;
@@ -38,11 +37,10 @@ public class StudioRoomPostService {
 
     private final StudioRoomPostRepository studioRoomPostRepository;
     private final MemberAccountRepository memberAccountRepository;
-    private final ParticipationRepository participationRepository;
     private final ScrapPostRepository scrapPostRepository;
     private final ViewPostRepository viewPostRepository;
-
     private final ViewCountService viewCountService;
+    private final S3FileService s3FileService;
 
     @Transactional(readOnly = true)
     public Page<StudioRoomPostDto> searchStudioRoomPosts(
@@ -58,22 +56,42 @@ public class StudioRoomPostService {
         if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
             return studioRoomPostRepository
                 .findAllByPublisherGender(gender, pageable)
-                .map(studioRoomPost ->
-                    StudioRoomPostDto.from(
-                        studioRoomPost,
-                        scrapPostViews
-                    )
+                .map(studioRoomPost -> {
+                        studioRoomPost
+                            .getRoomImages()
+                            .forEach(roomImage ->
+                                roomImage
+                                    .updateFileName(
+                                        s3FileService
+                                            .getPreSignedUrlForLoad(roomImage.getFileName())
+                                    )
+                            );
+                        return StudioRoomPostDto.from(
+                            studioRoomPost,
+                            scrapPostViews
+                        );
+                    }
                 );
         }
 
         if (searchFilterRequest == null) {
             return studioRoomPostRepository
                 .findStudioRoomPostBySearchKeyWords(gender, searchKeyWords, pageable)
-                .map(studioRoomPost ->
-                    StudioRoomPostDto.from(
-                        studioRoomPost,
-                        scrapPostViews
-                    )
+                .map(studioRoomPost -> {
+                        studioRoomPost
+                            .getRoomImages()
+                            .forEach(roomImage ->
+                                roomImage
+                                    .updateFileName(
+                                        s3FileService
+                                            .getPreSignedUrlForLoad(roomImage.getFileName())
+                                    )
+                            );
+                        return StudioRoomPostDto.from(
+                            studioRoomPost,
+                            scrapPostViews
+                        );
+                    }
                 );
         }
 
@@ -84,11 +102,21 @@ public class StudioRoomPostService {
                 searchKeyWords,
                 pageable
             )
-            .map(studioRoomPost ->
-                StudioRoomPostDto.from(
-                    studioRoomPost,
-                    scrapPostViews
-                )
+            .map(studioRoomPost -> {
+                    studioRoomPost
+                        .getRoomImages()
+                        .forEach(roomImage ->
+                            roomImage
+                                .updateFileName(
+                                    s3FileService
+                                        .getPreSignedUrlForLoad(roomImage.getFileName())
+                                )
+                        );
+                    return StudioRoomPostDto.from(
+                        studioRoomPost,
+                        scrapPostViews
+                    );
+                }
             );
     }
 
@@ -109,6 +137,14 @@ public class StudioRoomPostService {
         // 조회수 +1 & 게시글 총 조회수
         Long viewCount = viewCountService.increaseValue(SharedViewCountCacheKey.from(postId));
 
+        resultEntity
+            .getRoomImages()
+            .forEach(
+                roomImage -> roomImage.updateFileName(
+                    s3FileService
+                        .getPreSignedUrlForLoad(roomImage.getFileName())
+                )
+            );
         return StudioRoomPostDetailDto.from(resultEntity, isScrapped, scrapCount, viewCount);
     }
 
