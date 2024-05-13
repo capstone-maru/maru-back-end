@@ -28,7 +28,7 @@ public class MemberAccountService {
 
     private final MemberAccountRepository memberAccountRepository;
 
-    private final RecommendService recommendService;
+//    private final RecommendService recommendService;
 
     @Transactional(readOnly = true)
     public MemberAccountDto searchMember(String memberId) {
@@ -119,8 +119,8 @@ public class MemberAccountService {
      */
     public MemberAccount searchMemberAccountByEmail(String email) {
         return memberAccountRepository.findByEmail(email)
-            .orElseThrow(() -> new MemberAccountNotFoundException(
-                RestErrorCode.MEMBER_NOT_FOUND));
+                                      .orElseThrow(() -> new MemberAccountNotFoundException(
+                                          RestErrorCode.MEMBER_NOT_FOUND));
     }
 
     public List<MemberAccount> searchContainByEmail(String word) {
