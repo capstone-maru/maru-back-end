@@ -34,11 +34,11 @@ import org.springframework.util.StringUtils;
 public class DormitoryRoomPostService {
 
     private final ViewPostRepository viewPostRepository;
-
     private final DormitoryRoomPostRepository dormitoryRoomPostRepository;
     private final MemberAccountRepository memberAccountRepository;
     private final ScrapPostRepository scrapPostRepository;
 
+    private final S3FileService s3FileService;
     private final ViewCountService viewCountService;
 
     @Transactional(readOnly = true)
@@ -54,21 +54,39 @@ public class DormitoryRoomPostService {
         if (!StringUtils.hasText(searchKeyWords)) {
             return dormitoryRoomPostRepository
                 .findAllByPublisherGender(gender, pageable)
-                .map(dormitoryRoomPost ->
-                    DormitoryRoomPostDto.from(
-                        dormitoryRoomPost,
-                        scrapPostViews
-                    )
+                .map(dormitoryRoomPost -> {
+                        dormitoryRoomPost
+                            .getRoomImages()
+                            .forEach(roomImage ->
+                                roomImage
+                                    .updateFileName(
+                                        s3FileService.getPreSignedUrlForLoad(roomImage.getFileName())
+                                    )
+                            );
+                        return DormitoryRoomPostDto.from(
+                            dormitoryRoomPost,
+                            scrapPostViews
+                        );
+                    }
                 );
         }
 
         return dormitoryRoomPostRepository
             .findDormitoryRoomPostBySearchKeyWords(gender, searchKeyWords, pageable)
-            .map(dormitoryRoomPost ->
-                DormitoryRoomPostDto.from(
-                    dormitoryRoomPost,
-                    scrapPostViews
-                )
+            .map(dormitoryRoomPost -> {
+                    dormitoryRoomPost
+                        .getRoomImages()
+                        .forEach(roomImage ->
+                            roomImage
+                                .updateFileName(
+                                    s3FileService.getPreSignedUrlForLoad(roomImage.getFileName())
+                                )
+                        );
+                    return DormitoryRoomPostDto.from(
+                        dormitoryRoomPost,
+                        scrapPostViews
+                    );
+                }
             );
     }
 
@@ -87,6 +105,13 @@ public class DormitoryRoomPostService {
 
         Long viewCount = viewCountService.increaseValue(SharedViewCountCacheKey.from(postId));
 
+        resultEntity
+            .getRoomImages()
+            .forEach(
+                roomImage -> roomImage.updateFileName(
+                    s3FileService.getPreSignedUrlForLoad(roomImage.getFileName())
+                )
+            );
         return DormitoryRoomPostDetailDto.from(resultEntity, isScrapped, scrapCount, viewCount);
     }
 

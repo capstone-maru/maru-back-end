@@ -39,6 +39,7 @@ public class StudioRoomPostService {
     private final MemberAccountRepository memberAccountRepository;
     private final ScrapPostRepository scrapPostRepository;
     private final ViewPostRepository viewPostRepository;
+
     private final ViewCountService viewCountService;
     private final S3FileService s3FileService;
 
