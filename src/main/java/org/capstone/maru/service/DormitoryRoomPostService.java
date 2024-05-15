@@ -17,6 +17,7 @@ import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.exception.PostNotFoundException;
 import org.capstone.maru.exception.RestErrorCode;
 import org.capstone.maru.repository.postgre.DormitoryRoomPostRepository;
+import org.capstone.maru.repository.postgre.FollowRepository;
 import org.capstone.maru.repository.postgre.MemberAccountRepository;
 import org.capstone.maru.repository.postgre.ScrapPostRepository;
 import org.capstone.maru.repository.postgre.ViewPostRepository;
@@ -37,6 +38,7 @@ public class DormitoryRoomPostService {
     private final DormitoryRoomPostRepository dormitoryRoomPostRepository;
     private final MemberAccountRepository memberAccountRepository;
     private final ScrapPostRepository scrapPostRepository;
+    private final FollowRepository followRepository;
 
     private final S3FileService s3FileService;
     private final ViewCountService viewCountService;
@@ -102,9 +104,20 @@ public class DormitoryRoomPostService {
             .map(ScrapPostView::getIsScrapped)
             .orElse(false);
         final Long scrapCount = scrapPostRepository.countByScrappedIdAndIsScrapped(postId);
+        List<String> scrappedMemberIds = followRepository.findFollowingIdsByFollowerId(memberId);
 
         Long viewCount = viewCountService.increaseValue(SharedViewCountCacheKey.from(postId));
 
+        resultEntity
+            .getSharedRoomPostRecruits()
+            .stream()
+            .map(Participation::getRecruitedMemberAccount)
+            .map(MemberAccount::getProfileImage)
+            .forEach(
+                profileImage -> profileImage.updateFileName(
+                    s3FileService.getPreSignedUrlForLoad(profileImage.getFileName())
+                )
+            );
         resultEntity
             .getRoomImages()
             .forEach(
@@ -112,7 +125,8 @@ public class DormitoryRoomPostService {
                     s3FileService.getPreSignedUrlForLoad(roomImage.getFileName())
                 )
             );
-        return DormitoryRoomPostDetailDto.from(resultEntity, isScrapped, scrapCount, viewCount);
+        return DormitoryRoomPostDetailDto.from(resultEntity, isScrapped, scrappedMemberIds,
+            scrapCount, viewCount);
     }
 
     public void saveDormitoryRoomPost(

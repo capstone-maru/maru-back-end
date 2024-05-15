@@ -24,6 +24,7 @@ import org.springframework.util.StringUtils;
 
 import static org.capstone.maru.domain.QStudioRoomPost.studioRoomPost;
 import static org.capstone.maru.domain.QRoomInfo.roomInfo;
+import static org.capstone.maru.domain.QRecommend.recommend;
 
 public class StudioRoomPostCustomRepositoryImpl implements
     org.capstone.maru.repository.postgre.querydsl.StudioRoomPostCustomRepository {

@@ -2,6 +2,7 @@ package org.capstone.maru.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Builder;
@@ -16,7 +17,7 @@ public record DormitoryRoomPostDetailDto(
     String content,
     String publisherGender,
     FeatureCardDto roomMateCard,
-    List<MemberAccountDto> participants,
+    List<SimpleMemberProfileDto> participants,
     Set<RoomImageDto> roomImages,
     MemberAccountDto publisherAccount,
     Address address,
@@ -33,6 +34,7 @@ public record DormitoryRoomPostDetailDto(
     public static DormitoryRoomPostDetailDto from(
         DormitoryRoomPost entity,
         Boolean isScrapped,
+        List<String> scrappedMemberIds,
         Long scrapCount,
         Long viewCount
     ) {
@@ -46,7 +48,16 @@ public record DormitoryRoomPostDetailDto(
                 entity.getSharedRoomPostRecruits()
                       .stream()
                       .map(Participation::getRecruitedMemberAccount)
-                      .map(MemberAccountDto::from)
+                      .map(memberAccount ->
+                          SimpleMemberProfileDto
+                              .from(
+                                  memberAccount,
+                                  scrappedMemberIds
+                                      .stream()
+                                      .anyMatch(memberId -> Objects.equals(memberId,
+                                          memberAccount.getMemberId()))
+                              )
+                      )
                       .toList()
             )
             .roomImages(
