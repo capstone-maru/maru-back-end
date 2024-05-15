@@ -18,6 +18,7 @@ import org.capstone.maru.dto.StudioRoomPostDto;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.exception.PostNotFoundException;
 import org.capstone.maru.exception.RestErrorCode;
+import org.capstone.maru.repository.postgre.FollowRepository;
 import org.capstone.maru.repository.postgre.MemberAccountRepository;
 import org.capstone.maru.repository.postgre.ScrapPostRepository;
 import org.capstone.maru.repository.postgre.StudioRoomPostRepository;
@@ -39,6 +40,8 @@ public class StudioRoomPostService {
     private final MemberAccountRepository memberAccountRepository;
     private final ScrapPostRepository scrapPostRepository;
     private final ViewPostRepository viewPostRepository;
+    private final FollowRepository followRepository;
+
     private final ViewCountService viewCountService;
     private final S3FileService s3FileService;
 
@@ -133,10 +136,21 @@ public class StudioRoomPostService {
             .map(ScrapPostView::getIsScrapped)
             .orElse(false);
         final Long scrapCount = scrapPostRepository.countByScrappedIdAndIsScrapped(postId);
+        List<String> scrappedMemberIds = followRepository.findFollowingIdsByFollowerId(memberId);
 
         // 조회수 +1 & 게시글 총 조회수
         Long viewCount = viewCountService.increaseValue(SharedViewCountCacheKey.from(postId));
 
+        resultEntity
+            .getSharedRoomPostRecruits()
+            .stream()
+            .map(Participation::getRecruitedMemberAccount)
+            .map(MemberAccount::getProfileImage)
+            .forEach(
+                profileImage -> profileImage.updateFileName(
+                    s3FileService.getPreSignedUrlForLoad(profileImage.getFileName())
+                )
+            );
         resultEntity
             .getRoomImages()
             .forEach(
@@ -145,7 +159,8 @@ public class StudioRoomPostService {
                         .getPreSignedUrlForLoad(roomImage.getFileName())
                 )
             );
-        return StudioRoomPostDetailDto.from(resultEntity, isScrapped, scrapCount, viewCount);
+        return StudioRoomPostDetailDto.from(resultEntity, isScrapped, scrappedMemberIds, scrapCount,
+            viewCount);
     }
 
     public void saveStudioRoomPost(
