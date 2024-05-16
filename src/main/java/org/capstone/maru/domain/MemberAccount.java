@@ -65,6 +65,9 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
     @Column
     private String phoneNumber;
 
+    @Column
+    private String univName;
+
     @Column(nullable = false)
     private Boolean initialized;
 
@@ -261,5 +264,9 @@ public class MemberAccount extends AuditingFields implements Persistable<String>
         }
         this.recommendOn = recommendOn;
         return this.recommendOn;
+    }
+
+    public void updateUnivName(String univName) {
+        this.univName = univName;
     }
 }

@@ -24,6 +24,7 @@ public record StudioRoomPostDto(
     MemberAccountDto publisherAccount,
     Address address,
     RoomInfoDto roomInfo,
+    Short recruitmentCapacity,
     Boolean isScrapped,
     LocalDateTime createdAt,
     String createdBy,
@@ -33,10 +34,6 @@ public record StudioRoomPostDto(
 
     public static StudioRoomPostDto from(StudioRoomPost entity,
         List<ScrapPostView> scrapViewEntity) {
-
-        log.info(
-            "StudioRoomPostDto from(StudioRoomPost entity, List<ScrapPostView> scrapViewEntity)");
-
         return StudioRoomPostDto
             .builder()
             .id(entity.getId())
@@ -52,43 +49,7 @@ public record StudioRoomPostDto(
             .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))
             .address(entity.getAddress())
             .roomInfo(RoomInfoDto.from(entity.getRoomInfo()))
-            .isScrapped(
-                scrapViewEntity
-                    .stream()
-                    .filter(scrapPostView ->
-                        Objects.equals(scrapPostView.getScrappedId(), entity.getId()))
-                    .map(ScrapPostView::getIsScrapped)
-                    .findAny()
-                    .orElse(false)
-            )
-            .createdAt(entity.getCreatedAt())
-            .createdBy(entity.getCreatedBy())
-            .modifiedAt(entity.getModifiedAt())
-            .modifiedBy(entity.getModifiedBy())
-            .build();
-    }
-
-    public static StudioRoomPostDto from(StudioRoomRecommendPost entity,
-        List<ScrapPostView> scrapViewEntity) {
-
-        log.info(
-            "StudioRoomPostDto from(StudioRoomPost entity, List<ScrapPostView> scrapViewEntity)");
-
-        return StudioRoomPostDto
-            .builder()
-            .id(entity.getId())
-            .title(entity.getTitle())
-            .content(entity.getContent())
-            .roomImages(
-                entity.getRoomImages()
-                    .stream()
-                    .map(RoomImageDto::from)
-                    .toList()
-            )
-            .publisherGender(entity.getPublisherGender())
-            .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))
-            .address(entity.getAddress())
-            .roomInfo(RoomInfoDto.from(entity.getRoomInfo()))
+            .recruitmentCapacity(entity.getRecruitmentCapacity())
             .isScrapped(
                 scrapViewEntity
                     .stream()
@@ -114,6 +75,7 @@ public record StudioRoomPostDto(
             title,
             content,
             publisherGender,
+            recruitmentCapacity,
             publisherAccountEntity,
             roomMateCardEntity,
             address,

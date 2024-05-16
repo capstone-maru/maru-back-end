@@ -34,7 +34,7 @@ public class RoomInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Convert(converter = RoomTypeConverter.class)
     @Column
     private RoomType roomType;
@@ -62,9 +62,6 @@ public class RoomInfo {
     @Column(nullable = false)
     private Long expectedPayment;
 
-    @Column
-    private Short recruitmentCapacity;
-
     @JdbcTypeCode(SqlTypes.JSON)
     @Embedded
     private ExtraOption extraOption;
@@ -72,7 +69,7 @@ public class RoomInfo {
     // -- 생성 메서드 -- //
     private RoomInfo(RoomType roomType, FloorType floorType, Short size,
         Short numberOfRoom, Short numberOfBathRoom, Boolean hasLivingRoom, RentalType rentalType,
-        Long expectedPayment, Short recruitmentCapacity, ExtraOption extraOption) {
+        Long expectedPayment, ExtraOption extraOption) {
         this.roomType = roomType;
         this.floorType = floorType;
         this.size = size;
@@ -81,7 +78,6 @@ public class RoomInfo {
         this.hasLivingRoom = hasLivingRoom;
         this.rentalType = rentalType;
         this.expectedPayment = expectedPayment;
-        this.recruitmentCapacity = recruitmentCapacity;
         this.extraOption = extraOption;
     }
 
@@ -94,7 +90,6 @@ public class RoomInfo {
         Boolean hasLivingRoom,
         RentalType rentalType,
         Long expectedPayment,
-        Short recruitmentCapacity,
         ExtraOption extraOption
     ) {
         return new RoomInfo(
@@ -106,7 +101,6 @@ public class RoomInfo {
             hasLivingRoom,
             rentalType,
             expectedPayment,
-            recruitmentCapacity,
             extraOption
         );
     }
@@ -121,7 +115,6 @@ public class RoomInfo {
         updateHasLivingRoom(dto.hasLivingRoom());
         updateRentalType(dto.rentalType());
         updateExpectedPayment(dto.expectedPayment());
-        updateRecruitmentCapacity(dto.recruitmentCapacity());
         updateExtraOptions(dto.extraOption());
     }
 
@@ -181,12 +174,6 @@ public class RoomInfo {
         this.expectedPayment = expectedPayment;
     }
 
-    private void updateRecruitmentCapacity(Short recruitmentCapacity) {
-        if (Objects.equals(this.recruitmentCapacity, recruitmentCapacity)) {
-            return;
-        }
-        this.recruitmentCapacity = recruitmentCapacity;
-    }
 
     private void updateExtraOptions(ExtraOption extraOption) {
         if (Objects.equals(this.extraOption, extraOption)) {

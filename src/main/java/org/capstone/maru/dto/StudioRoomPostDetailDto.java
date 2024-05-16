@@ -21,6 +21,7 @@ public record StudioRoomPostDetailDto(
     MemberAccountDto publisherAccount,
     Address address,
     RoomInfoDto roomInfo,
+    Short recruitmentCapacity,
     Boolean isScrapped,
     Long scrapCount,
     Long viewCount,
@@ -44,21 +45,22 @@ public record StudioRoomPostDetailDto(
             .roomMateCard(FeatureCardDto.from(entity.getRoomMateCard()))
             .participants(
                 entity.getSharedRoomPostRecruits()
-                    .stream()
-                    .map(Participation::getRecruitedMemberAccount)
-                    .map(MemberAccountDto::from)
-                    .toList()
+                      .stream()
+                      .map(Participation::getRecruitedMemberAccount)
+                      .map(MemberAccountDto::from)
+                      .toList()
             )
             .roomImages(
                 entity.getRoomImages()
-                    .stream()
-                    .map(RoomImageDto::from)
-                    .collect(Collectors.toSet())
+                      .stream()
+                      .map(RoomImageDto::from)
+                      .collect(Collectors.toSet())
             )
             .publisherGender(entity.getPublisherGender())
             .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))
             .address(entity.getAddress())
             .roomInfo(RoomInfoDto.from(entity.getRoomInfo()))
+            .recruitmentCapacity(entity.getRecruitmentCapacity())
             .isScrapped(isScrapped)
             .scrapCount(scrapCount)
             .viewCount(viewCount)

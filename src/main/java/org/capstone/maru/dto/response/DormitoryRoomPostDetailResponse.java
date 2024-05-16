@@ -18,6 +18,7 @@ public record DormitoryRoomPostDetailResponse(
     List<RoomImageResponse> roomImages,
     MemberAccountResponse publisherAccount,
     Address address,
+    Short recruitmentCapacity,
     Boolean isScrapped,
     Long scrapCount,
     Long viewCount,
@@ -49,6 +50,7 @@ public record DormitoryRoomPostDetailResponse(
             )
             .publisherAccount(MemberAccountResponse.from(dto.publisherAccount()))
             .address(dto.address())
+            .recruitmentCapacity(dto.recruitmentCapacity())
             .isScrapped(dto.isScrapped())
             .scrapCount(dto.scrapCount())
             .viewCount(dto.viewCount())

@@ -22,7 +22,7 @@ public record RoomInfoResponse(
     ExtraOption extraOption
 ) {
 
-    public static RoomInfoResponse from(RoomInfoDto dto) {
+    public static RoomInfoResponse from(RoomInfoDto dto, Short recruitmentCapacity) {
         return RoomInfoResponse
             .builder()
             .id(dto.id())
@@ -32,7 +32,7 @@ public record RoomInfoResponse(
             .numberOfRoom(dto.numberOfRoom())
             .numberOfBathRoom(dto.numberOfBathRoom())
             .hasLivingRoom(dto.hasLivingRoom())
-            .recruitmentCapacity(dto.recruitmentCapacity())
+            .recruitmentCapacity(recruitmentCapacity)
             .rentalType(dto.rentalType().getDescription())
             .expectedPayment(dto.expectedPayment())
             .extraOption(dto.extraOption())

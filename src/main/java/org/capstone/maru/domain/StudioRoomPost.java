@@ -31,9 +31,11 @@ public class StudioRoomPost extends SharedRoomPost {
 
     // -- 생성자 메서드 -- //
     private StudioRoomPost(String title, String content, String publisherGender,
+        Short recruitmentCapacity,
         MemberAccount publisherAccount, FeatureCard roomMateCard, Address address,
         RoomInfo roomInfo) {
-        super(title, content, publisherGender, publisherAccount, roomMateCard, address);
+        super(title, content, publisherGender, recruitmentCapacity, publisherAccount, roomMateCard,
+            address);
         this.roomInfo = roomInfo;
     }
 
@@ -41,13 +43,15 @@ public class StudioRoomPost extends SharedRoomPost {
         String title,
         String content,
         String publisherGender,
+        Short recruitmentCapacity,
         MemberAccount publisherAccount,
         FeatureCard roomMateCard,
         Address address,
         RoomInfo roomInfo
     ) {
         return new StudioRoomPost(
-            title, content, publisherGender, publisherAccount, roomMateCard, address, roomInfo
+            title, content, publisherGender, recruitmentCapacity, publisherAccount, roomMateCard,
+            address, roomInfo
         );
     }
 
@@ -62,7 +66,8 @@ public class StudioRoomPost extends SharedRoomPost {
             studioRoomPostDto.title(),
             studioRoomPostDto.content(),
             roomMateCardDto.toEntity(),
-            studioRoomPostDto.address()
+            studioRoomPostDto.address(),
+            studioRoomPostDto.recruitmentCapacity()
         );
         this.roomInfo.updateRoomInfo(roomInfoDto);
         this.updateRoomImages(roomImagesDto);
