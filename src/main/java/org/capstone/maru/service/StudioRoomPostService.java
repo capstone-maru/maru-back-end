@@ -52,67 +52,59 @@ public class StudioRoomPostService {
         String gender,
         SearchFilterRequest searchFilterRequest,
         String searchKeyWords,
+        String cardOption,
         Pageable pageable
     ) {
         List<ScrapPostView> scrapPostViews = scrapPostRepository
             .findScrapViewByScrapperMemberId(memberId);
 
-//        if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
-//            return studioRoomPostRepository
-//                .findAllByPublisherGender(gender, pageable)
-//                .map(studioRoomPost ->
-//                    StudioRoomPostDto.from(
-//                        studioRoomPost,
-//                        scrapPostViews
-//                    )
-//                );
-//        }
-//
-//        if (searchFilterRequest == null) {
-//            return studioRoomPostRepository
-//                .findStudioRoomPostBySearchKeyWords(gender, searchKeyWords, pageable)
-//                .map(studioRoomPost ->
-//                    StudioRoomPostDto.from(
-//                        studioRoomPost,
-//                        scrapPostViews
-//                    )
-//                );
-//        }
+        // filter, 키워드 없는 경우
+        if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
+            Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
+                .findAllRecommendByPublisherGender(gender, cardOption, pageable);
 
-//        if (searchFilterRequest.cardOption() != null) {
-        log.info("searchFilterRequest : {}", searchFilterRequest.cardOption());
+            return resultPage.map(studioRoomPost ->
+                StudioRoomRecommendPostDto.from(
+                    studioRoomPost,
+                    scrapPostViews
+                )
+            );
+        }
 
+        // card option 키워드만 있는 경우
+        if (searchFilterRequest == null) {
+            Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
+                .findStudioRoomRecommendPostBySearchKeyWords(
+                    memberId,
+                    gender,
+                    searchKeyWords,
+                    cardOption,
+                    pageable
+                );
+
+            return resultPage.map(studioRoomPost ->
+                StudioRoomRecommendPostDto.from(
+                    studioRoomPost,
+                    scrapPostViews
+                )
+            );
+        }
+
+        log.info("searchFilterRequest : {}", cardOption);
+
+        // filter가 있는  경우
         Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
             .findStudioRoomPostByRecommendDynamicFilter(
-                gender, searchFilterRequest, searchKeyWords, memberId, pageable);
+                gender, searchFilterRequest, searchKeyWords, memberId, cardOption, pageable);
 
         log.info("resultPage : {}", resultPage);
 
-        Page<StudioRoomRecommendPostDto> result = resultPage.map(studioRoomPost ->
+        return resultPage.map(studioRoomPost ->
             StudioRoomRecommendPostDto.from(
                 studioRoomPost,
                 scrapPostViews
             )
         );
-
-        log.info(result.toString());
-
-        return result;
-//        }
-
-//        return studioRoomPostRepository
-//            .findStudioRoomPostByDynamicFilter(
-//                gender,
-//                searchFilterRequest,
-//                searchKeyWords,
-//                pageable
-//            )
-//            .map(studioRoomPost ->
-//                StudioRoomPostDto.from(
-//                    studioRoomPost,
-//                    scrapPostViews
-//                )
-//            );
     }
 
     @Transactional(readOnly = true)
