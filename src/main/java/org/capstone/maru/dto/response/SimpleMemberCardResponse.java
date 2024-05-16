@@ -11,7 +11,8 @@ public record SimpleMemberCardResponse(
     String nickname,
     String profileImageUrl,
     String location,
-    MemberFeatures options
+    MemberFeatures options,
+    Integer score
 ) {
 
     public static SimpleMemberCardResponse from(SimpleMemberCardDto simpleMemberCardDto) {
@@ -21,6 +22,7 @@ public record SimpleMemberCardResponse(
             .profileImageUrl(simpleMemberCardDto.profileImageUrl())
             .location(simpleMemberCardDto.location())
             .options(simpleMemberCardDto.options())
+            .score(simpleMemberCardDto.score())
             .build();
     }
 

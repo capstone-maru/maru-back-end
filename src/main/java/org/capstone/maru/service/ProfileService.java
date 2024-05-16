@@ -179,18 +179,22 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public List<SimpleMemberCardDto> getRecommendMember(String memberId, String gender,
         String cardType) {
+        log.info("cardType: {}", cardType);
 
-        String wantType = "mate".equals(cardType) ? "my" : "mate";
-
+        //
         recommendService.updateRecommendation(
             memberId,
             cardType,
-            wantType
+            "member"
         ).subscribe();
 
-        List<Recommend> recommendList = recommendRepository.findAllByUserIdAndCardTypeOrderByScoreDesc(
+        String recommendType = "my".equals(cardType) ? "mate" : "my";
+
+        List<Recommend> recommendList = recommendRepository.findAllByUserIdAndCardTypeAndRecommendationCardTypeOrderByScoreDesc(
             memberId,
-            cardType);
+            cardType,
+            recommendType
+        );
 
         return recommendList.stream().map(recommend -> {
             MemberAccount memberAccount = memberAccountService.searchMemberAccount(
@@ -203,7 +207,8 @@ public class ProfileService {
             ProfileImage profileImage = memberAccount.getProfileImage();
             FeatureCard featureCard = memberAccount.getMyCard();
 
-            return SimpleMemberCardDto.from(memberAccount, featureCard, profileImage);
+            return SimpleMemberCardDto.from(memberAccount, featureCard, profileImage,
+                recommend.getScore());
         }).toList();
     }
 }
