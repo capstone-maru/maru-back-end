@@ -46,6 +46,8 @@ public class StudioRoomPostService {
 
     private final ViewCountService viewCountService;
 
+    private final RecommendService recommendService;
+
     @Transactional(readOnly = true)
     public Page<StudioRoomRecommendPostDto> searchStudioRoomPosts(
         String memberId,
@@ -55,6 +57,12 @@ public class StudioRoomPostService {
         String cardOption,
         Pageable pageable
     ) {
+        recommendService.updateRecommendation(
+            memberId,
+            cardOption,
+            "post"
+        ).subscribe();
+
         List<ScrapPostView> scrapPostViews = scrapPostRepository
             .findScrapViewByScrapperMemberId(memberId);
 

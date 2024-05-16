@@ -178,21 +178,20 @@ public class ProfileService {
 
     @Transactional(readOnly = true)
     public List<SimpleMemberCardDto> getRecommendMember(String memberId, String gender,
-        String cardType) {
-        log.info("cardType: {}", cardType);
+        String cardOption) {
+        log.info("cardOption: {}", cardOption);
 
-        //
         recommendService.updateRecommendation(
             memberId,
-            cardType,
+            cardOption,
             "member"
         ).subscribe();
 
-        String recommendType = "my".equals(cardType) ? "mate" : "my";
+        String recommendType = "my".equals(cardOption) ? "mate" : "my";
 
         List<Recommend> recommendList = recommendRepository.findAllByUserIdAndCardTypeAndRecommendationCardTypeOrderByScoreDesc(
             memberId,
-            cardType,
+            cardOption,
             recommendType
         );
 

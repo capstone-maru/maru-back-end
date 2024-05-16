@@ -197,12 +197,12 @@ public class ProfileController {
     @GetMapping("/recommend")
     public ResponseEntity<APIResponse> getRecommendMateCard(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
-        @RequestParam(name = "type") String cardType
+        @RequestParam(name = "cardOption") String cardOption
     ) {
         log.info("call getRecommendMateCard : {}", memberPrincipal.memberId());
 
         List<SimpleMemberCardDto> recommendMember = profileService.getRecommendMember(
-            memberPrincipal.memberId(), memberPrincipal.gender(), cardType);
+            memberPrincipal.memberId(), memberPrincipal.gender(), cardOption);
 
         List<SimpleMemberCardResponse> result = recommendMember.stream()
             .map(SimpleMemberCardResponse::from)
