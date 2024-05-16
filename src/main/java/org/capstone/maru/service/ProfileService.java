@@ -36,6 +36,8 @@ public class ProfileService {
 
     private final RecommendRepository recommendRepository;
 
+    private final RecommendService recommendService;
+
     @Transactional
     public FeatureCardDto updateMyCard(String memberId, Long cardId, String location,
         MemberFeatures features) {
@@ -175,20 +177,37 @@ public class ProfileService {
     }
 
     @Transactional(readOnly = true)
-    public List<SimpleMemberCardDto> getRecommendMember(String memberId, String cardType) {
+    public List<SimpleMemberCardDto> getRecommendMember(String memberId, String gender,
+        String cardOption) {
+        log.info("cardOption: {}", cardOption);
 
-        List<Recommend> recommendList = recommendRepository.findAllByUserIdAndCardTypeOrderByScoreDesc(
+        recommendService.updateRecommendation(
             memberId,
-            cardType);
+            cardOption,
+            "member"
+        ).subscribe();
+
+        String recommendType = "my".equals(cardOption) ? "mate" : "my";
+
+        List<Recommend> recommendList = recommendRepository.findAllByUserIdAndCardTypeAndRecommendationCardTypeOrderByScoreDesc(
+            memberId,
+            cardOption,
+            recommendType
+        );
 
         return recommendList.stream().map(recommend -> {
-
             MemberAccount memberAccount = memberAccountService.searchMemberAccount(
                 recommend.getRecommendationId());
+
+            if (!memberAccount.getGender().equals(gender)) {
+                return null;
+            }
+
             ProfileImage profileImage = memberAccount.getProfileImage();
             FeatureCard featureCard = memberAccount.getMyCard();
 
-            return SimpleMemberCardDto.from(memberAccount, featureCard, profileImage);
+            return SimpleMemberCardDto.from(memberAccount, featureCard, profileImage,
+                recommend.getScore());
         }).toList();
     }
 }

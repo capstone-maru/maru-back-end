@@ -148,7 +148,8 @@ class StudioRoomPostRepositoryTest {
 
         // when
         Page<StudioRoomPost> studioRoomPostsPage = studioRoomPostRepository
-            .findStudioRoomPostByDynamicFilter(MALE.name(), searchFilter, null, pageable);
+            .findStudioRoomPostByDynamicFilter(MALE.name(), searchFilter, null,
+                pageable);
 
         // then
         assertThat(

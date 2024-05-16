@@ -19,8 +19,7 @@ public record SearchFilterRequest(
     Boolean hasAirConditioner,
     Boolean hasRefrigerator,
     Boolean hasWasher,
-    Boolean hasTerrace,
-    Boolean cardOption
+    Boolean hasTerrace
 ) {
 
     public static SearchFilterRequest fromJson(String json) {

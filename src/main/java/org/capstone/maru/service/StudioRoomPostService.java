@@ -15,10 +15,13 @@ import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
 import org.capstone.maru.dto.StudioRoomPostDetailDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
+import org.capstone.maru.dto.StudioRoomRecommendPost;
+import org.capstone.maru.dto.StudioRoomRecommendPostDto;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.exception.PostNotFoundException;
 import org.capstone.maru.exception.RestErrorCode;
 import org.capstone.maru.repository.postgre.MemberAccountRepository;
+import org.capstone.maru.repository.postgre.ParticipationRepository;
 import org.capstone.maru.repository.postgre.ScrapPostRepository;
 import org.capstone.maru.repository.postgre.StudioRoomPostRepository;
 import org.capstone.maru.repository.postgre.ViewPostRepository;
@@ -37,87 +40,80 @@ public class StudioRoomPostService {
 
     private final StudioRoomPostRepository studioRoomPostRepository;
     private final MemberAccountRepository memberAccountRepository;
+    private final ParticipationRepository participationRepository;
     private final ScrapPostRepository scrapPostRepository;
     private final ViewPostRepository viewPostRepository;
+
     private final ViewCountService viewCountService;
-    private final S3FileService s3FileService;
+
+    private final RecommendService recommendService;
 
     @Transactional(readOnly = true)
-    public Page<StudioRoomPostDto> searchStudioRoomPosts(
+    public Page<StudioRoomRecommendPostDto> searchStudioRoomPosts(
         String memberId,
         String gender,
         SearchFilterRequest searchFilterRequest,
         String searchKeyWords,
+        String cardOption,
         Pageable pageable
     ) {
+        recommendService.updateRecommendation(
+            memberId,
+            cardOption,
+            "post"
+        ).subscribe();
+
         List<ScrapPostView> scrapPostViews = scrapPostRepository
             .findScrapViewByScrapperMemberId(memberId);
 
+        // filter, 키워드 없는 경우
         if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
-            return studioRoomPostRepository
-                .findAllByPublisherGender(gender, pageable)
-                .map(studioRoomPost -> {
-                        studioRoomPost
-                            .getRoomImages()
-                            .forEach(roomImage ->
-                                roomImage
-                                    .updateFileName(
-                                        s3FileService
-                                            .getPreSignedUrlForLoad(roomImage.getFileName())
-                                    )
-                            );
-                        return StudioRoomPostDto.from(
-                            studioRoomPost,
-                            scrapPostViews
-                        );
-                    }
-                );
-        }
+            log.info("cardOption : {}", cardOption);
 
-        if (searchFilterRequest == null) {
-            return studioRoomPostRepository
-                .findStudioRoomPostBySearchKeyWords(gender, searchKeyWords, pageable)
-                .map(studioRoomPost -> {
-                        studioRoomPost
-                            .getRoomImages()
-                            .forEach(roomImage ->
-                                roomImage
-                                    .updateFileName(
-                                        s3FileService
-                                            .getPreSignedUrlForLoad(roomImage.getFileName())
-                                    )
-                            );
-                        return StudioRoomPostDto.from(
-                            studioRoomPost,
-                            scrapPostViews
-                        );
-                    }
-                );
-        }
+            Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
+                .findAllRecommendByPublisherGender(gender, cardOption, pageable);
 
-        return studioRoomPostRepository
-            .findStudioRoomPostByDynamicFilter(
-                gender,
-                searchFilterRequest,
-                searchKeyWords,
-                pageable
-            )
-            .map(studioRoomPost -> {
-                    studioRoomPost
-                        .getRoomImages()
-                        .forEach(roomImage ->
-                            roomImage
-                                .updateFileName(
-                                    s3FileService
-                                        .getPreSignedUrlForLoad(roomImage.getFileName())
-                                )
-                        );
-                    return StudioRoomPostDto.from(
-                        studioRoomPost,
-                        scrapPostViews
-                    );
-                }
+            return resultPage.map(studioRoomPost ->
+                StudioRoomRecommendPostDto.from(
+                    studioRoomPost,
+                    scrapPostViews
+                )
             );
+        }
+
+        // card option 키워드만 있는 경우
+        if (searchFilterRequest == null) {
+            log.info("searchKeyWords : {}", searchKeyWords);
+
+            Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
+                .findStudioRoomRecommendPostBySearchKeyWords(
+                    memberId,
+                    gender,
+                    searchKeyWords,
+                    cardOption,
+                    pageable
+                );
+
+            return resultPage.map(studioRoomPost ->
+                StudioRoomRecommendPostDto.from(
+                    studioRoomPost,
+                    scrapPostViews
+                )
+            );
+        }
+
+        log.info("searchFilterRequest : {}", searchFilterRequest);
+        // filter가 있는  경우
+        Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
+            .findStudioRoomPostByRecommendDynamicFilter(
+                gender, searchFilterRequest, searchKeyWords, memberId, cardOption, pageable);
+
+        return resultPage.map(studioRoomPost ->
+            StudioRoomRecommendPostDto.from(
+                studioRoomPost,
+                scrapPostViews
+            )
+        );
     }
 
     @Transactional(readOnly = true)
@@ -137,14 +133,6 @@ public class StudioRoomPostService {
         // 조회수 +1 & 게시글 총 조회수
         Long viewCount = viewCountService.increaseValue(SharedViewCountCacheKey.from(postId));
 
-        resultEntity
-            .getRoomImages()
-            .forEach(
-                roomImage -> roomImage.updateFileName(
-                    s3FileService
-                        .getPreSignedUrlForLoad(roomImage.getFileName())
-                )
-            );
         return StudioRoomPostDetailDto.from(resultEntity, isScrapped, scrapCount, viewCount);
     }
 
