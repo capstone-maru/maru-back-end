@@ -192,7 +192,7 @@ public class ProfileController {
     }
 
     /*
-    내 메이트 카드 기반 유저 추천 리스트
+    내 메이트 카드 기반 유저 추천 리스트 조회
      */
     @GetMapping("/recommend")
     public ResponseEntity<APIResponse> getRecommendMateCard(
@@ -202,7 +202,7 @@ public class ProfileController {
         log.info("call getRecommendMateCard : {}", memberPrincipal.memberId());
 
         List<SimpleMemberCardDto> recommendMember = profileService.getRecommendMember(
-            memberPrincipal.memberId(), cardType);
+            memberPrincipal.memberId(), memberPrincipal.gender(), cardType);
 
         List<SimpleMemberCardResponse> result = recommendMember.stream()
             .map(SimpleMemberCardResponse::from)

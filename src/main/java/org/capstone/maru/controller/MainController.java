@@ -42,7 +42,10 @@ public class MainController {
 
     @GetMapping("/test2")
     public void test2() {
-        recommendService.updateRecommendation().subscribe();
+        recommendService.updateRecommendation(
+            "naver_htT4VdDRPKqGqKpnncpa71HCA4CVg5LdRC1cWZhCnF8", "my",
+            "post"
+        ).subscribe();
     }
 
 }

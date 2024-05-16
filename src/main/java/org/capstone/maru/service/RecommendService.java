@@ -19,10 +19,9 @@ public class RecommendService {
         this.webClient = WebClient.create();
     }
 
-    public Mono<String> updateRecommendation() {
-        RecommendRequest recommendRequest = new RecommendRequest(
-            "naver_htT4VdDRPKqGqKpnncpa71HCA4CVg5LdRC1cWZhCnF8", "my",
-            "post");
+    public Mono<String> updateRecommendation(String memberId, String cardType, String wantType) {
+
+        RecommendRequest recommendRequest = new RecommendRequest(memberId, cardType, wantType);
 
         return webClient.post()
             .uri(externalServerUrl + "/recommendation/update")
