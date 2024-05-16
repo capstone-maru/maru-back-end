@@ -218,12 +218,13 @@ public class StudioRoomPostCustomRepositoryImpl implements
             .orderBy(postSort(pageable))
             .fetch();
 
+        log.info(content.toString());
+
         JPAQuery<Long> countQuery = jpaQueryFactory
             .select(studioRoomPost.count())
             .from(studioRoomPost)
             .where(
-                eqGender(gender),
-                recommend.cardType.eq(cardOption)
+                eqGender(gender)
             );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);

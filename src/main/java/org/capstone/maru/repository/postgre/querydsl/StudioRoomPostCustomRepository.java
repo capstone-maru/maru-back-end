@@ -1,6 +1,5 @@
 package org.capstone.maru.repository.postgre.querydsl;
 
-import io.lettuce.core.Value;
 import jakarta.annotation.Nonnull;
 import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.dto.StudioRoomRecommendPost;
