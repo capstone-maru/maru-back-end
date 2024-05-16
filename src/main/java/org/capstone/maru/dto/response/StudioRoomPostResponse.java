@@ -2,12 +2,14 @@ package org.capstone.maru.dto.response;
 
 import java.time.LocalDateTime;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Address;
 import org.capstone.maru.dto.StudioRoomPostDto;
 
 /**
  * 게시판에서 보는 게시글 response
  */
+@Slf4j
 @Builder
 public record StudioRoomPostResponse(
     Long id,
@@ -25,6 +27,14 @@ public record StudioRoomPostResponse(
 ) {
 
     public static StudioRoomPostResponse from(StudioRoomPostDto dto) {
+
+        log.info("dto, {} ", dto);
+        log.info("isThumnail, {} ", dto.thumbnail().isThumbnail().toString());
+        log.info(dto.thumbnail() == null ? "null" : "not null");
+        log.info("StudioRoomPostResponse from(StudioRoomPostDto dto : {})", dto.toString());
+
+        log.info(dto.thumbnail().toString());
+
         return StudioRoomPostResponse
             .builder()
             .id(dto.id())

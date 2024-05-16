@@ -54,7 +54,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     ) {
         String memberId = getMemberId(registrationId, extractAttributes);
 
-        MemberPrincipal member = MemberPrincipal.from(
+        return MemberPrincipal.from(
             memberAccountService.login(
                 memberId,
                 extractAttributes.email(),
@@ -65,10 +65,5 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             ),
             oauth2Attributes
         );
-
-        Mono<String> result = recommendService.updateRecommendation();
-        result.block();
-        
-        return member;
     }
 }

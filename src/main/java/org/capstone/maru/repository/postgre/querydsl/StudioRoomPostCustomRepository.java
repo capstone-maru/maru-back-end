@@ -1,5 +1,6 @@
 package org.capstone.maru.repository.postgre.querydsl;
 
+import com.querydsl.core.Tuple;
 import jakarta.annotation.Nonnull;
 import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.dto.request.SearchFilterRequest;
@@ -18,6 +19,14 @@ public interface StudioRoomPostCustomRepository {
     Page<StudioRoomPost> findStudioRoomPostBySearchKeyWords(
         String gender,
         String searchKeyWords,
+        Pageable pageable
+    );
+
+    Page<StudioRoomPost> findStudioRoomPostByRecommendDynamicFilter(
+        String gender,
+        @Nonnull SearchFilterRequest searchFilterRequest,
+        String searchKeyWords,
+        String memberId,
         Pageable pageable
     );
 }

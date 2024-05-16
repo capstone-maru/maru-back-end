@@ -77,6 +77,27 @@ public class StudioRoomPostService {
                 );
         }
 
+        if (searchFilterRequest.cardOption() != null) {
+            log.info("searchFilterRequest : {}", searchFilterRequest.cardOption());
+
+            Page<StudioRoomPost> resultPage = studioRoomPostRepository
+                .findStudioRoomPostByRecommendDynamicFilter(
+                    gender, searchFilterRequest, searchKeyWords, memberId, pageable);
+
+            log.info("resultPage : {}", resultPage);
+
+            Page<StudioRoomPostDto> result = resultPage.map(studioRoomPost ->
+                StudioRoomPostDto.from(
+                    studioRoomPost,
+                    scrapPostViews
+                )
+            );
+
+            log.info(result.toString());
+
+            return result;
+        }
+
         return studioRoomPostRepository
             .findStudioRoomPostByDynamicFilter(
                 gender,

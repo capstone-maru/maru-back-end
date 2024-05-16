@@ -1,5 +1,6 @@
 package org.capstone.maru.repository.postgre.querydsl;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -9,6 +10,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
@@ -22,9 +24,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.StringUtils;
 
+import static org.capstone.maru.domain.QRecommend.recommend;
 import static org.capstone.maru.domain.QStudioRoomPost.studioRoomPost;
 import static org.capstone.maru.domain.QRoomInfo.roomInfo;
 
+@Slf4j
 public class StudioRoomPostCustomRepositoryImpl implements
     org.capstone.maru.repository.postgre.querydsl.StudioRoomPostCustomRepository {
 
@@ -98,6 +102,43 @@ public class StudioRoomPostCustomRepositoryImpl implements
             .orderBy(postSort(pageable))
             .fetch();
 
+        // 개수
+        JPAQuery<Long> countQuery = jpaQueryFactory
+            .select(studioRoomPost.count())
+            .from(studioRoomPost)
+            .where(
+                eqGender(gender),
+                containSearchKeyWords(searchKeyWords)
+            );
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Page<StudioRoomPost> findStudioRoomPostByRecommendDynamicFilter(
+        String gender,
+        @Nonnull SearchFilterRequest searchFilterRequest,
+        String searchKeyWords,
+        String memberId,
+        Pageable pageable
+    ) {
+        log.info("findStudioRoomPostByRecommendDynamicFilter : {}",
+            searchFilterRequest.cardOption());
+
+        List<StudioRoomPost> content = jpaQueryFactory
+            .select(studioRoomPost)
+            .from(recommend)
+            .join(studioRoomPost)
+            .on(recommend.recommendationId.castToNum(Long.class).eq(studioRoomPost.id))
+            .where(
+                recommend.userId.eq(memberId)
+            )
+            .fetch();
+
+        log.info("content size : {}", content.size());
+        log.info("content : {}", content.get(0).toString());
+
+        // 개수
         JPAQuery<Long> countQuery = jpaQueryFactory
             .select(studioRoomPost.count())
             .from(studioRoomPost)

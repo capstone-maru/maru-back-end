@@ -53,6 +53,9 @@ public class SharedRoomPostController {
         @RequestParam(name = "search", required = false) String searchKeyWords,
         @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
+
+        log.info("searchFilterRequest: {}", searchFilterRequest.cardOption());
+
         Page<StudioRoomPostResponse> result = studioRoomPostService
             .searchStudioRoomPosts(
                 principal.memberId(),

@@ -92,7 +92,7 @@ class StudioRoomPostServiceTest {
             .contains(StudioRoomPostDto.from(studioRoomPost, List.of()));
         then(scrapPostRepository).should().findScrapViewByScrapperMemberId(memberId);
         then(studioRoomPostRepository).should()
-                                      .findStudioRoomPostByDynamicFilter(gender, filterCondition,
-                                          null, pageable);
+            .findStudioRoomPostByDynamicFilter(gender, filterCondition,
+                null, pageable);
     }
 }
