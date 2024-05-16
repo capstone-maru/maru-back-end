@@ -27,14 +27,6 @@ public record StudioRoomPostResponse(
 ) {
 
     public static StudioRoomPostResponse from(StudioRoomPostDto dto) {
-
-        log.info("dto, {} ", dto);
-        log.info("isThumnail, {} ", dto.thumbnail().isThumbnail().toString());
-        log.info(dto.thumbnail() == null ? "null" : "not null");
-        log.info("StudioRoomPostResponse from(StudioRoomPostDto dto : {})", dto.toString());
-
-        log.info(dto.thumbnail().toString());
-
         return StudioRoomPostResponse
             .builder()
             .id(dto.id())

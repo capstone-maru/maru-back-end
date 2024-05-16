@@ -15,6 +15,8 @@ import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.dto.RoomInfoDto;
 import org.capstone.maru.dto.StudioRoomPostDetailDto;
 import org.capstone.maru.dto.StudioRoomPostDto;
+import org.capstone.maru.dto.StudioRoomRecommendPost;
+import org.capstone.maru.dto.StudioRoomRecommendPostDto;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.exception.PostNotFoundException;
 import org.capstone.maru.exception.RestErrorCode;
@@ -45,7 +47,7 @@ public class StudioRoomPostService {
     private final ViewCountService viewCountService;
 
     @Transactional(readOnly = true)
-    public Page<StudioRoomPostDto> searchStudioRoomPosts(
+    public Page<StudioRoomRecommendPostDto> searchStudioRoomPosts(
         String memberId,
         String gender,
         SearchFilterRequest searchFilterRequest,
@@ -55,62 +57,62 @@ public class StudioRoomPostService {
         List<ScrapPostView> scrapPostViews = scrapPostRepository
             .findScrapViewByScrapperMemberId(memberId);
 
-        if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
-            return studioRoomPostRepository
-                .findAllByPublisherGender(gender, pageable)
-                .map(studioRoomPost ->
-                    StudioRoomPostDto.from(
-                        studioRoomPost,
-                        scrapPostViews
-                    )
-                );
-        }
+//        if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
+//            return studioRoomPostRepository
+//                .findAllByPublisherGender(gender, pageable)
+//                .map(studioRoomPost ->
+//                    StudioRoomPostDto.from(
+//                        studioRoomPost,
+//                        scrapPostViews
+//                    )
+//                );
+//        }
+//
+//        if (searchFilterRequest == null) {
+//            return studioRoomPostRepository
+//                .findStudioRoomPostBySearchKeyWords(gender, searchKeyWords, pageable)
+//                .map(studioRoomPost ->
+//                    StudioRoomPostDto.from(
+//                        studioRoomPost,
+//                        scrapPostViews
+//                    )
+//                );
+//        }
 
-        if (searchFilterRequest == null) {
-            return studioRoomPostRepository
-                .findStudioRoomPostBySearchKeyWords(gender, searchKeyWords, pageable)
-                .map(studioRoomPost ->
-                    StudioRoomPostDto.from(
-                        studioRoomPost,
-                        scrapPostViews
-                    )
-                );
-        }
+//        if (searchFilterRequest.cardOption() != null) {
+        log.info("searchFilterRequest : {}", searchFilterRequest.cardOption());
 
-        if (searchFilterRequest.cardOption() != null) {
-            log.info("searchFilterRequest : {}", searchFilterRequest.cardOption());
+        Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
+            .findStudioRoomPostByRecommendDynamicFilter(
+                gender, searchFilterRequest, searchKeyWords, memberId, pageable);
 
-            Page<StudioRoomPost> resultPage = studioRoomPostRepository
-                .findStudioRoomPostByRecommendDynamicFilter(
-                    gender, searchFilterRequest, searchKeyWords, memberId, pageable);
+        log.info("resultPage : {}", resultPage);
 
-            log.info("resultPage : {}", resultPage);
-
-            Page<StudioRoomPostDto> result = resultPage.map(studioRoomPost ->
-                StudioRoomPostDto.from(
-                    studioRoomPost,
-                    scrapPostViews
-                )
-            );
-
-            log.info(result.toString());
-
-            return result;
-        }
-
-        return studioRoomPostRepository
-            .findStudioRoomPostByDynamicFilter(
-                gender,
-                searchFilterRequest,
-                searchKeyWords,
-                pageable
+        Page<StudioRoomRecommendPostDto> result = resultPage.map(studioRoomPost ->
+            StudioRoomRecommendPostDto.from(
+                studioRoomPost,
+                scrapPostViews
             )
-            .map(studioRoomPost ->
-                StudioRoomPostDto.from(
-                    studioRoomPost,
-                    scrapPostViews
-                )
-            );
+        );
+
+        log.info(result.toString());
+
+        return result;
+//        }
+
+//        return studioRoomPostRepository
+//            .findStudioRoomPostByDynamicFilter(
+//                gender,
+//                searchFilterRequest,
+//                searchKeyWords,
+//                pageable
+//            )
+//            .map(studioRoomPost ->
+//                StudioRoomPostDto.from(
+//                    studioRoomPost,
+//                    scrapPostViews
+//                )
+//            );
     }
 
     @Transactional(readOnly = true)

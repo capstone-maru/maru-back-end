@@ -15,6 +15,8 @@ import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
+import org.capstone.maru.dto.QStudioRoomRecommendPost;
+import org.capstone.maru.dto.StudioRoomRecommendPost;
 import org.capstone.maru.dto.request.RangeRequest;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +117,7 @@ public class StudioRoomPostCustomRepositoryImpl implements
     }
 
     @Override
-    public Page<StudioRoomPost> findStudioRoomPostByRecommendDynamicFilter(
+    public Page<StudioRoomRecommendPost> findStudioRoomPostByRecommendDynamicFilter(
         String gender,
         @Nonnull SearchFilterRequest searchFilterRequest,
         String searchKeyWords,
@@ -125,14 +127,15 @@ public class StudioRoomPostCustomRepositoryImpl implements
         log.info("findStudioRoomPostByRecommendDynamicFilter : {}",
             searchFilterRequest.cardOption());
 
-        List<StudioRoomPost> content = jpaQueryFactory
-            .select(studioRoomPost)
+        List<StudioRoomRecommendPost> content = jpaQueryFactory
+            .select(new QStudioRoomRecommendPost(studioRoomPost, recommend))
             .from(recommend)
             .join(studioRoomPost)
             .on(recommend.recommendationId.castToNum(Long.class).eq(studioRoomPost.id))
             .where(
                 recommend.userId.eq(memberId)
             )
+            .orderBy(recommend.score.desc())
             .fetch();
 
         log.info("content size : {}", content.size());

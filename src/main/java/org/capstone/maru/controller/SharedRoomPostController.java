@@ -18,6 +18,7 @@ import org.capstone.maru.dto.response.DormitoryRoomPostDetailResponse;
 import org.capstone.maru.dto.response.DormitoryRoomPostResponse;
 import org.capstone.maru.dto.response.StudioRoomPostDetailResponse;
 import org.capstone.maru.dto.response.StudioRoomPostResponse;
+import org.capstone.maru.dto.response.StudioRoomRecommendPostResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.DormitoryRoomPostService;
 import org.capstone.maru.service.StudioRoomPostService;
@@ -56,7 +57,7 @@ public class SharedRoomPostController {
 
         log.info("searchFilterRequest: {}", searchFilterRequest.cardOption());
 
-        Page<StudioRoomPostResponse> result = studioRoomPostService
+        Page<StudioRoomRecommendPostResponse> result = studioRoomPostService
             .searchStudioRoomPosts(
                 principal.memberId(),
                 principal.gender(),
@@ -64,7 +65,7 @@ public class SharedRoomPostController {
                 searchKeyWords,
                 pageable
             )
-            .map(StudioRoomPostResponse::from);
+            .map(StudioRoomRecommendPostResponse::from);
 
         return ResponseEntity.ok(APIResponse.success(result));
     }
