@@ -65,6 +65,15 @@ public class DormitoryRoomPostService {
                                         s3FileService.getPreSignedUrlForLoad(roomImage.getFileName())
                                     )
                             );
+                        dormitoryRoomPost
+                            .getPublisherAccount()
+                            .getProfileImage()
+                            .updateFileName(
+                                dormitoryRoomPost
+                                    .getPublisherAccount()
+                                    .getProfileImage()
+                                    .getFileName()
+                            );
                         return DormitoryRoomPostDto.from(
                             dormitoryRoomPost,
                             scrapPostViews
@@ -83,6 +92,15 @@ public class DormitoryRoomPostService {
                                 .updateFileName(
                                     s3FileService.getPreSignedUrlForLoad(roomImage.getFileName())
                                 )
+                        );
+                    dormitoryRoomPost
+                        .getPublisherAccount()
+                        .getProfileImage()
+                        .updateFileName(
+                            dormitoryRoomPost
+                                .getPublisherAccount()
+                                .getProfileImage()
+                                .getFileName()
                         );
                     return DormitoryRoomPostDto.from(
                         dormitoryRoomPost,

@@ -69,6 +69,13 @@ public class StudioRoomPostService {
                                             .getPreSignedUrlForLoad(roomImage.getFileName())
                                     )
                             );
+                        studioRoomPost
+                            .getPublisherAccount()
+                            .getProfileImage()
+                            .updateFileName(
+                                s3FileService.getPreSignedUrlForLoad(
+                                    studioRoomPost.getPublisherAccount().getProfileImage().getFileName()
+                                ));
                         return StudioRoomPostDto.from(
                             studioRoomPost,
                             scrapPostViews
@@ -90,6 +97,13 @@ public class StudioRoomPostService {
                                             .getPreSignedUrlForLoad(roomImage.getFileName())
                                     )
                             );
+                        studioRoomPost
+                            .getPublisherAccount()
+                            .getProfileImage()
+                            .updateFileName(
+                                s3FileService.getPreSignedUrlForLoad(
+                                    studioRoomPost.getPublisherAccount().getProfileImage().getFileName()
+                                ));
                         return StudioRoomPostDto.from(
                             studioRoomPost,
                             scrapPostViews
@@ -115,6 +129,13 @@ public class StudioRoomPostService {
                                         .getPreSignedUrlForLoad(roomImage.getFileName())
                                 )
                         );
+                    studioRoomPost
+                        .getPublisherAccount()
+                        .getProfileImage()
+                        .updateFileName(
+                            s3FileService.getPreSignedUrlForLoad(
+                                studioRoomPost.getPublisherAccount().getProfileImage().getFileName()
+                            ));
                     return StudioRoomPostDto.from(
                         studioRoomPost,
                         scrapPostViews
