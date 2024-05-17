@@ -40,6 +40,7 @@ public interface StudioRoomPostCustomRepository {
     );
 
     Page<StudioRoomRecommendPost> findAllRecommendByPublisherGender(
+        String memberId,
         String gender,
         String cardOption,
         Pageable pageable

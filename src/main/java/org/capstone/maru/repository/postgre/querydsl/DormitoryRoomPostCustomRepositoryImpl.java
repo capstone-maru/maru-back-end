@@ -8,7 +8,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
-import org.capstone.maru.domain.DormitoryRoomPost;
+import org.capstone.maru.dto.DormitoryRoomRecommendPost;
+import org.capstone.maru.dto.QDormitoryRoomRecommendPost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.StringUtils;
 
 import static org.capstone.maru.domain.QDormitoryRoomPost.dormitoryRoomPost;
+import static org.capstone.maru.domain.QRecommend.recommend;
 
 public class DormitoryRoomPostCustomRepositoryImpl implements DormitoryRoomPostCustomRepository {
 
@@ -26,12 +28,55 @@ public class DormitoryRoomPostCustomRepositoryImpl implements DormitoryRoomPostC
         this.jpaQueryFactory = new JPAQueryFactory(em);
     }
 
+
     @Override
-    public Page<DormitoryRoomPost> findDormitoryRoomPostBySearchKeyWords(String gender,
-        String searchKeyWords, Pageable pageable) {
-        List<DormitoryRoomPost> content = jpaQueryFactory
-            .selectFrom(dormitoryRoomPost)
+    public Page<DormitoryRoomRecommendPost> findDormitoryRoomPostByPublisherGender(
+        String memberId,
+        String gender,
+        String cardOption,
+        Pageable pageable
+    ) {
+        List<DormitoryRoomRecommendPost> content = jpaQueryFactory
+            .select(new QDormitoryRoomRecommendPost(dormitoryRoomPost, recommend))
+            .from(dormitoryRoomPost)
+            .join(recommend)
+            .on(recommend.recommendationId.castToNum(Long.class).eq(dormitoryRoomPost.id))
             .where(
+                recommend.userId.eq(memberId),
+                recommend.cardType.eq(cardOption),
+                eqGender(gender)
+            )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(postSort(pageable))
+            .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+            .select(dormitoryRoomPost.count())
+            .from(dormitoryRoomPost)
+            .where(
+                eqGender(gender)
+            );
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Page<DormitoryRoomRecommendPost> findDormitoryRoomPostBySearchKeyWords(
+        String memberId,
+        String gender,
+        String searchKeyWords,
+        String cardOption,
+        Pageable pageable
+    ) {
+        List<DormitoryRoomRecommendPost> content = jpaQueryFactory
+            .select(new QDormitoryRoomRecommendPost(dormitoryRoomPost, recommend))
+            .from(recommend)
+            .join(dormitoryRoomPost)
+            .on(recommend.recommendationId.castToNum(Long.class).eq(dormitoryRoomPost.id))
+            .where(
+                recommend.userId.eq(memberId),
+                recommend.cardType.eq(cardOption),
                 eqGender(gender),
                 containSearchKeyWords(searchKeyWords)
             )
@@ -82,7 +127,7 @@ public class DormitoryRoomPostCustomRepositoryImpl implements DormitoryRoomPostC
                             new OrderSpecifier<>(direction, dormitoryRoomPost.createdAt);
                         case "modifiedAt" ->
                             new OrderSpecifier<>(direction, dormitoryRoomPost.modifiedAt);
-                        default -> new OrderSpecifier<>(direction, dormitoryRoomPost.id);
+                        default -> new OrderSpecifier<>(direction, recommend.score);
                     }
                 );
             }

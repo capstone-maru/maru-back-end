@@ -197,6 +197,7 @@ public class StudioRoomPostCustomRepositoryImpl implements
 
     @Override
     public Page<StudioRoomRecommendPost> findAllRecommendByPublisherGender(
+        String memberId,
         String gender,
         String cardOption,
         Pageable pageable
@@ -321,7 +322,7 @@ public class StudioRoomPostCustomRepositoryImpl implements
                             new OrderSpecifier<>(direction, studioRoomPost.createdAt);
                         case "modifiedAt" ->
                             new OrderSpecifier<>(direction, studioRoomPost.modifiedAt);
-                        default -> new OrderSpecifier<>(direction, studioRoomPost.id);
+                        default -> new OrderSpecifier<>(direction, recommend.score);
                     }
                 );
             }

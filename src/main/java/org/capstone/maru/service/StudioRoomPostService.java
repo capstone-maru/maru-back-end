@@ -68,23 +68,36 @@ public class StudioRoomPostService {
         List<ScrapPostView> scrapPostViews = scrapPostRepository
             .findScrapViewByScrapperMemberId(memberId);
 
-        // filter, 키워드 없는 경우
         if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
             Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
-                .findAllRecommendByPublisherGender(gender, cardOption, pageable);
+                .findAllRecommendByPublisherGender(memberId, gender, cardOption, pageable);
 
-            return resultPage.map(studioRoomPost ->
-                StudioRoomRecommendPostDto.from(
-                    studioRoomPost,
-                    scrapPostViews
-                )
-            );
+            return resultPage
+                .map(studioRoomPost -> {
+                    studioRoomPost
+                        .getRoomImages()
+                        .forEach(roomImage ->
+                            roomImage
+                                .updateFileName(
+                                    s3FileService
+                                        .getPreSignedUrlForLoad(roomImage.getFileName())
+                                )
+                        );
+                    studioRoomPost
+                        .getPublisherAccount()
+                        .getProfileImage()
+                        .updateFileName(
+                            s3FileService.getPreSignedUrlForLoad(
+                                studioRoomPost.getPublisherAccount().getProfileImage().getFileName()
+                            ));
+                    return StudioRoomRecommendPostDto.from(
+                        studioRoomPost,
+                        scrapPostViews
+                    );
+                });
         }
 
-        // card option 키워드만 있는 경우
         if (searchFilterRequest == null) {
-            log.info("searchKeyWords : {}", searchKeyWords);
-
             Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
                 .findStudioRoomRecommendPostBySearchKeyWords(
                     memberId,
@@ -94,25 +107,58 @@ public class StudioRoomPostService {
                     pageable
                 );
 
-            return resultPage.map(studioRoomPost ->
-                StudioRoomRecommendPostDto.from(
-                    studioRoomPost,
-                    scrapPostViews
-                )
+            return resultPage.map(studioRoomPost -> {
+                    studioRoomPost
+                        .getRoomImages()
+                        .forEach(roomImage ->
+                            roomImage
+                                .updateFileName(
+                                    s3FileService
+                                        .getPreSignedUrlForLoad(roomImage.getFileName())
+                                )
+                        );
+                    studioRoomPost
+                        .getPublisherAccount()
+                        .getProfileImage()
+                        .updateFileName(
+                            s3FileService.getPreSignedUrlForLoad(
+                                studioRoomPost.getPublisherAccount().getProfileImage().getFileName()
+                            ));
+                    return StudioRoomRecommendPostDto.from(
+                        studioRoomPost,
+                        scrapPostViews
+                    );
+                }
             );
         }
 
-        // filter가 있는 경우
         Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
             .findStudioRoomPostByRecommendDynamicFilter(
                 gender, searchFilterRequest, searchKeyWords, memberId, cardOption, pageable
             );
 
-        return resultPage.map(studioRoomPost ->
-            StudioRoomRecommendPostDto.from(
-                studioRoomPost,
-                scrapPostViews
-            )
+        return resultPage.map(studioRoomPost -> {
+                studioRoomPost
+                    .getRoomImages()
+                    .forEach(roomImage ->
+                        roomImage
+                            .updateFileName(
+                                s3FileService
+                                    .getPreSignedUrlForLoad(roomImage.getFileName())
+                            )
+                    );
+                studioRoomPost
+                    .getPublisherAccount()
+                    .getProfileImage()
+                    .updateFileName(
+                        s3FileService.getPreSignedUrlForLoad(
+                            studioRoomPost.getPublisherAccount().getProfileImage().getFileName()
+                        ));
+                return StudioRoomRecommendPostDto.from(
+                    studioRoomPost,
+                    scrapPostViews
+                );
+            }
         );
     }
 
