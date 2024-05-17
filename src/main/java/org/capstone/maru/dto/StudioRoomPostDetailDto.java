@@ -2,6 +2,7 @@ package org.capstone.maru.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Builder;
@@ -16,7 +17,7 @@ public record StudioRoomPostDetailDto(
     String content,
     String publisherGender,
     FeatureCardDto roomMateCard,
-    List<MemberAccountDto> participants,
+    List<SimpleMemberProfileDto> participants,
     Set<RoomImageDto> roomImages,
     MemberAccountDto publisherAccount,
     Address address,
@@ -33,7 +34,8 @@ public record StudioRoomPostDetailDto(
 
     public static StudioRoomPostDetailDto from(
         StudioRoomPost entity,
-        Boolean isScrapped,
+        Boolean isPostScrapped,
+        List<String> scrappedMemberIds,
         Long scrapCount,
         Long viewCount
     ) {
@@ -47,7 +49,16 @@ public record StudioRoomPostDetailDto(
                 entity.getSharedRoomPostRecruits()
                       .stream()
                       .map(Participation::getRecruitedMemberAccount)
-                      .map(MemberAccountDto::from)
+                      .map(memberAccount ->
+                          SimpleMemberProfileDto
+                              .from(
+                                  memberAccount,
+                                  scrappedMemberIds
+                                      .stream()
+                                      .anyMatch(memberId -> Objects.equals(memberId,
+                                          memberAccount.getMemberId()))
+                              )
+                      )
                       .toList()
             )
             .roomImages(
@@ -61,7 +72,7 @@ public record StudioRoomPostDetailDto(
             .address(entity.getAddress())
             .roomInfo(RoomInfoDto.from(entity.getRoomInfo()))
             .recruitmentCapacity(entity.getRecruitmentCapacity())
-            .isScrapped(isScrapped)
+            .isScrapped(isPostScrapped)
             .scrapCount(scrapCount)
             .viewCount(viewCount)
             .createdAt(entity.getCreatedAt())

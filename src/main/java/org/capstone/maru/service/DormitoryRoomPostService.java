@@ -12,11 +12,13 @@ import org.capstone.maru.domain.ScrapPost;
 import org.capstone.maru.domain.ViewPost;
 import org.capstone.maru.dto.DormitoryRoomPostDetailDto;
 import org.capstone.maru.dto.DormitoryRoomPostDto;
+import org.capstone.maru.dto.DormitoryRoomRecommendPostDto;
 import org.capstone.maru.dto.FeatureCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.exception.PostNotFoundException;
 import org.capstone.maru.exception.RestErrorCode;
 import org.capstone.maru.repository.postgre.DormitoryRoomPostRepository;
+import org.capstone.maru.repository.postgre.FollowRepository;
 import org.capstone.maru.repository.postgre.MemberAccountRepository;
 import org.capstone.maru.repository.postgre.ScrapPostRepository;
 import org.capstone.maru.repository.postgre.ViewPostRepository;
@@ -34,18 +36,20 @@ import org.springframework.util.StringUtils;
 public class DormitoryRoomPostService {
 
     private final ViewPostRepository viewPostRepository;
-
     private final DormitoryRoomPostRepository dormitoryRoomPostRepository;
     private final MemberAccountRepository memberAccountRepository;
     private final ScrapPostRepository scrapPostRepository;
+    private final FollowRepository followRepository;
 
+    private final S3FileService s3FileService;
     private final ViewCountService viewCountService;
 
     @Transactional(readOnly = true)
-    public Page<DormitoryRoomPostDto> searchDormitoryRoomPosts(
+    public Page<DormitoryRoomRecommendPostDto> searchDormitoryRoomPosts(
         String memberId,
         String gender,
         String searchKeyWords,
+        String cardOption,
         Pageable pageable
     ) {
         List<ScrapPostView> scrapPostViews = scrapPostRepository
@@ -53,22 +57,60 @@ public class DormitoryRoomPostService {
 
         if (!StringUtils.hasText(searchKeyWords)) {
             return dormitoryRoomPostRepository
-                .findAllByPublisherGender(gender, pageable)
-                .map(dormitoryRoomPost ->
-                    DormitoryRoomPostDto.from(
+                .findDormitoryRoomPostByPublisherGender(
+                    memberId, gender, cardOption, pageable
+                )
+                .map(dormitoryRoomPost -> {
+                    dormitoryRoomPost
+                        .getRoomImages()
+                        .forEach(roomImage ->
+                            roomImage
+                                .updateFileName(
+                                    s3FileService.getPreSignedUrlForLoad(roomImage.getFileName())
+                                )
+                        );
+                    dormitoryRoomPost
+                        .getPublisherAccount()
+                        .getProfileImage()
+                        .updateFileName(
+                            dormitoryRoomPost
+                                .getPublisherAccount()
+                                .getProfileImage()
+                                .getFileName()
+                        );
+                    return DormitoryRoomRecommendPostDto.from(
                         dormitoryRoomPost,
                         scrapPostViews
-                    )
-                );
+                    );
+                });
         }
 
         return dormitoryRoomPostRepository
-            .findDormitoryRoomPostBySearchKeyWords(gender, searchKeyWords, pageable)
-            .map(dormitoryRoomPost ->
-                DormitoryRoomPostDto.from(
-                    dormitoryRoomPost,
-                    scrapPostViews
-                )
+            .findDormitoryRoomPostBySearchKeyWords(memberId, gender, searchKeyWords, cardOption,
+                pageable)
+            .map(dormitoryRoomPost -> {
+                    dormitoryRoomPost
+                        .getRoomImages()
+                        .forEach(roomImage ->
+                            roomImage
+                                .updateFileName(
+                                    s3FileService.getPreSignedUrlForLoad(roomImage.getFileName())
+                                )
+                        );
+                    dormitoryRoomPost
+                        .getPublisherAccount()
+                        .getProfileImage()
+                        .updateFileName(
+                            dormitoryRoomPost
+                                .getPublisherAccount()
+                                .getProfileImage()
+                                .getFileName()
+                        );
+                    return DormitoryRoomRecommendPostDto.from(
+                        dormitoryRoomPost,
+                        scrapPostViews
+                    );
+                }
             );
     }
 
@@ -84,10 +126,29 @@ public class DormitoryRoomPostService {
             .map(ScrapPostView::getIsScrapped)
             .orElse(false);
         final Long scrapCount = scrapPostRepository.countByScrappedIdAndIsScrapped(postId);
+        List<String> scrappedMemberIds = followRepository.findFollowingIdsByFollowerId(memberId);
 
         Long viewCount = viewCountService.increaseValue(SharedViewCountCacheKey.from(postId));
 
-        return DormitoryRoomPostDetailDto.from(resultEntity, isScrapped, scrapCount, viewCount);
+        resultEntity
+            .getSharedRoomPostRecruits()
+            .stream()
+            .map(Participation::getRecruitedMemberAccount)
+            .map(MemberAccount::getProfileImage)
+            .forEach(
+                profileImage -> profileImage.updateFileName(
+                    s3FileService.getPreSignedUrlForLoad(profileImage.getFileName())
+                )
+            );
+        resultEntity
+            .getRoomImages()
+            .forEach(
+                roomImage -> roomImage.updateFileName(
+                    s3FileService.getPreSignedUrlForLoad(roomImage.getFileName())
+                )
+            );
+        return DormitoryRoomPostDetailDto.from(resultEntity, isScrapped, scrappedMemberIds,
+            scrapCount, viewCount);
     }
 
     public void saveDormitoryRoomPost(

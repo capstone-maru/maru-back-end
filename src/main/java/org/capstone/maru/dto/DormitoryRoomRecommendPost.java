@@ -5,14 +5,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import org.capstone.maru.domain.Address;
+import org.capstone.maru.domain.DormitoryRoomPost;
 import org.capstone.maru.domain.MemberAccount;
 import org.capstone.maru.domain.Recommend;
 import org.capstone.maru.domain.RoomImage;
-import org.capstone.maru.domain.RoomInfo;
-import org.capstone.maru.domain.StudioRoomPost;
 
 @Getter
-public class StudioRoomRecommendPost {
+public class DormitoryRoomRecommendPost {
 
     private final Long id;
     private final String title;
@@ -21,7 +20,6 @@ public class StudioRoomRecommendPost {
     private final List<RoomImage> roomImages;
     private final MemberAccount publisherAccount;
     private final Address address;
-    private final RoomInfo roomInfo;
     private final LocalDateTime createdAt;
     private final String createdBy;
     private final LocalDateTime modifiedAt;
@@ -29,24 +27,21 @@ public class StudioRoomRecommendPost {
     private final Integer score;
 
     @QueryProjection
-    public StudioRoomRecommendPost(
-        StudioRoomPost studioRoomPost,
+    public DormitoryRoomRecommendPost(
+        DormitoryRoomPost dormitoryRoomPost,
         Recommend recommend
     ) {
-        this.id = studioRoomPost.getId();
-        this.title = studioRoomPost.getTitle();
-        this.content = studioRoomPost.getContent();
-        this.publisherGender = studioRoomPost.getPublisherGender();
-        this.roomImages = studioRoomPost.getRoomImages();
-        this.publisherAccount = studioRoomPost.getPublisherAccount();
-        this.address = studioRoomPost.getAddress();
-        this.roomInfo = studioRoomPost.getRoomInfo();
-        this.createdAt = studioRoomPost.getCreatedAt();
-        this.createdBy = studioRoomPost.getCreatedBy();
-        this.modifiedAt = studioRoomPost.getModifiedAt();
-        this.modifiedBy = studioRoomPost.getModifiedBy();
+        this.id = dormitoryRoomPost.getId();
+        this.title = dormitoryRoomPost.getTitle();
+        this.content = dormitoryRoomPost.getContent();
+        this.publisherGender = dormitoryRoomPost.getPublisherGender();
+        this.roomImages = dormitoryRoomPost.getRoomImages();
+        this.publisherAccount = dormitoryRoomPost.getPublisherAccount();
+        this.address = dormitoryRoomPost.getAddress();
+        this.createdAt = dormitoryRoomPost.getCreatedAt();
+        this.createdBy = dormitoryRoomPost.getCreatedBy();
+        this.modifiedAt = dormitoryRoomPost.getModifiedAt();
+        this.modifiedBy = dormitoryRoomPost.getModifiedBy();
         this.score = recommend.getScore();
     }
-
-
 }

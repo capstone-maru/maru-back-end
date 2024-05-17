@@ -16,6 +16,7 @@ import org.capstone.maru.dto.request.StudioRoomPostRequest;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.dto.response.DormitoryRoomPostDetailResponse;
 import org.capstone.maru.dto.response.DormitoryRoomPostResponse;
+import org.capstone.maru.dto.response.DormitoryRoomRecommendPostResponse;
 import org.capstone.maru.dto.response.StudioRoomPostDetailResponse;
 import org.capstone.maru.dto.response.StudioRoomPostResponse;
 import org.capstone.maru.dto.response.StudioRoomRecommendPostResponse;
@@ -52,16 +53,9 @@ public class SharedRoomPostController {
         @AuthenticationPrincipal MemberPrincipal principal,
         @RequestQueryString(name = "filter", required = false) SearchFilterRequest searchFilterRequest,
         @RequestParam(name = "search", required = false) String searchKeyWords,
-        @RequestParam(name = "cardOption", required = false) String cardOption,
+        @RequestParam(name = "cardOption") String cardOption,
         @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
-
-        log.info("searchFilterRequest: {}", cardOption);
-
-        if (cardOption == null) {
-            throw new IllegalArgumentException("cardOption is required");
-        }
-
         Page<StudioRoomRecommendPostResponse> result = studioRoomPostService
             .searchStudioRoomPosts(
                 principal.memberId(),
@@ -163,16 +157,18 @@ public class SharedRoomPostController {
     public ResponseEntity<APIResponse> dormitoryRoomPosts(
         @AuthenticationPrincipal MemberPrincipal principal,
         @RequestParam(name = "search", required = false) String searchKeyWords,
+        @RequestParam(name = "cardOption") String cardOption,
         @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
-        Page<DormitoryRoomPostResponse> result = dormitoryRoomPostService
+        Page<DormitoryRoomRecommendPostResponse> result = dormitoryRoomPostService
             .searchDormitoryRoomPosts(
                 principal.memberId(),
                 principal.gender(),
                 searchKeyWords,
+                cardOption,
                 pageable
             )
-            .map(DormitoryRoomPostResponse::from);
+            .map(DormitoryRoomRecommendPostResponse::from);
 
         return ResponseEntity.ok(APIResponse.success(result));
     }

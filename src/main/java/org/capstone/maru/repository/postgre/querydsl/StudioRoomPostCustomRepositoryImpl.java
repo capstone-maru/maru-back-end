@@ -125,9 +125,6 @@ public class StudioRoomPostCustomRepositoryImpl implements
         String cardOption,
         Pageable pageable
     ) {
-        log.info("findStudioRoomPostByRecommendDynamicFilter : {}",
-            cardOption);
-
         List<StudioRoomRecommendPost> content = jpaQueryFactory
             .select(new QStudioRoomRecommendPost(studioRoomPost, recommend))
             .from(recommend)
@@ -200,6 +197,7 @@ public class StudioRoomPostCustomRepositoryImpl implements
 
     @Override
     public Page<StudioRoomRecommendPost> findAllRecommendByPublisherGender(
+        String memberId,
         String gender,
         String cardOption,
         Pageable pageable
@@ -217,8 +215,6 @@ public class StudioRoomPostCustomRepositoryImpl implements
             .limit(pageable.getPageSize())
             .orderBy(postSort(pageable))
             .fetch();
-
-        log.info(content.toString());
 
         JPAQuery<Long> countQuery = jpaQueryFactory
             .select(studioRoomPost.count())
@@ -326,7 +322,7 @@ public class StudioRoomPostCustomRepositoryImpl implements
                             new OrderSpecifier<>(direction, studioRoomPost.createdAt);
                         case "modifiedAt" ->
                             new OrderSpecifier<>(direction, studioRoomPost.modifiedAt);
-                        default -> new OrderSpecifier<>(direction, studioRoomPost.id);
+                        default -> new OrderSpecifier<>(direction, recommend.score);
                     }
                 );
             }
