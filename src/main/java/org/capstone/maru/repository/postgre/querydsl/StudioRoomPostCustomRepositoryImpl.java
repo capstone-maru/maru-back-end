@@ -1,9 +1,11 @@
 package org.capstone.maru.repository.postgre.querydsl;
 
-import com.querydsl.core.Tuple;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.annotation.Nonnull;
@@ -11,6 +13,7 @@ import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.maru.domain.Recommend;
 import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
@@ -127,9 +130,9 @@ public class StudioRoomPostCustomRepositoryImpl implements
     ) {
         List<StudioRoomRecommendPost> content = jpaQueryFactory
             .select(new QStudioRoomRecommendPost(studioRoomPost, recommend))
-            .from(recommend)
-            .join(studioRoomPost)
-            .on(recommend.recommendationId.castToNum(Long.class).eq(studioRoomPost.id))
+            .from(studioRoomPost)
+            .join(recommend)
+            .on(studioRoomPost.id.stringValue().eq(recommend.recommendationId))
             .where(
                 recommend.userId.eq(memberId),
                 recommend.cardType.eq(cardOption),
@@ -150,9 +153,20 @@ public class StudioRoomPostCustomRepositoryImpl implements
         // 개수
         JPAQuery<Long> countQuery = jpaQueryFactory
             .select(studioRoomPost.count())
-            .from(studioRoomPost)
+            .join(recommend)
+            .on(studioRoomPost.id.stringValue().eq(recommend.recommendationId))
             .where(
+                recommend.userId.eq(memberId),
+                recommend.cardType.eq(cardOption),
                 eqGender(gender),
+                inRoomTypes(searchFilterRequest.roomTypes()),
+                inRentalTypes(searchFilterRequest.rentalTypes()),
+                eqHasLivingRoom(searchFilterRequest.hasLivingRoom()),
+                eqNumberOfRoom(searchFilterRequest.numberOfRoom()),
+                eqNumberOfBathRoom(searchFilterRequest.numberOfBathRoom()),
+                betweenRoomSize(searchFilterRequest.roomSizeRange()),
+                inFloorTypes(searchFilterRequest.floorTypes()),
+                betweenExpectedPayment(searchFilterRequest.expectedPaymentRange()),
                 containSearchKeyWords(searchKeyWords)
             );
 
@@ -171,7 +185,7 @@ public class StudioRoomPostCustomRepositoryImpl implements
             .select(new QStudioRoomRecommendPost(studioRoomPost, recommend))
             .from(studioRoomPost)
             .join(recommend)
-            .on(recommend.recommendationId.castToNum(Long.class).eq(studioRoomPost.id))
+            .on(studioRoomPost.id.stringValue().eq(recommend.recommendationId))
             .where(
                 eqGender(gender),
                 containSearchKeyWords(searchKeyWords),
@@ -187,9 +201,13 @@ public class StudioRoomPostCustomRepositoryImpl implements
         JPAQuery<Long> countQuery = jpaQueryFactory
             .select(studioRoomPost.count())
             .from(studioRoomPost)
+            .join(recommend)
+            .on(studioRoomPost.id.stringValue().eq(recommend.recommendationId))
             .where(
                 eqGender(gender),
-                containSearchKeyWords(searchKeyWords)
+                containSearchKeyWords(searchKeyWords),
+                recommend.userId.eq(memberId),
+                recommend.cardType.eq(cardOption)
             );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
@@ -206,7 +224,7 @@ public class StudioRoomPostCustomRepositoryImpl implements
             .select(new QStudioRoomRecommendPost(studioRoomPost, recommend))
             .from(studioRoomPost)
             .join(recommend)
-            .on(recommend.recommendationId.castToNum(Long.class).eq(studioRoomPost.id))
+            .on(studioRoomPost.id.stringValue().eq(recommend.recommendationId))
             .where(
                 eqGender(gender),
                 recommend.cardType.eq(cardOption)
@@ -219,8 +237,11 @@ public class StudioRoomPostCustomRepositoryImpl implements
         JPAQuery<Long> countQuery = jpaQueryFactory
             .select(studioRoomPost.count())
             .from(studioRoomPost)
+            .join(recommend)
+            .on(studioRoomPost.id.stringValue().eq(recommend.recommendationId))
             .where(
-                eqGender(gender)
+                eqGender(gender),
+                recommend.cardType.eq(cardOption)
             );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
