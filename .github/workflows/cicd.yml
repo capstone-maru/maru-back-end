@@ -92,7 +92,7 @@ jobs:
             #            docker-compose up -d
             #
             #            docker image prune -a -f
-            #                        
+            #
             # 환경 변수 설정 및 docker-compose.yml 파일 생성
                     touch ~/docker-compose.yml
                     echo "${{ secrets.DOCKER_COMPOSE }}" > ~/docker-compose.yml
