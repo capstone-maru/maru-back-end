@@ -1,6 +1,5 @@
 package org.capstone.maru.dto;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.annotations.QueryProjection;
 import java.time.LocalDateTime;
 import java.util.List;

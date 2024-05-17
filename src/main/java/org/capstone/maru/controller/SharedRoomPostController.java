@@ -52,16 +52,9 @@ public class SharedRoomPostController {
         @AuthenticationPrincipal MemberPrincipal principal,
         @RequestQueryString(name = "filter", required = false) SearchFilterRequest searchFilterRequest,
         @RequestParam(name = "search", required = false) String searchKeyWords,
-        @RequestParam(name = "cardOption", required = false) String cardOption,
+        @RequestParam(name = "cardOption") String cardOption,
         @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
-
-        log.info("searchFilterRequest: {}", cardOption);
-
-        if (cardOption == null) {
-            throw new IllegalArgumentException("cardOption is required");
-        }
-
         Page<StudioRoomRecommendPostResponse> result = studioRoomPostService
             .searchStudioRoomPosts(
                 principal.memberId(),

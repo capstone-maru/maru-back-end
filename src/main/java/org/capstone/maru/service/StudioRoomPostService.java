@@ -70,8 +70,6 @@ public class StudioRoomPostService {
 
         // filter, 키워드 없는 경우
         if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
-            log.info("cardOption : {}", cardOption);
-
             Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
                 .findAllRecommendByPublisherGender(gender, cardOption, pageable);
 
@@ -104,11 +102,11 @@ public class StudioRoomPostService {
             );
         }
 
-        log.info("searchFilterRequest : {}", searchFilterRequest);
-        // filter가 있는  경우
+        // filter가 있는 경우
         Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
             .findStudioRoomPostByRecommendDynamicFilter(
-                gender, searchFilterRequest, searchKeyWords, memberId, cardOption, pageable);
+                gender, searchFilterRequest, searchKeyWords, memberId, cardOption, pageable
+            );
 
         return resultPage.map(studioRoomPost ->
             StudioRoomRecommendPostDto.from(
