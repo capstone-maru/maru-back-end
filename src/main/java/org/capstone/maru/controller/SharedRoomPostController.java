@@ -18,6 +18,7 @@ import org.capstone.maru.dto.response.DormitoryRoomPostDetailResponse;
 import org.capstone.maru.dto.response.DormitoryRoomPostResponse;
 import org.capstone.maru.dto.response.StudioRoomPostDetailResponse;
 import org.capstone.maru.dto.response.StudioRoomPostResponse;
+import org.capstone.maru.dto.response.StudioRoomRecommendPostResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.DormitoryRoomPostService;
 import org.capstone.maru.service.StudioRoomPostService;
@@ -51,17 +52,26 @@ public class SharedRoomPostController {
         @AuthenticationPrincipal MemberPrincipal principal,
         @RequestQueryString(name = "filter", required = false) SearchFilterRequest searchFilterRequest,
         @RequestParam(name = "search", required = false) String searchKeyWords,
+        @RequestParam(name = "cardOption", required = false) String cardOption,
         @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
-        Page<StudioRoomPostResponse> result = studioRoomPostService
+
+        log.info("searchFilterRequest: {}", cardOption);
+
+        if (cardOption == null) {
+            throw new IllegalArgumentException("cardOption is required");
+        }
+
+        Page<StudioRoomRecommendPostResponse> result = studioRoomPostService
             .searchStudioRoomPosts(
                 principal.memberId(),
                 principal.gender(),
                 searchFilterRequest,
                 searchKeyWords,
+                cardOption,
                 pageable
             )
-            .map(StudioRoomPostResponse::from);
+            .map(StudioRoomRecommendPostResponse::from);
 
         return ResponseEntity.ok(APIResponse.success(result));
     }

@@ -1,5 +1,6 @@
 package org.capstone.maru.repository.postgre.querydsl;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -9,10 +10,13 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.domain.constant.FloorType;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
+import org.capstone.maru.dto.QStudioRoomRecommendPost;
+import org.capstone.maru.dto.StudioRoomRecommendPost;
 import org.capstone.maru.dto.request.RangeRequest;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +26,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.StringUtils;
 
+import static org.capstone.maru.domain.QRecommend.recommend;
 import static org.capstone.maru.domain.QStudioRoomPost.studioRoomPost;
 import static org.capstone.maru.domain.QRoomInfo.roomInfo;
 import static org.capstone.maru.domain.QRecommend.recommend;
 
+@Slf4j
 public class StudioRoomPostCustomRepositoryImpl implements
     org.capstone.maru.repository.postgre.querydsl.StudioRoomPostCustomRepository {
 
@@ -99,12 +105,127 @@ public class StudioRoomPostCustomRepositoryImpl implements
             .orderBy(postSort(pageable))
             .fetch();
 
+        // 개수
         JPAQuery<Long> countQuery = jpaQueryFactory
             .select(studioRoomPost.count())
             .from(studioRoomPost)
             .where(
                 eqGender(gender),
                 containSearchKeyWords(searchKeyWords)
+            );
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Page<StudioRoomRecommendPost> findStudioRoomPostByRecommendDynamicFilter(
+        String gender,
+        @Nonnull SearchFilterRequest searchFilterRequest,
+        String searchKeyWords,
+        String memberId,
+        String cardOption,
+        Pageable pageable
+    ) {
+        log.info("findStudioRoomPostByRecommendDynamicFilter : {}",
+            cardOption);
+
+        List<StudioRoomRecommendPost> content = jpaQueryFactory
+            .select(new QStudioRoomRecommendPost(studioRoomPost, recommend))
+            .from(recommend)
+            .join(studioRoomPost)
+            .on(recommend.recommendationId.castToNum(Long.class).eq(studioRoomPost.id))
+            .where(
+                recommend.userId.eq(memberId),
+                recommend.cardType.eq(cardOption),
+                eqGender(gender),
+                inRoomTypes(searchFilterRequest.roomTypes()),
+                inRentalTypes(searchFilterRequest.rentalTypes()),
+                eqHasLivingRoom(searchFilterRequest.hasLivingRoom()),
+                eqNumberOfRoom(searchFilterRequest.numberOfRoom()),
+                eqNumberOfBathRoom(searchFilterRequest.numberOfBathRoom()),
+                betweenRoomSize(searchFilterRequest.roomSizeRange()),
+                inFloorTypes(searchFilterRequest.floorTypes()),
+                betweenExpectedPayment(searchFilterRequest.expectedPaymentRange()),
+                containSearchKeyWords(searchKeyWords)
+            )
+            .orderBy(recommend.score.desc())
+            .fetch();
+
+        // 개수
+        JPAQuery<Long> countQuery = jpaQueryFactory
+            .select(studioRoomPost.count())
+            .from(studioRoomPost)
+            .where(
+                eqGender(gender),
+                containSearchKeyWords(searchKeyWords)
+            );
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Page<StudioRoomRecommendPost> findStudioRoomRecommendPostBySearchKeyWords(
+        String memberId,
+        String gender,
+        String searchKeyWords,
+        String cardOption,
+        Pageable pageable
+    ) {
+        List<StudioRoomRecommendPost> content = jpaQueryFactory
+            .select(new QStudioRoomRecommendPost(studioRoomPost, recommend))
+            .from(studioRoomPost)
+            .join(recommend)
+            .on(recommend.recommendationId.castToNum(Long.class).eq(studioRoomPost.id))
+            .where(
+                eqGender(gender),
+                containSearchKeyWords(searchKeyWords),
+                recommend.userId.eq(memberId),
+                recommend.cardType.eq(cardOption)
+            )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(postSort(pageable))
+            .fetch();
+
+        // 개수
+        JPAQuery<Long> countQuery = jpaQueryFactory
+            .select(studioRoomPost.count())
+            .from(studioRoomPost)
+            .where(
+                eqGender(gender),
+                containSearchKeyWords(searchKeyWords)
+            );
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Page<StudioRoomRecommendPost> findAllRecommendByPublisherGender(
+        String gender,
+        String cardOption,
+        Pageable pageable
+    ) {
+        List<StudioRoomRecommendPost> content = jpaQueryFactory
+            .select(new QStudioRoomRecommendPost(studioRoomPost, recommend))
+            .from(studioRoomPost)
+            .join(recommend)
+            .on(recommend.recommendationId.castToNum(Long.class).eq(studioRoomPost.id))
+            .where(
+                eqGender(gender),
+                recommend.cardType.eq(cardOption)
+            )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(postSort(pageable))
+            .fetch();
+
+        log.info(content.toString());
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+            .select(studioRoomPost.count())
+            .from(studioRoomPost)
+            .where(
+                eqGender(gender)
             );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
