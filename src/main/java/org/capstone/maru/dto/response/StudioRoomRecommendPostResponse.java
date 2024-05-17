@@ -14,11 +14,10 @@ public record StudioRoomRecommendPostResponse(
     Long id,
     String title,
     String content,
-    String publisherGender,
-    List<RoomImageDto> roomImages,
-    MemberAccountDto publisherAccount,
+    RoomImageResponse thumbnail,
+    MemberAccountResponse publisherAccount,
     Address address,
-    RoomInfoDto roomInfo,
+    RoomInfoResponse roomInfo,
     Boolean isScrapped,
     LocalDateTime createdAt,
     String createdBy,
@@ -28,23 +27,22 @@ public record StudioRoomRecommendPostResponse(
 ) {
 
     public static StudioRoomRecommendPostResponse from(
-        StudioRoomRecommendPostDto studioRoomRecommendPostDto) {
-        
-        return StudioRoomRecommendPostResponse.builder()
-            .id(studioRoomRecommendPostDto.id())
-            .title(studioRoomRecommendPostDto.title())
-            .content(studioRoomRecommendPostDto.content())
-            .publisherGender(studioRoomRecommendPostDto.publisherGender())
-            .roomImages(studioRoomRecommendPostDto.roomImages())
-            .publisherAccount(studioRoomRecommendPostDto.publisherAccount())
-            .address(studioRoomRecommendPostDto.address())
-            .roomInfo(studioRoomRecommendPostDto.roomInfo())
-            .isScrapped(studioRoomRecommendPostDto.isScrapped())
-            .createdAt(studioRoomRecommendPostDto.createdAt())
-            .createdBy(studioRoomRecommendPostDto.createdBy())
-            .modifiedAt(studioRoomRecommendPostDto.modifiedAt())
-            .modifiedBy(studioRoomRecommendPostDto.modifiedBy())
-            .score(studioRoomRecommendPostDto.score())
+        StudioRoomRecommendPostDto dto) {
+        return StudioRoomRecommendPostResponse
+            .builder()
+            .id(dto.id())
+            .title(dto.title())
+            .content(dto.content())
+            .thumbnail(RoomImageResponse.from(dto.thumbnail()))
+            .publisherAccount(MemberAccountResponse.from(dto.publisherAccount()))
+            .address(dto.address())
+            .roomInfo(RoomInfoResponse.from(dto.roomInfo(), dto.recruitmentCapacity()))
+            .isScrapped(dto.isScrapped())
+            .createdAt(dto.createdAt())
+            .createdBy(dto.createdBy())
+            .modifiedAt(dto.modifiedAt())
+            .modifiedBy(dto.modifiedBy())
+            .score(dto.score())
             .build();
     }
 }

@@ -22,6 +22,7 @@ public class StudioRoomRecommendPost {
     private final MemberAccount publisherAccount;
     private final Address address;
     private final RoomInfo roomInfo;
+    private final Short recruitmentCapacity;
     private final LocalDateTime createdAt;
     private final String createdBy;
     private final LocalDateTime modifiedAt;
@@ -40,6 +41,7 @@ public class StudioRoomRecommendPost {
         this.roomImages = studioRoomPost.getRoomImages();
         this.publisherAccount = studioRoomPost.getPublisherAccount();
         this.address = studioRoomPost.getAddress();
+        this.recruitmentCapacity = studioRoomPost.getRecruitmentCapacity();
         this.roomInfo = studioRoomPost.getRoomInfo();
         this.createdAt = studioRoomPost.getCreatedAt();
         this.createdBy = studioRoomPost.getCreatedBy();

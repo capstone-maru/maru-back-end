@@ -13,6 +13,7 @@ public record DormitoryRoomRecommendPostDto(
     List<RoomImageDto> roomImages,
     MemberAccountDto publisherAccount,
     Address address,
+    Short recruitmentCapacity,
     Boolean isScrapped,
     LocalDateTime createdAt,
     String createdBy,
@@ -33,17 +34,28 @@ public record DormitoryRoomRecommendPostDto(
                   .toList(),
             MemberAccountDto.from(entity.getPublisherAccount()),
             entity.getAddress(),
-            scrapPostViews.stream()
-                          .filter(
-                              scrapPostView -> scrapPostView.getScrappedId().equals(entity.getId()))
-                          .map(ScrapPostView::getIsScrapped)
-                          .findFirst()
-                          .orElse(false),
+            entity.getRecruitmentCapacity(),
+            scrapPostViews
+                .stream()
+                .filter(
+                    scrapPostView -> scrapPostView.getScrappedId()
+                                                  .equals(entity.getId()))
+                .map(ScrapPostView::getIsScrapped)
+                .findFirst()
+                .orElse(false),
             entity.getCreatedAt(),
             entity.getCreatedBy(),
             entity.getModifiedAt(),
             entity.getModifiedBy(),
             entity.getScore()
         );
+    }
+
+    public RoomImageDto thumbnail() {
+        return roomImages
+            .stream()
+            .filter(RoomImageDto::isThumbnail)
+            .findAny()
+            .orElseThrow(IllegalArgumentException::new);
     }
 }

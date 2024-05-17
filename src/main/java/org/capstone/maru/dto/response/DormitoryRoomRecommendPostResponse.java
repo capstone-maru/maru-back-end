@@ -13,10 +13,10 @@ public record DormitoryRoomRecommendPostResponse(
     Long id,
     String title,
     String content,
-    String publisherGender,
-    List<RoomImageDto> roomImages,
-    MemberAccountDto publisherAccount,
+    RoomImageResponse thumbnail,
+    MemberAccountResponse publisherAccount,
     Address address,
+    Short recruitmentCapacity,
     Boolean isScrapped,
     LocalDateTime createdAt,
     String createdBy,
@@ -33,10 +33,10 @@ public record DormitoryRoomRecommendPostResponse(
             .id(dto.id())
             .title(dto.title())
             .content(dto.content())
-            .publisherGender(dto.publisherGender())
-            .roomImages(dto.roomImages())
-            .publisherAccount(dto.publisherAccount())
+            .thumbnail(RoomImageResponse.from(dto.thumbnail()))
+            .publisherAccount(MemberAccountResponse.from(dto.publisherAccount()))
             .address(dto.address())
+            .recruitmentCapacity(dto.recruitmentCapacity())
             .isScrapped(dto.isScrapped())
             .createdAt(dto.createdAt())
             .createdBy(dto.createdBy())
