@@ -43,6 +43,7 @@ public class DormitoryRoomPostService {
 
     private final S3FileService s3FileService;
     private final ViewCountService viewCountService;
+    private final RecommendService recommendService;
 
     @Transactional(readOnly = true)
     public Page<DormitoryRoomRecommendPostDto> searchDormitoryRoomPosts(
@@ -52,6 +53,12 @@ public class DormitoryRoomPostService {
         String cardOption,
         Pageable pageable
     ) {
+        recommendService.updateRecommendation(
+            memberId,
+            cardOption,
+            "post"
+        ).subscribe();
+
         List<ScrapPostView> scrapPostViews = scrapPostRepository
             .findScrapViewByScrapperMemberId(memberId);
 
