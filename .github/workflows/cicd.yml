@@ -76,51 +76,25 @@ jobs:
           key: ${{ secrets.AWS_ACCESS_SECRET_KEY }} # pem 키
           # 도커 작업
           script: |
-            #            touch ~/docker-compose.yml
-            #            echo "${{ secrets.DOCKER_COMPOSE }}" > ~/docker-compose.yml
-            #
-            #            CONTAINERS=$(docker ps -q)
-            #
-            #            for CONTAINER in $CONTAINERS; do
-            #              docker stop $CONTAINER
-            #            done
-            #
-            #            docker rm $(docker ps -aq)
-            #
-            #            docker rmi $(docker images -q)
-            #
-            #            docker-compose up -d
-            #
-            #            docker image prune -a -f
-            #
-            # 환경 변수 설정 및 docker-compose.yml 파일 생성
-                    touch ~/docker-compose.yml
-                    echo "${{ secrets.DOCKER_COMPOSE }}" > ~/docker-compose.yml
+            touch ~/docker-compose.yml
+            echo "${{ secrets.DOCKER_COMPOSE }}" > ~/docker-compose.yml
             
-            # 제외할 컨테이너 이름 설정
-                    EXCLUDE_CONTAINER_NAME="maru-rec-sys-container"
+            EXCLUDE_CONTAINER_NAME="maru-rec-sys-container"
             
-            # 제외할 컨테이너 ID 가져오기
-                    EXCLUDE_CONTAINER_ID=$(docker ps -qf "name=$EXCLUDE_CONTAINER_NAME")
+            EXCLUDE_CONTAINER_ID=$(docker ps -qf "name=$EXCLUDE_CONTAINER_NAME")
             
-            # 실행 중인 모든 컨테이너 ID 가져오기
-                    CONTAINERS=$(docker ps -q)
+            CONTAINERS=$(docker ps -q)
             
-            # 모든 컨테이너 중 제외할 컨테이너를 제외한 나머지 컨테이너 정지
-                    for CONTAINER in $CONTAINERS; do
-                    if [ "$CONTAINER" != "$EXCLUDE_CONTAINER_ID" ]; then
-                    docker stop $CONTAINER
-                    fi
-                    done
+            for CONTAINER in $CONTAINERS; do
+            if [ "$CONTAINER" != "$EXCLUDE_CONTAINER_ID" ]; then
+            docker stop $CONTAINER
+            fi
+            done
             
-            # 모든 컨테이너 중 제외할 컨테이너를 제외한 나머지 컨테이너 제거
-                    docker ps -aq | grep -v $EXCLUDE_CONTAINER_ID | xargs docker rm
+            docker ps -aq | grep -v $EXCLUDE_CONTAINER_ID | xargs docker rm
             
-            # 모든 이미지 삭제 (제외할 컨테이너의 이미지는 삭제되지 않도록 주의)
-                    docker rmi $(docker images -q)
+            docker rmi $(docker images -q)
             
-            # docker-compose로 컨테이너 다시 시작
-                    docker-compose up -d
+            docker-compose up -d
             
-            # 사용되지 않는 이미지 제거
-                    docker image prune -a -f
+            docker image prune -a -f
