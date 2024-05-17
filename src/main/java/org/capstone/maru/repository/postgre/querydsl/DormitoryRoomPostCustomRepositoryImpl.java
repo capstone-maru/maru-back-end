@@ -40,7 +40,7 @@ public class DormitoryRoomPostCustomRepositoryImpl implements DormitoryRoomPostC
             .select(new QDormitoryRoomRecommendPost(dormitoryRoomPost, recommend))
             .from(dormitoryRoomPost)
             .join(recommend)
-            .on(recommend.recommendationId.castToNum(Long.class).eq(dormitoryRoomPost.id))
+            .on(dormitoryRoomPost.id.stringValue().eq(recommend.recommendationId))
             .where(
                 recommend.userId.eq(memberId),
                 recommend.cardType.eq(cardOption),
@@ -54,7 +54,11 @@ public class DormitoryRoomPostCustomRepositoryImpl implements DormitoryRoomPostC
         JPAQuery<Long> countQuery = jpaQueryFactory
             .select(dormitoryRoomPost.count())
             .from(dormitoryRoomPost)
+            .join(recommend)
+            .on(dormitoryRoomPost.id.stringValue().eq(recommend.recommendationId))
             .where(
+                recommend.userId.eq(memberId),
+                recommend.cardType.eq(cardOption),
                 eqGender(gender)
             );
 
@@ -71,9 +75,9 @@ public class DormitoryRoomPostCustomRepositoryImpl implements DormitoryRoomPostC
     ) {
         List<DormitoryRoomRecommendPost> content = jpaQueryFactory
             .select(new QDormitoryRoomRecommendPost(dormitoryRoomPost, recommend))
-            .from(recommend)
-            .join(dormitoryRoomPost)
-            .on(recommend.recommendationId.castToNum(Long.class).eq(dormitoryRoomPost.id))
+            .from(dormitoryRoomPost)
+            .join(recommend)
+            .on(dormitoryRoomPost.id.stringValue().eq(recommend.recommendationId))
             .where(
                 recommend.userId.eq(memberId),
                 recommend.cardType.eq(cardOption),
@@ -88,7 +92,11 @@ public class DormitoryRoomPostCustomRepositoryImpl implements DormitoryRoomPostC
         JPAQuery<Long> countQuery = jpaQueryFactory
             .select(dormitoryRoomPost.count())
             .from(dormitoryRoomPost)
+            .join(recommend)
+            .on(dormitoryRoomPost.id.stringValue().eq(recommend.recommendationId))
             .where(
+                recommend.userId.eq(memberId),
+                recommend.cardType.eq(cardOption),
                 eqGender(gender),
                 containSearchKeyWords(searchKeyWords)
             );
