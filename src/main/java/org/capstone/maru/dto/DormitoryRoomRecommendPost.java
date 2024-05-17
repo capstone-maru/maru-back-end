@@ -20,6 +20,7 @@ public class DormitoryRoomRecommendPost {
     private final List<RoomImage> roomImages;
     private final MemberAccount publisherAccount;
     private final Address address;
+    private final Short recruitmentCapacity;
     private final LocalDateTime createdAt;
     private final String createdBy;
     private final LocalDateTime modifiedAt;
@@ -38,6 +39,7 @@ public class DormitoryRoomRecommendPost {
         this.roomImages = dormitoryRoomPost.getRoomImages();
         this.publisherAccount = dormitoryRoomPost.getPublisherAccount();
         this.address = dormitoryRoomPost.getAddress();
+        this.recruitmentCapacity = dormitoryRoomPost.getRecruitmentCapacity();
         this.createdAt = dormitoryRoomPost.getCreatedAt();
         this.createdBy = dormitoryRoomPost.getCreatedBy();
         this.modifiedAt = dormitoryRoomPost.getModifiedAt();
