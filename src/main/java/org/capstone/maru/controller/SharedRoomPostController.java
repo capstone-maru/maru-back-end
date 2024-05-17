@@ -16,8 +16,10 @@ import org.capstone.maru.dto.request.StudioRoomPostRequest;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.dto.response.DormitoryRoomPostDetailResponse;
 import org.capstone.maru.dto.response.DormitoryRoomPostResponse;
+import org.capstone.maru.dto.response.DormitoryRoomRecommendPostResponse;
 import org.capstone.maru.dto.response.StudioRoomPostDetailResponse;
 import org.capstone.maru.dto.response.StudioRoomPostResponse;
+import org.capstone.maru.dto.response.StudioRoomRecommendPostResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.DormitoryRoomPostService;
 import org.capstone.maru.service.StudioRoomPostService;
@@ -51,17 +53,19 @@ public class SharedRoomPostController {
         @AuthenticationPrincipal MemberPrincipal principal,
         @RequestQueryString(name = "filter", required = false) SearchFilterRequest searchFilterRequest,
         @RequestParam(name = "search", required = false) String searchKeyWords,
+        @RequestParam(name = "cardOption") String cardOption,
         @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
-        Page<StudioRoomPostResponse> result = studioRoomPostService
+        Page<StudioRoomRecommendPostResponse> result = studioRoomPostService
             .searchStudioRoomPosts(
                 principal.memberId(),
                 principal.gender(),
                 searchFilterRequest,
                 searchKeyWords,
+                cardOption,
                 pageable
             )
-            .map(StudioRoomPostResponse::from);
+            .map(StudioRoomRecommendPostResponse::from);
 
         return ResponseEntity.ok(APIResponse.success(result));
     }
@@ -153,16 +157,18 @@ public class SharedRoomPostController {
     public ResponseEntity<APIResponse> dormitoryRoomPosts(
         @AuthenticationPrincipal MemberPrincipal principal,
         @RequestParam(name = "search", required = false) String searchKeyWords,
+        @RequestParam(name = "cardOption") String cardOption,
         @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
-        Page<DormitoryRoomPostResponse> result = dormitoryRoomPostService
+        Page<DormitoryRoomRecommendPostResponse> result = dormitoryRoomPostService
             .searchDormitoryRoomPosts(
                 principal.memberId(),
                 principal.gender(),
                 searchKeyWords,
+                cardOption,
                 pageable
             )
-            .map(DormitoryRoomPostResponse::from);
+            .map(DormitoryRoomRecommendPostResponse::from);
 
         return ResponseEntity.ok(APIResponse.success(result));
     }

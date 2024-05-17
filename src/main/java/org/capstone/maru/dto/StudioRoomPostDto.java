@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Address;
 import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.MemberAccount;
@@ -12,6 +13,7 @@ import org.capstone.maru.domain.RoomInfo;
 import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.repository.postgre.projection.ScrapPostView;
 
+@Slf4j
 @Builder
 public record StudioRoomPostDto(
     Long id,
@@ -30,10 +32,8 @@ public record StudioRoomPostDto(
     String modifiedBy
 ) {
 
-    public static StudioRoomPostDto from(
-        StudioRoomPost entity,
-        List<ScrapPostView> scrapViewEntity
-    ) {
+    public static StudioRoomPostDto from(StudioRoomPost entity,
+        List<ScrapPostView> scrapViewEntity) {
         return StudioRoomPostDto
             .builder()
             .id(entity.getId())
@@ -41,9 +41,9 @@ public record StudioRoomPostDto(
             .content(entity.getContent())
             .roomImages(
                 entity.getRoomImages()
-                      .stream()
-                      .map(RoomImageDto::from)
-                      .toList()
+                    .stream()
+                    .map(RoomImageDto::from)
+                    .toList()
             )
             .publisherGender(entity.getPublisherGender())
             .publisherAccount(MemberAccountDto.from(entity.getPublisherAccount()))

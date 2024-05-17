@@ -1,46 +1,48 @@
 package org.capstone.maru.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
-import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.Address;
-import org.capstone.maru.dto.StudioRoomPostDto;
+import org.capstone.maru.dto.DormitoryRoomRecommendPostDto;
+import org.capstone.maru.dto.MemberAccountDto;
+import org.capstone.maru.dto.RoomImageDto;
 
-/**
- * 게시판에서 보는 게시글 response
- */
-@Slf4j
 @Builder
-public record StudioRoomPostResponse(
+public record DormitoryRoomRecommendPostResponse(
     Long id,
     String title,
     String content,
-    RoomImageResponse thumbnail,
-    MemberAccountResponse publisherAccount,
+    String publisherGender,
+    List<RoomImageDto> roomImages,
+    MemberAccountDto publisherAccount,
     Address address,
-    RoomInfoResponse roomInfo,
     Boolean isScrapped,
     LocalDateTime createdAt,
     String createdBy,
     LocalDateTime modifiedAt,
-    String modifiedBy
+    String modifiedBy,
+    Integer score
 ) {
 
-    public static StudioRoomPostResponse from(StudioRoomPostDto dto) {
-        return StudioRoomPostResponse
+    public static DormitoryRoomRecommendPostResponse from(
+        DormitoryRoomRecommendPostDto dto
+    ) {
+        return DormitoryRoomRecommendPostResponse
             .builder()
             .id(dto.id())
             .title(dto.title())
             .content(dto.content())
-            .thumbnail(RoomImageResponse.from(dto.thumbnail()))
-            .publisherAccount(MemberAccountResponse.from(dto.publisherAccount()))
+            .publisherGender(dto.publisherGender())
+            .roomImages(dto.roomImages())
+            .publisherAccount(dto.publisherAccount())
             .address(dto.address())
-            .roomInfo(RoomInfoResponse.from(dto.roomInfo(), dto.recruitmentCapacity()))
             .isScrapped(dto.isScrapped())
             .createdAt(dto.createdAt())
             .createdBy(dto.createdBy())
             .modifiedAt(dto.modifiedAt())
             .modifiedBy(dto.modifiedBy())
+            .score(dto.score())
             .build();
     }
 }

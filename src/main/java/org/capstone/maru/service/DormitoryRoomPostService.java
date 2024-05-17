@@ -12,6 +12,7 @@ import org.capstone.maru.domain.ScrapPost;
 import org.capstone.maru.domain.ViewPost;
 import org.capstone.maru.dto.DormitoryRoomPostDetailDto;
 import org.capstone.maru.dto.DormitoryRoomPostDto;
+import org.capstone.maru.dto.DormitoryRoomRecommendPostDto;
 import org.capstone.maru.dto.FeatureCardDto;
 import org.capstone.maru.dto.RoomImageDto;
 import org.capstone.maru.exception.PostNotFoundException;
@@ -44,10 +45,11 @@ public class DormitoryRoomPostService {
     private final ViewCountService viewCountService;
 
     @Transactional(readOnly = true)
-    public Page<DormitoryRoomPostDto> searchDormitoryRoomPosts(
+    public Page<DormitoryRoomRecommendPostDto> searchDormitoryRoomPosts(
         String memberId,
         String gender,
         String searchKeyWords,
+        String cardOption,
         Pageable pageable
     ) {
         List<ScrapPostView> scrapPostViews = scrapPostRepository
@@ -55,26 +57,37 @@ public class DormitoryRoomPostService {
 
         if (!StringUtils.hasText(searchKeyWords)) {
             return dormitoryRoomPostRepository
-                .findAllByPublisherGender(gender, pageable)
+                .findDormitoryRoomPostByPublisherGender(
+                    memberId, gender, cardOption, pageable
+                )
                 .map(dormitoryRoomPost -> {
-                        dormitoryRoomPost
-                            .getRoomImages()
-                            .forEach(roomImage ->
-                                roomImage
-                                    .updateFileName(
-                                        s3FileService.getPreSignedUrlForLoad(roomImage.getFileName())
-                                    )
-                            );
-                        return DormitoryRoomPostDto.from(
-                            dormitoryRoomPost,
-                            scrapPostViews
+                    dormitoryRoomPost
+                        .getRoomImages()
+                        .forEach(roomImage ->
+                            roomImage
+                                .updateFileName(
+                                    s3FileService.getPreSignedUrlForLoad(roomImage.getFileName())
+                                )
                         );
-                    }
-                );
+                    dormitoryRoomPost
+                        .getPublisherAccount()
+                        .getProfileImage()
+                        .updateFileName(
+                            dormitoryRoomPost
+                                .getPublisherAccount()
+                                .getProfileImage()
+                                .getFileName()
+                        );
+                    return DormitoryRoomRecommendPostDto.from(
+                        dormitoryRoomPost,
+                        scrapPostViews
+                    );
+                });
         }
 
         return dormitoryRoomPostRepository
-            .findDormitoryRoomPostBySearchKeyWords(gender, searchKeyWords, pageable)
+            .findDormitoryRoomPostBySearchKeyWords(memberId, gender, searchKeyWords, cardOption,
+                pageable)
             .map(dormitoryRoomPost -> {
                     dormitoryRoomPost
                         .getRoomImages()
@@ -84,7 +97,16 @@ public class DormitoryRoomPostService {
                                     s3FileService.getPreSignedUrlForLoad(roomImage.getFileName())
                                 )
                         );
-                    return DormitoryRoomPostDto.from(
+                    dormitoryRoomPost
+                        .getPublisherAccount()
+                        .getProfileImage()
+                        .updateFileName(
+                            dormitoryRoomPost
+                                .getPublisherAccount()
+                                .getProfileImage()
+                                .getFileName()
+                        );
+                    return DormitoryRoomRecommendPostDto.from(
                         dormitoryRoomPost,
                         scrapPostViews
                     );
