@@ -14,6 +14,7 @@ import org.capstone.maru.domain.StudioRoomPost;
 import org.capstone.maru.domain.constant.Gender;
 import org.capstone.maru.domain.constant.RentalType;
 import org.capstone.maru.domain.constant.RoomType;
+import org.capstone.maru.dto.StudioRoomRecommendPost;
 import org.capstone.maru.dto.request.SearchFilterRequest;
 import org.capstone.maru.repository.postgre.MemberAccountRepository;
 import org.capstone.maru.repository.postgre.RoomImageRepository;
@@ -147,9 +148,15 @@ class StudioRoomPostRepositoryTest {
             .fromJson("{\"roomTypes\": [0, 1], \"rentalTypes\": [0]}");
 
         // when
-        Page<StudioRoomPost> studioRoomPostsPage = studioRoomPostRepository
-            .findStudioRoomPostByDynamicFilter(MALE.name(), searchFilter, null,
-                pageable);
+        Page<StudioRoomRecommendPost> studioRoomPostsPage = studioRoomPostRepository
+            .findStudioRoomPostByRecommendDynamicFilter(
+                MALE.name(),
+                searchFilter,
+                null,
+                "test_1",
+                "room",
+                pageable
+            );
 
         // then
         assertThat(
@@ -168,8 +175,9 @@ class StudioRoomPostRepositoryTest {
         String searchKeyWords = "test";
 
         // when
-        Page<StudioRoomPost> studioRoomPostsPage = studioRoomPostRepository
-            .findStudioRoomPostBySearchKeyWords(MALE.name(), searchKeyWords, pageable);
+        Page<StudioRoomRecommendPost> studioRoomPostsPage = studioRoomPostRepository
+            .findStudioRoomRecommendPostBySearchKeyWords("test_1", MALE.name(), searchKeyWords,
+                "my", pageable);
 
         // then
         assertThat(studioRoomPostsPage.getContent()).hasSize(pageable.getPageSize());
