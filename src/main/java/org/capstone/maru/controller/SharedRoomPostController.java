@@ -54,7 +54,7 @@ public class SharedRoomPostController {
         @RequestQueryString(name = "filter", required = false) SearchFilterRequest searchFilterRequest,
         @RequestParam(name = "search", required = false) String searchKeyWords,
         @RequestParam(name = "cardOption") String cardOption,
-        @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
+        @PageableDefault(size = 10, sort = "score", direction = Direction.DESC) Pageable pageable
     ) {
         Page<StudioRoomRecommendPostResponse> result = studioRoomPostService
             .searchStudioRoomPosts(
@@ -158,7 +158,7 @@ public class SharedRoomPostController {
         @AuthenticationPrincipal MemberPrincipal principal,
         @RequestParam(name = "search", required = false) String searchKeyWords,
         @RequestParam(name = "cardOption") String cardOption,
-        @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
+        @PageableDefault(size = 10, sort = "score", direction = Direction.DESC) Pageable pageable
     ) {
         Page<DormitoryRoomRecommendPostResponse> result = dormitoryRoomPostService
             .searchDormitoryRoomPosts(
