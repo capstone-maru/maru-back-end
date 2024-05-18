@@ -153,6 +153,7 @@ public class StudioRoomPostCustomRepositoryImpl implements
         // 개수
         JPAQuery<Long> countQuery = jpaQueryFactory
             .select(studioRoomPost.count())
+            .from(studioRoomPost)
             .join(recommend)
             .on(studioRoomPost.id.stringValue().eq(recommend.recommendationId))
             .where(
@@ -226,13 +227,16 @@ public class StudioRoomPostCustomRepositoryImpl implements
             .join(recommend)
             .on(studioRoomPost.id.stringValue().eq(recommend.recommendationId))
             .where(
-                eqGender(gender),
-                recommend.cardType.eq(cardOption)
+                recommend.userId.eq(memberId),
+                recommend.cardType.eq(cardOption),
+                eqGender(gender)
             )
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .orderBy(postSort(pageable))
             .fetch();
+
+        log.info("[Debug] content: {}", content);
 
         JPAQuery<Long> countQuery = jpaQueryFactory
             .select(studioRoomPost.count())
@@ -240,8 +244,9 @@ public class StudioRoomPostCustomRepositoryImpl implements
             .join(recommend)
             .on(studioRoomPost.id.stringValue().eq(recommend.recommendationId))
             .where(
-                eqGender(gender),
-                recommend.cardType.eq(cardOption)
+                recommend.userId.eq(memberId),
+                recommend.cardType.eq(cardOption),
+                eqGender(gender)
             );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
