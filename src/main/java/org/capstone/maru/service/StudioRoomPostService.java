@@ -63,14 +63,17 @@ public class StudioRoomPostService {
             memberId,
             cardOption,
             "post"
-        ).subscribe();
+        ).block();
 
         List<ScrapPostView> scrapPostViews = scrapPostRepository
             .findScrapViewByScrapperMemberId(memberId);
 
         if (searchFilterRequest == null && !StringUtils.hasText(searchKeyWords)) {
+            log.info("둘다 없음");
             Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
                 .findAllRecommendByPublisherGender(memberId, gender, cardOption, pageable);
+
+            log.info("resultPage: {}", resultPage);
 
             return resultPage
                 .map(studioRoomPost -> {
@@ -83,6 +86,7 @@ public class StudioRoomPostService {
                                         .getPreSignedUrlForLoad(roomImage.getFileName())
                                 )
                         );
+
                     studioRoomPost
                         .getPublisherAccount()
                         .getProfileImage()
@@ -90,6 +94,7 @@ public class StudioRoomPostService {
                             s3FileService.getPreSignedUrlForLoad(
                                 studioRoomPost.getPublisherAccount().getProfileImage().getFileName()
                             ));
+
                     return StudioRoomRecommendPostDto.from(
                         studioRoomPost,
                         scrapPostViews
@@ -98,6 +103,7 @@ public class StudioRoomPostService {
         }
 
         if (searchFilterRequest == null) {
+            log.info("searchKeyWords만 있음");
             Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
                 .findStudioRoomRecommendPostBySearchKeyWords(
                     memberId,
@@ -131,6 +137,8 @@ public class StudioRoomPostService {
                 }
             );
         }
+
+        log.info("둘다 있음");
 
         Page<StudioRoomRecommendPost> resultPage = studioRoomPostRepository
             .findStudioRoomPostByRecommendDynamicFilter(
