@@ -67,6 +67,8 @@ public class SharedRoomPostController {
             )
             .map(StudioRoomRecommendPostResponse::from);
 
+        log.info("result size : {}", result.getSize());
+        
         return ResponseEntity.ok(APIResponse.success(result));
     }
 

@@ -185,7 +185,7 @@ public class ProfileService {
             memberId,
             cardOption,
             "member"
-        ).subscribe();
+        ).block();
 
         String recommendType = "my".equals(cardOption) ? "mate" : "my";
 
