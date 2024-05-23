@@ -165,6 +165,13 @@ public class ProfileController {
         return ResponseEntity.ok(APIResponse.success(result));
     }
 
+    @GetMapping("/mutual/follow")
+    public ResponseEntity<APIResponse> mutualFollowings(
+        @AuthenticationPrincipal MemberPrincipal principal) {
+        FollowingDto result = followService.getMutualFollower(principal.memberId());
+        return ResponseEntity.ok(APIResponse.success(result));
+    }
+
     /*
      * 프로필 이미지 수정
      */
