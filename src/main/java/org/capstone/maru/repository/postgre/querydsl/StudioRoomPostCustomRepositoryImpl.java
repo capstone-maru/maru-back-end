@@ -57,6 +57,8 @@ public class StudioRoomPostCustomRepositoryImpl implements
             .from(studioRoomPost)
             .join(recommend)
             .on(studioRoomPost.id.stringValue().eq(recommend.recommendationId))
+            .join(studioRoomPost.roomInfo, roomInfo)
+            .fetchJoin()
             .where(
                 recommend.userId.eq(memberId),
                 recommend.cardType.eq(cardOption),
