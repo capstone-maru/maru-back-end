@@ -210,4 +210,10 @@ public class ProfileService {
                 recommend.getScore());
         }).toList();
     }
+
+    @Transactional
+    public void updateRecommendOnOff(String memberId, Boolean recommendOn) {
+        MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
+        memberAccount.updateRecommendOn(recommendOn);
+    }
 }
