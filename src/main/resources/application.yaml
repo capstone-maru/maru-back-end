@@ -37,3 +37,7 @@ jwt:
 
 univcert:
   api_key: 91927da3-bc95-4574-8d43-47e10a9272a7
+
+server:
+  tomcat:
+    keep-alive-timeout: 20000

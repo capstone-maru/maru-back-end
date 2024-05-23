@@ -147,7 +147,9 @@ public class StudioRoomPostCustomRepositoryImpl implements
                 betweenExpectedPayment(searchFilterRequest.expectedPaymentRange()),
                 containSearchKeyWords(searchKeyWords)
             )
-            .orderBy(recommend.score.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(postSort(pageable))
             .fetch();
 
         // 개수
