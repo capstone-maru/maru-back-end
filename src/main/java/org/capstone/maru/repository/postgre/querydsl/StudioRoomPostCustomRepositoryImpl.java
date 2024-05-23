@@ -175,6 +175,10 @@ public class StudioRoomPostCustomRepositoryImpl implements
                 eqGender(gender)
             );
 
+        log.info("[Debug] count: {}", countQuery);
+
+        log.info("[Debug] countQuery: {}", countQuery.fetchOne());
+
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
