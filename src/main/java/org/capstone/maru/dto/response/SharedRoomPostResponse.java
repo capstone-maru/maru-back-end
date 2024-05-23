@@ -10,9 +10,7 @@ public record SharedRoomPostResponse(
     String title,
     String type,
     LocalDateTime createdAt,
-    String createdBy,
-    LocalDateTime modifiedAt,
-    String modifiedBy
+    LocalDateTime modifiedAt
 ) {
 
     public static SharedRoomPostResponse from(SharedRoomPostDto dto) {
@@ -22,9 +20,7 @@ public record SharedRoomPostResponse(
             .title(dto.title())
             .type(dto.type())
             .createdAt(dto.createdAt())
-            .createdBy(dto.createdBy())
             .modifiedAt(dto.modifiedAt())
-            .modifiedBy(dto.modifiedBy())
             .build();
     }
 
