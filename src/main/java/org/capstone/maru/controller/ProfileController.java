@@ -237,18 +237,4 @@ public class ProfileController {
         return ResponseEntity.ok(APIResponse.success(result));
     }
 
-    /*
-    추천 on/off
-     */
-    @PatchMapping("/recommend/onoff")
-    public ResponseEntity<APIResponse> updateRecommendOnOff(
-        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
-        @RequestParam(name = "recommendOn") Boolean recommendOn
-    ) {
-        log.info("call updateRecommendOnOff : {}", memberPrincipal.memberId());
-
-        profileService.updateRecommendOnOff(memberPrincipal.memberId(), recommendOn);
-
-        return ResponseEntity.ok(APIResponse.success());
-    }
 }
