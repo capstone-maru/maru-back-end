@@ -40,4 +40,4 @@ univcert:
 
 server:
   tomcat:
-    keep-alive-timeout: 20000
+    keep-alive-timeout: 300000
