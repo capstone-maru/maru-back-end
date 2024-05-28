@@ -1,11 +1,13 @@
 package org.capstone.maru.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.MemberAccount;
+import org.capstone.maru.domain.MemberRecommendUpdate;
 import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.domain.Recommend;
 import org.capstone.maru.domain.jsonb.MemberFeatures;
@@ -17,6 +19,7 @@ import org.capstone.maru.dto.response.AuthResponse;
 import org.capstone.maru.dto.response.SharedRoomPostResponse;
 import org.capstone.maru.dto.response.SimpleMemberProfileResponse;
 import org.capstone.maru.repository.postgre.MemberCardRepository;
+import org.capstone.maru.repository.postgre.MemberRecommendUpdateRepository;
 import org.capstone.maru.repository.postgre.ProfileImageRepository;
 import org.capstone.maru.repository.postgre.RecommendRepository;
 import org.springframework.stereotype.Service;
@@ -40,6 +43,8 @@ public class ProfileService {
     private final RecommendRepository recommendRepository;
 
     private final RecommendService recommendService;
+
+    private final MemberRecommendUpdateRepository memberRecommendUpdateRepository;
 
     @Transactional
     public FeatureCardDto updateMyCard(String memberId, Long cardId, String location,
@@ -124,9 +129,9 @@ public class ProfileService {
         log.info("getCard - cardId: {}", cardId);
 
         FeatureCard featureCard = memberCardRepository.findById(cardId)
-                                                      .orElseThrow(
-                                                          () -> new IllegalArgumentException(
-                                                              "MemberCard not found"));
+            .orElseThrow(
+                () -> new IllegalArgumentException(
+                    "MemberCard not found"));
 
         return FeatureCardDto.from(featureCard);
     }
@@ -141,13 +146,9 @@ public class ProfileService {
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
 
-        Optional<ProfileImage> profileImage = profileImageRepository.findById(fileName);
+        ProfileImage profileImage = memberAccount.getProfileImage();
 
-        if (profileImage.isEmpty()) {
-            throw new IllegalArgumentException("ProfileImage not found");
-        }
-
-        memberAccount.updateProfileImage(profileImage.get());
+        profileImage.updateFileName(fileName);
     }
 
     @Transactional
@@ -189,11 +190,22 @@ public class ProfileService {
         String cardOption) {
         log.info("cardOption: {}", cardOption);
 
-        recommendService.updateRecommendation(
-            memberId,
-            cardOption,
-            "member"
-        ).block();
+        LocalDateTime now = LocalDateTime.now();
+
+        Optional<MemberRecommendUpdate> recommendUpdate = memberRecommendUpdateRepository.findById(
+            memberId);
+
+        if (recommendUpdate.isEmpty() || recommendUpdate.get().haveToUpdate(now)) {
+            recommendService.updateRecommendation(
+                memberId,
+                cardOption,
+                "member"
+            ).block();
+
+            MemberRecommendUpdate recommendUpdateSave = new MemberRecommendUpdate(memberId, now);
+
+            memberRecommendUpdateRepository.save(recommendUpdateSave);
+        }
 
         String recommendType = "my".equals(cardOption) ? "mate" : "my";
 
