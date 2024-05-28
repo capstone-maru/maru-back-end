@@ -41,7 +41,7 @@ public class JwtTokenProvider implements TokenProvider, InitializingBean {
 
     private final String SECRET_KEY_STRING;
     private Key SECRET_KEY;
-    private final Long ACCESS_TOKEN_VALID_MILLI_SECOND = 60 * 1000L;
+    private final Long ACCESS_TOKEN_VALID_MILLI_SECOND = 60 * 60 * 1000L;
     private final Long REFRESH_TOKEN_VALID_MILLI_SECOND = 7 * 24 * 60 * 60 * 1000L; // 7 days
     private static final String AUTHORITY = "authorities";
     private static final String EMAIL = "email";
