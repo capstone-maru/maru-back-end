@@ -146,13 +146,9 @@ public class ProfileService {
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
 
-        Optional<ProfileImage> profileImage = profileImageRepository.findById(fileName);
+        ProfileImage profileImage = memberAccount.getProfileImage();
 
-        if (profileImage.isEmpty()) {
-            throw new IllegalArgumentException("ProfileImage not found");
-        }
-
-        memberAccount.updateProfileImage(profileImage.get());
+        profileImage.updateFileName(fileName);
     }
 
     @Transactional
