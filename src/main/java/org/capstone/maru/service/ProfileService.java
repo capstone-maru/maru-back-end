@@ -146,9 +146,9 @@ public class ProfileService {
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
 
-        ProfileImage profileImage = memberAccount.getProfileImage();
+        ProfileImage profileImage = ProfileImage.of(fileName, memberId);
 
-        profileImage.updateFileName(fileName);
+        memberAccount.updateProfileImage(profileImage);
     }
 
     @Transactional
