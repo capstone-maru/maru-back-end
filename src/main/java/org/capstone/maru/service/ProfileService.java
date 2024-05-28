@@ -1,5 +1,6 @@
 package org.capstone.maru.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -193,15 +194,21 @@ public class ProfileService {
         String cardOption) {
         log.info("cardOption: {}", cardOption);
 
+        LocalDateTime now = LocalDateTime.now();
+
         Optional<MemberRecommendUpdate> recommendUpdate = memberRecommendUpdateRepository.findById(
             memberId);
 
-        if (recommendUpdate.isEmpty() || recommendUpdate.get().isUpdated()) {
+        if (recommendUpdate.isEmpty() || recommendUpdate.get().haveToUpdate(now)) {
             recommendService.updateRecommendation(
                 memberId,
                 cardOption,
                 "member"
             ).block();
+
+            MemberRecommendUpdate recommendUpdateSave = new MemberRecommendUpdate(memberId, now);
+
+            memberRecommendUpdateRepository.save(recommendUpdateSave);
         }
 
         String recommendType = "my".equals(cardOption) ? "mate" : "my";
