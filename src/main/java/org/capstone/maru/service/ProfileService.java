@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.domain.FeatureCard;
 import org.capstone.maru.domain.MemberAccount;
-import org.capstone.maru.domain.MemberRecommendUpdate;
 import org.capstone.maru.domain.ProfileImage;
 import org.capstone.maru.domain.Recommend;
 import org.capstone.maru.domain.jsonb.MemberFeatures;
@@ -19,7 +18,6 @@ import org.capstone.maru.dto.response.AuthResponse;
 import org.capstone.maru.dto.response.SharedRoomPostResponse;
 import org.capstone.maru.dto.response.SimpleMemberProfileResponse;
 import org.capstone.maru.repository.postgre.MemberCardRepository;
-import org.capstone.maru.repository.postgre.MemberRecommendUpdateRepository;
 import org.capstone.maru.repository.postgre.ProfileImageRepository;
 import org.capstone.maru.repository.postgre.RecommendRepository;
 import org.springframework.stereotype.Service;
@@ -43,9 +41,7 @@ public class ProfileService {
     private final RecommendRepository recommendRepository;
 
     private final RecommendService recommendService;
-
-    private final MemberRecommendUpdateRepository memberRecommendUpdateRepository;
-
+    
     @Transactional
     public FeatureCardDto updateMyCard(String memberId, Long cardId, String location,
         MemberFeatures features) {
