@@ -11,6 +11,7 @@ import org.capstone.maru.dto.request.EmailSearchRequest;
 import org.capstone.maru.dto.SimpleMemberCardDto;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
 import org.capstone.maru.dto.request.MemberIdRequest;
+import org.capstone.maru.dto.request.SettingRequest;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.dto.response.SimpleMemberCardResponse;
 import org.capstone.maru.dto.response.SimpleMemberProfileResponse;
@@ -238,10 +239,19 @@ public class ProfileController {
             memberPrincipal.memberId(), memberPrincipal.gender(), cardOption);
 
         List<SimpleMemberCardResponse> result = recommendMember.stream()
-            .map(SimpleMemberCardResponse::from)
-            .toList();
+                                                               .map(SimpleMemberCardResponse::from)
+                                                               .toList();
 
         return ResponseEntity.ok(APIResponse.success(result));
     }
 
+    @PatchMapping("/setting")
+    public ResponseEntity<APIResponse> updateProfileSetting(
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+        @RequestBody SettingRequest settingRequest
+    ) {
+        profileService.updateRecommendOnOff(memberPrincipal.memberId(),
+            settingRequest.recommendOn());
+        return ResponseEntity.ok(APIResponse.success());
+    }
 }

@@ -119,22 +119,22 @@ public class ChatService {
          */
 
         chatRepository.findAllByRoomId(roomId, pageable).stream().map(
-                chat -> {
-                    if (messageId.contains(chat.getId())) {
-                        return null;
-                    } else {
-                        return ChatMessageResponse.builder()
-                            .messageId(chat.getId())
-                            .sender(chat.getCreatedBy())
-                            .message(chat.getMessage())
-                            .nickname(chat.getNickname())
-                            .createdAt(chat.getCreatedAt())
-                            .build();
-                    }
-                }
-            )
-            .filter(Objects::nonNull)
-            .forEach(recentMessage::add);
+                          chat -> {
+                              if (messageId.contains(chat.getId())) {
+                                  return null;
+                              } else {
+                                  return ChatMessageResponse.builder()
+                                                            .messageId(chat.getId())
+                                                            .sender(chat.getCreatedBy())
+                                                            .message(chat.getMessage())
+                                                            .nickname(chat.getNickname())
+                                                            .createdAt(chat.getCreatedAt())
+                                                            .build();
+                              }
+                          }
+                      )
+                      .filter(Objects::nonNull)
+                      .forEach(recentMessage::add);
 
         recentMessage.sort(comparator);
 
@@ -289,12 +289,12 @@ public class ChatService {
 
         if (chat == null) {
             return ChatMessageResponse.builder()
-                .messageId("0")
-                .message("")
-                .nickname("initial")
-                .sender("initial")
-                .createdAt(LocalDateTime.now())
-                .build();
+                                      .messageId("0")
+                                      .message("")
+                                      .nickname("initial")
+                                      .sender("initial")
+                                      .createdAt(LocalDateTime.now())
+                                      .build();
         }
 
         return ChatMessageResponse.from(chat);
@@ -306,8 +306,31 @@ public class ChatService {
     @Transactional
     public void exitChatRoom(Long roomId, String memberId) {
         log.info("exitChatRoom : {}, {}", roomId, memberId);
-        MemberRoom memberRoom = memberRoomRepository.findByMemberIdAndChatRoomId(memberId, roomId);
+        MemberRoom memberRoom = memberRoomRepository.findByMemberIdAndChatRoomId(memberId, roomId)
+                                                    .orElseThrow(
+                                                        IllegalArgumentException::new);
         log.info("memberRoom : {}", memberRoom.getId());
         memberRoom.updateLastCheckTime();
+    }
+
+    @Transactional
+    public void leaveChatRoom(Long roomId, String memberId) {
+        memberRoomRepository.deleteByMemberIdAndChatRoomId(memberId, roomId);
+
+        if (memberRoomRepository.existsByChatRoomId(roomId)) {
+            return;
+        }
+
+        chatRoomRepository.deleteById(roomId);
+    }
+
+    @Transactional
+    public void updateChatRoomName(Long roomId, String roomName) {
+        // TODO: memberId로 변경 가능한지 확인해야함
+        ChatRoom chatRoom = chatRoomRepository
+            .findById(roomId)
+            .orElseThrow(IllegalArgumentException::new);
+
+        chatRoom.updateChatRoomName(roomName);
     }
 }
