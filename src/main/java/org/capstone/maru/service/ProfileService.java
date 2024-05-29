@@ -106,7 +106,8 @@ public class ProfileService {
 
         AuthResponse authResponse = AuthResponse.from(memberAccount);
 
-        return MemberProfileDto.from(imgURL, myCard, mateCard, authResponse, memberPosts);
+        return MemberProfileDto.from(imgURL, myCard, mateCard, authResponse, memberPosts,
+            memberAccount.getRecommendOn());
     }
 
     @Transactional
