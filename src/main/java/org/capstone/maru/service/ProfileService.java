@@ -41,7 +41,7 @@ public class ProfileService {
     private final RecommendRepository recommendRepository;
 
     private final RecommendService recommendService;
-    
+
     @Transactional
     public FeatureCardDto updateMyCard(String memberId, Long cardId, String location,
         MemberFeatures features) {
@@ -80,6 +80,7 @@ public class ProfileService {
         log.info("getMyCard - memberId: {}", memberId);
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
+        
         List<SharedRoomPostResponse> memberPosts = sharedRoomPostService
             .getMySharedRoomPosts(memberId)
             .stream()

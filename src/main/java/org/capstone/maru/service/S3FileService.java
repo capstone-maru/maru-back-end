@@ -40,12 +40,12 @@ public class S3FileService {
         Date expiration = getPreSignedUrlExpiration();
 
         if (filename.contains("default.png") && Objects.equals(gender, "MALE")) {
-            return amazonS3.generatePresignedUrl(bucket, "images/maleDefault.png", expiration)
+            return amazonS3.generatePresignedUrl(bucket, "images/maleDefault.webp", expiration)
                 .toString();
         }
 
         if (filename.contains("default.png") && Objects.equals(gender, "FEMALE")) {
-            return amazonS3.generatePresignedUrl(bucket, "images/femaleDefault.png", expiration)
+            return amazonS3.generatePresignedUrl(bucket, "images/femaleDefault.webp", expiration)
                 .toString();
         }
 
