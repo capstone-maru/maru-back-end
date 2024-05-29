@@ -153,6 +153,16 @@ public class DormitoryRoomPostService {
             );
 
         resultEntity
+            .getPublisherAccount()
+            .getProfileImage()
+            .updateFileName(
+                s3FileService.getMemberPreSignedUrlForLoad(
+                    resultEntity.getPublisherGender(), resultEntity.getPublisherAccount()
+                        .getProfileImage().getFileName()
+                )
+            );
+
+        resultEntity
             .getSharedRoomPostRecruits()
             .stream()
             .map(Participation::getRecruitedMemberAccount)
