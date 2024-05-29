@@ -151,15 +151,6 @@ public class ProfileService {
         memberAccount.updateProfileImage(profileImage);
     }
 
-    @Transactional
-    public Boolean updateRecommend(String memberId, Boolean recommendOn) {
-        /*
-        내 카드인지 확인
-         */
-        MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
-        return memberAccount.updateRecommendOn(recommendOn);
-    }
-
     /*
      * 프로필 검색
      */

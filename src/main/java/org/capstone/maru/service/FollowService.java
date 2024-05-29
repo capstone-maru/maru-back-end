@@ -45,8 +45,14 @@ public class FollowService {
         log.info("followerAccount: {}", followerAccount.getFollowings());
 
         List<Follow> followingList = followerAccount.getFollowings().stream().toList();
-        followingList.forEach(follow -> s3FileService.getPreSignedUrlForLoad(
-            follow.getFollowing().getProfileImage().getFileName()));
+        followingList.forEach(follow -> follow
+            .getFollowing()
+            .getProfileImage()
+            .updateFileName(
+                s3FileService.getPreSignedUrlForLoad(
+                    follow.getFollowing().getProfileImage().getFileName())
+            )
+        );
 
         return FollowingDto.fromFollow(followingList);
     }
@@ -55,8 +61,12 @@ public class FollowService {
     public FollowingDto getMutualFollower(String memberId) {
         List<MemberAccount> followingList = followRepository.findAllMutualFollower(memberId)
                                                             .stream().toList();
-        followingList.forEach(memberAccount -> s3FileService.getPreSignedUrlForLoad(
-            memberAccount.getProfileImage().getFileName()));
+        followingList.forEach(memberAccount -> memberAccount
+            .getProfileImage()
+            .updateFileName(
+                s3FileService.getPreSignedUrlForLoad(memberAccount.getProfileImage().getFileName())
+            )
+        );
 
         return FollowingDto.fromMemberAccount(
             followingList

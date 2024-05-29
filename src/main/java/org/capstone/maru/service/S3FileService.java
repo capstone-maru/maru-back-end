@@ -5,7 +5,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Nonnull;
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.capstone.maru.dto.ImageDto;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +42,29 @@ public class S3FileService {
         if (filename.contains("default.png")) {
             return amazonS3.generatePresignedUrl(bucket, "images/default.png", expiration)
                            .toString();
+        }
+
+        // TODO: 더미 데이터를 위한 코드 실제 서비스에서는 제거할 것
+        if (filename.contains("test")) {
+            Random random = new Random();
+            switch (random.nextInt(4) + 1) {
+                case 1:
+                    return amazonS3.generatePresignedUrl(bucket, "images/defaultroom1.jpg",
+                                       expiration)
+                                   .toString();
+                case 2:
+                    return amazonS3.generatePresignedUrl(bucket, "images/defaultroom2.jpg",
+                                       expiration)
+                                   .toString();
+                case 3:
+                    return amazonS3.generatePresignedUrl(bucket, "images/defaultroom3.jpg",
+                                       expiration)
+                                   .toString();
+                case 4:
+                    return amazonS3.generatePresignedUrl(bucket, "images/defaultroom.jpeg",
+                                       expiration)
+                                   .toString();
+            }
         }
 
         return amazonS3.generatePresignedUrl(bucket, filename, expiration)
