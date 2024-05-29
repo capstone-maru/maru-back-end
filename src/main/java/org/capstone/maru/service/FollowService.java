@@ -49,7 +49,8 @@ public class FollowService {
             .getFollowing()
             .getProfileImage()
             .updateFileName(
-                s3FileService.getPreSignedUrlForLoad(
+                s3FileService.getMemberPreSignedUrlForLoad(
+                    followerAccount.getGender(),
                     follow.getFollowing().getProfileImage().getFileName())
             )
         );
@@ -60,11 +61,14 @@ public class FollowService {
     @Transactional(readOnly = true)
     public FollowingDto getMutualFollower(String memberId) {
         List<MemberAccount> followingList = followRepository.findAllMutualFollower(memberId)
-                                                            .stream().toList();
+            .stream().toList();
         followingList.forEach(memberAccount -> memberAccount
             .getProfileImage()
             .updateFileName(
-                s3FileService.getPreSignedUrlForLoad(memberAccount.getProfileImage().getFileName())
+                s3FileService.getMemberPreSignedUrlForLoad(
+                    memberAccount.getGender(),
+                    memberAccount.getProfileImage().getFileName()
+                )
             )
         );
 
