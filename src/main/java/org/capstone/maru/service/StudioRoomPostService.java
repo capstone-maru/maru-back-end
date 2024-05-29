@@ -185,6 +185,7 @@ public class StudioRoomPostService {
             .findScrapViewByScrappedIdAndScrapperMemberId(postId, memberId)
             .map(ScrapPostView::getIsScrapped)
             .orElse(false);
+
         final Long scrapCount = scrapPostRepository.countByScrappedIdAndIsScrapped(postId);
 
         // 모집된 인원과 사용자의 팔로우 관계
@@ -193,19 +194,36 @@ public class StudioRoomPostService {
         // 조회수 +1 & 게시글 총 조회수
         Long viewCount = viewCountService.increaseValue(SharedViewCountCacheKey.from(postId));
 
+        log.info(gender);
+
+        resultEntity
+            .getPublisherAccount()
+            .getProfileImage()
+            .updateFileName(
+                s3FileService.getMemberPreSignedUrlForLoad(
+                    resultEntity.getPublisherGender(), resultEntity.getPublisherAccount()
+                        .getProfileImage().getFileName()
+                )
+            );
+
         resultEntity
             .getSharedRoomPostRecruits()
             .stream()
             .map(Participation::getRecruitedMemberAccount)
             .map(MemberAccount::getProfileImage)
             .forEach(
-                profileImage -> profileImage.updateFileName(
-                    s3FileService.getMemberPreSignedUrlForLoad(
-                        gender,
-                        profileImage.getFileName()
+                profileImage ->
+                    profileImage.updateFileName(
+                        s3FileService.getMemberPreSignedUrlForLoad(
+                            gender,
+                            profileImage.getFileName()
+                        )
                     )
-                )
             );
+
+        log.info("resultEntity: {}",
+            resultEntity.getPublisherAccount().getProfileImage().getFileName());
+
         resultEntity
             .getRoomImages()
             .forEach(
@@ -214,6 +232,7 @@ public class StudioRoomPostService {
                         .getPreSignedUrlForLoad(roomImage.getFileName())
                 )
             );
+
         return StudioRoomPostDetailDto.from(resultEntity, isScrapped, followingIds, scrapCount,
             viewCount);
     }

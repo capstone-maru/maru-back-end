@@ -11,11 +11,13 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.maru.dto.ImageDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
+@Slf4j
 @Service
 public class S3FileService {
 
@@ -39,7 +41,10 @@ public class S3FileService {
     public String getMemberPreSignedUrlForLoad(String gender, String filename) {
         Date expiration = getPreSignedUrlExpiration();
 
+        log.info("getMemberPreSignedUrlForLoad: {}", filename);
+
         if (filename.contains("default.png") && Objects.equals(gender, "MALE")) {
+            log.info("getMemberPreSignedUrlForLoad: {}", filename);
             return amazonS3.generatePresignedUrl(bucket, "images/maleDefault.webp", expiration)
                 .toString();
         }
@@ -56,6 +61,8 @@ public class S3FileService {
 
     public String getPreSignedUrlForLoad(String filename) {
 
+        log.info("getPreSignedUrlForLoad: {}", filename);
+        
         Date expiration = getPreSignedUrlExpiration();
 
         if (filename.contains("default.png")) {
