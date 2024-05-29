@@ -140,6 +140,16 @@ public class DormitoryRoomPostService {
         Long viewCount = viewCountService.increaseValue(SharedViewCountCacheKey.from(postId));
 
         resultEntity
+            .getPublisherAccount()
+            .getProfileImage()
+            .updateFileName(
+                s3FileService.getMemberPreSignedUrlForLoad(
+                    resultEntity.getPublisherGender(), resultEntity.getPublisherAccount()
+                        .getProfileImage().getFileName()
+                )
+            );
+
+        resultEntity
             .getSharedRoomPostRecruits()
             .stream()
             .map(Participation::getRecruitedMemberAccount)
@@ -159,7 +169,7 @@ public class DormitoryRoomPostService {
                     s3FileService.getPreSignedUrlForLoad(roomImage.getFileName())
                 )
             );
-        
+
         return DormitoryRoomPostDetailDto.from(resultEntity, isScrapped, followingIds,
             scrapCount, viewCount);
     }
