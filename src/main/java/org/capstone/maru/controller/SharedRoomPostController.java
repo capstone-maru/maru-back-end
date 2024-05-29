@@ -22,7 +22,6 @@ import org.capstone.maru.dto.response.StudioRoomPostResponse;
 import org.capstone.maru.dto.response.StudioRoomRecommendPostResponse;
 import org.capstone.maru.security.principal.MemberPrincipal;
 import org.capstone.maru.service.DormitoryRoomPostService;
-import org.capstone.maru.service.S3FileService;
 import org.capstone.maru.service.StudioRoomPostService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,7 +47,6 @@ public class SharedRoomPostController {
 
     private final StudioRoomPostService studioRoomPostService;
     private final DormitoryRoomPostService dormitoryRoomPostService;
-    private final S3FileService s3FileService;
 
     @GetMapping("/studio")
     public ResponseEntity<APIResponse> studioRoomPosts(
@@ -80,18 +78,14 @@ public class SharedRoomPostController {
         @PathVariable("postId") Long postId
     ) {
         StudioRoomPostDetailResponse result = StudioRoomPostDetailResponse.from(
-            studioRoomPostService.getStudioRoomPostDetail(principal.memberId(), postId,
-                principal.gender())
-        );
-
-        return ResponseEntity.ok(
-            APIResponse.success(result,
-                s3FileService.getMemberPreSignedUrlForLoad(
-                    result.publisherAccount().gender(),
-                    result.publisherAccount().profileImageFileName()
-                )
+            studioRoomPostService.getStudioRoomPostDetail(
+                principal.memberId(),
+                postId,
+                principal.gender()
             )
         );
+
+        return ResponseEntity.ok(APIResponse.success(result));
     }
 
     @PostMapping("/studio")
