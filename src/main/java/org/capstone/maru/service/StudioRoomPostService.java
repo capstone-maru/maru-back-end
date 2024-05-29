@@ -197,7 +197,10 @@ public class StudioRoomPostService {
             .map(MemberAccount::getProfileImage)
             .forEach(
                 profileImage -> profileImage.updateFileName(
-                    s3FileService.getPreSignedUrlForLoad(profileImage.getFileName())
+                    s3FileService.getMemberPreSignedUrlForLoad(
+                        gender,
+                        profileImage.getFileName()
+                    )
                 )
             );
         resultEntity

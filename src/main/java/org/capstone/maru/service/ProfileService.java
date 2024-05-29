@@ -80,7 +80,7 @@ public class ProfileService {
         log.info("getMyCard - memberId: {}", memberId);
 
         MemberAccount memberAccount = memberAccountService.searchMemberAccount(memberId);
-        
+
         List<SharedRoomPostResponse> memberPosts = sharedRoomPostService
             .getMySharedRoomPosts(memberId)
             .stream()
@@ -230,7 +230,12 @@ public class ProfileService {
             ProfileImage profileImage = memberAccount.getProfileImage();
             FeatureCard featureCard = memberAccount.getMyCard();
 
-            return SimpleMemberCardDto.from(memberAccount, featureCard, profileImage,
+            String imgURL = s3FileService.getMemberPreSignedUrlForLoad(
+                memberAccount.getGender(),
+                profileImage.getFileName()
+            );
+
+            return SimpleMemberCardDto.from(memberAccount, featureCard, imgURL,
                 recommend.getScore());
         }).toList();
     }
