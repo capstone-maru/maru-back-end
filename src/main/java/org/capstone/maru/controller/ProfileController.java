@@ -238,10 +238,18 @@ public class ProfileController {
             memberPrincipal.memberId(), memberPrincipal.gender(), cardOption);
 
         List<SimpleMemberCardResponse> result = recommendMember.stream()
-            .map(SimpleMemberCardResponse::from)
-            .toList();
+                                                               .map(SimpleMemberCardResponse::from)
+                                                               .toList();
 
         return ResponseEntity.ok(APIResponse.success(result));
     }
 
+    @PatchMapping("/setting")
+    public ResponseEntity<APIResponse> updateProfileSetting(
+        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
+        @RequestBody Boolean recommendOn
+    ) {
+        profileService.updateRecommendOnOff(memberPrincipal.memberId(), recommendOn);
+        return ResponseEntity.ok(APIResponse.success());
+    }
 }
