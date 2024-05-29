@@ -11,6 +11,7 @@ import org.capstone.maru.dto.request.EmailSearchRequest;
 import org.capstone.maru.dto.SimpleMemberCardDto;
 import org.capstone.maru.dto.request.MemberFeatureRequest;
 import org.capstone.maru.dto.request.MemberIdRequest;
+import org.capstone.maru.dto.request.SettingRequest;
 import org.capstone.maru.dto.response.APIResponse;
 import org.capstone.maru.dto.response.SimpleMemberCardResponse;
 import org.capstone.maru.dto.response.SimpleMemberProfileResponse;
@@ -247,9 +248,10 @@ public class ProfileController {
     @PatchMapping("/setting")
     public ResponseEntity<APIResponse> updateProfileSetting(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
-        @RequestBody Boolean recommendOn
+        @RequestBody SettingRequest settingRequest
     ) {
-        profileService.updateRecommendOnOff(memberPrincipal.memberId(), recommendOn);
+        profileService.updateRecommendOnOff(memberPrincipal.memberId(),
+            settingRequest.recommendOn());
         return ResponseEntity.ok(APIResponse.success());
     }
 }
