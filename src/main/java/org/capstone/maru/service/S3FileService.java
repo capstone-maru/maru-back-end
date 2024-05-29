@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Nonnull;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -29,11 +30,29 @@ public class S3FileService {
         Date expiration = getPreSignedUrlExpiration();
 
         String imageURL = amazonS3.generatePresignedUrl(bucket, filename, expiration,
-                                      HttpMethod.PUT)
-                                  .toString();
+                HttpMethod.PUT)
+            .toString();
 
         return ImageDto.from(imageURL, filename);
     }
+
+    public String getMemberPreSignedUrlForLoad(String gender, String filename) {
+        Date expiration = getPreSignedUrlExpiration();
+
+        if (filename.contains("default.png") && Objects.equals(gender, "MALE")) {
+            return amazonS3.generatePresignedUrl(bucket, "images/maleDefault.png", expiration)
+                .toString();
+        }
+
+        if (filename.contains("default.png") && Objects.equals(gender, "FEMALE")) {
+            return amazonS3.generatePresignedUrl(bucket, "images/femaleDefault.png", expiration)
+                .toString();
+        }
+
+        return amazonS3.generatePresignedUrl(bucket, filename, expiration)
+            .toString();
+    }
+
 
     public String getPreSignedUrlForLoad(String filename) {
 
@@ -41,7 +60,7 @@ public class S3FileService {
 
         if (filename.contains("default.png")) {
             return amazonS3.generatePresignedUrl(bucket, "images/default.png", expiration)
-                           .toString();
+                .toString();
         }
 
         // TODO: 더미 데이터를 위한 코드 실제 서비스에서는 제거할 것
@@ -50,25 +69,25 @@ public class S3FileService {
             switch (random.nextInt(4) + 1) {
                 case 1:
                     return amazonS3.generatePresignedUrl(bucket, "images/defaultroom1.jpg",
-                                       expiration)
-                                   .toString();
+                            expiration)
+                        .toString();
                 case 2:
                     return amazonS3.generatePresignedUrl(bucket, "images/defaultroom2.jpg",
-                                       expiration)
-                                   .toString();
+                            expiration)
+                        .toString();
                 case 3:
                     return amazonS3.generatePresignedUrl(bucket, "images/defaultroom3.jpg",
-                                       expiration)
-                                   .toString();
+                            expiration)
+                        .toString();
                 case 4:
                     return amazonS3.generatePresignedUrl(bucket, "images/defaultroom.jpeg",
-                                       expiration)
-                                   .toString();
+                            expiration)
+                        .toString();
             }
         }
 
         return amazonS3.generatePresignedUrl(bucket, filename, expiration)
-                       .toString();
+            .toString();
     }
 
     private Date getPreSignedUrlExpiration() {

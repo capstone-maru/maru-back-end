@@ -102,7 +102,10 @@ public class ProfileService {
         log.info("mateCard: {}", mateCard.getMemberFeatures());
         log.info("profileImage: {}", profileImage.getFileName());
 
-        String imgURL = s3FileService.getPreSignedUrlForLoad(profileImage.getFileName());
+        String imgURL = s3FileService.getMemberPreSignedUrlForLoad(
+            memberAccount.getGender(),
+            profileImage.getFileName()
+        );
 
         AuthResponse authResponse = AuthResponse.from(memberAccount);
 
@@ -159,7 +162,10 @@ public class ProfileService {
     public SimpleMemberProfileResponse searchProfile(String email) {
         MemberAccount memberAccount = memberAccountService.searchMemberAccountByEmail(email);
         ProfileImage profileImage = memberAccount.getProfileImage();
-        String imgURL = s3FileService.getPreSignedUrlForLoad(profileImage.getFileName());
+        String imgURL = s3FileService.getMemberPreSignedUrlForLoad(
+            memberAccount.getGender(),
+            profileImage.getFileName()
+        );
 
         return SimpleMemberProfileResponse.from(memberAccount.getMemberId(),
             memberAccount.getNickname(), imgURL);
@@ -170,7 +176,10 @@ public class ProfileService {
 
         return memberAccounts.stream().map(memberAccount -> {
             ProfileImage profileImage = memberAccount.getProfileImage();
-            String imgURL = s3FileService.getPreSignedUrlForLoad(profileImage.getFileName());
+            String imgURL = s3FileService.getMemberPreSignedUrlForLoad(
+                memberAccount.getGender(),
+                profileImage.getFileName()
+            );
 
             return SimpleMemberProfileResponse.from(memberAccount.getMemberId(),
                 memberAccount.getNickname(), imgURL);
@@ -182,22 +191,28 @@ public class ProfileService {
         String cardOption) {
         log.info("cardOption: {}", cardOption);
 
-        LocalDateTime now = LocalDateTime.now();
+        recommendService.updateRecommendation(
+            memberId,
+            cardOption,
+            "member"
+        ).block();
 
-        Optional<MemberRecommendUpdate> recommendUpdate = memberRecommendUpdateRepository.findById(
-            memberId);
-
-        if (recommendUpdate.isEmpty() || recommendUpdate.get().haveToUpdate(now)) {
-            recommendService.updateRecommendation(
-                memberId,
-                cardOption,
-                "member"
-            ).block();
-
-            MemberRecommendUpdate recommendUpdateSave = new MemberRecommendUpdate(memberId, now);
-
-            memberRecommendUpdateRepository.save(recommendUpdateSave);
-        }
+//        LocalDateTime now = LocalDateTime.now();
+//
+//        Optional<MemberRecommendUpdate> recommendUpdate = memberRecommendUpdateRepository.findById(
+//            memberId);
+//
+//        if (recommendUpdate.isEmpty() || recommendUpdate.get().haveToUpdate(now)) {
+//            recommendService.updateRecommendation(
+//                memberId,
+//                cardOption,
+//                "member"
+//            ).block();
+//
+//            MemberRecommendUpdate recommendUpdateSave = new MemberRecommendUpdate(memberId, now);
+//
+//            memberRecommendUpdateRepository.save(recommendUpdateSave);
+//        }
 
         String recommendType = "my".equals(cardOption) ? "mate" : "my";
 

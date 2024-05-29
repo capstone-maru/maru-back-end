@@ -119,22 +119,22 @@ public class ChatService {
          */
 
         chatRepository.findAllByRoomId(roomId, pageable).stream().map(
-                          chat -> {
-                              if (messageId.contains(chat.getId())) {
-                                  return null;
-                              } else {
-                                  return ChatMessageResponse.builder()
-                                                            .messageId(chat.getId())
-                                                            .sender(chat.getCreatedBy())
-                                                            .message(chat.getMessage())
-                                                            .nickname(chat.getNickname())
-                                                            .createdAt(chat.getCreatedAt())
-                                                            .build();
-                              }
-                          }
-                      )
-                      .filter(Objects::nonNull)
-                      .forEach(recentMessage::add);
+                chat -> {
+                    if (messageId.contains(chat.getId())) {
+                        return null;
+                    } else {
+                        return ChatMessageResponse.builder()
+                            .messageId(chat.getId())
+                            .sender(chat.getCreatedBy())
+                            .message(chat.getMessage())
+                            .nickname(chat.getNickname())
+                            .createdAt(chat.getCreatedAt())
+                            .build();
+                    }
+                }
+            )
+            .filter(Objects::nonNull)
+            .forEach(recentMessage::add);
 
         recentMessage.sort(comparator);
 
@@ -179,7 +179,8 @@ public class ChatService {
             memberRoom -> {
                 MemberAccount memberAccount = memberRoom.getMember();
 
-                String profileImageUrl = s3FileService.getPreSignedUrlForLoad(
+                String profileImageUrl = s3FileService.getMemberPreSignedUrlForLoad(
+                    memberAccount.getGender(),
                     memberAccount.getProfileImage().getFileName());
 
                 return ChatMemberProfileResponse.from(
@@ -289,12 +290,12 @@ public class ChatService {
 
         if (chat == null) {
             return ChatMessageResponse.builder()
-                                      .messageId("0")
-                                      .message("")
-                                      .nickname("initial")
-                                      .sender("initial")
-                                      .createdAt(LocalDateTime.now())
-                                      .build();
+                .messageId("0")
+                .message("")
+                .nickname("initial")
+                .sender("initial")
+                .createdAt(LocalDateTime.now())
+                .build();
         }
 
         return ChatMessageResponse.from(chat);
@@ -307,8 +308,8 @@ public class ChatService {
     public void exitChatRoom(Long roomId, String memberId) {
         log.info("exitChatRoom : {}, {}", roomId, memberId);
         MemberRoom memberRoom = memberRoomRepository.findByMemberIdAndChatRoomId(memberId, roomId)
-                                                    .orElseThrow(
-                                                        IllegalArgumentException::new);
+            .orElseThrow(
+                IllegalArgumentException::new);
         log.info("memberRoom : {}", memberRoom.getId());
         memberRoom.updateLastCheckTime();
     }
