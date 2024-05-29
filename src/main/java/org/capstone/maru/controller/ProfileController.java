@@ -240,5 +240,5 @@ public class ProfileController {
             settingRequest.recommendOn());
         return ResponseEntity.ok(APIResponse.success());
     }
-    
+
 }
