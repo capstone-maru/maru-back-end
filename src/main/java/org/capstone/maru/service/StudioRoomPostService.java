@@ -91,7 +91,8 @@ public class StudioRoomPostService {
                         .getPublisherAccount()
                         .getProfileImage()
                         .updateFileName(
-                            s3FileService.getPreSignedUrlForLoad(
+                            s3FileService.getMemberPreSignedUrlForLoad(
+                                studioRoomPost.getPublisherGender(),
                                 studioRoomPost.getPublisherAccount().getProfileImage().getFileName()
                             ));
 
@@ -127,7 +128,8 @@ public class StudioRoomPostService {
                         .getPublisherAccount()
                         .getProfileImage()
                         .updateFileName(
-                            s3FileService.getPreSignedUrlForLoad(
+                            s3FileService.getMemberPreSignedUrlForLoad(
+                                studioRoomPost.getPublisherGender(),
                                 studioRoomPost.getPublisherAccount().getProfileImage().getFileName()
                             ));
                     return StudioRoomRecommendPostDto.from(
@@ -159,7 +161,8 @@ public class StudioRoomPostService {
                     .getPublisherAccount()
                     .getProfileImage()
                     .updateFileName(
-                        s3FileService.getPreSignedUrlForLoad(
+                        s3FileService.getMemberPreSignedUrlForLoad(
+                            studioRoomPost.getPublisherGender(),
                             studioRoomPost.getPublisherAccount().getProfileImage().getFileName()
                         ));
                 return StudioRoomRecommendPostDto.from(
