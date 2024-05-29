@@ -77,20 +77,6 @@ public class ProfileController {
         return ResponseEntity.ok(APIResponse.success(result));
     }
 
-    @PatchMapping("/recommend/{recommendOn}")
-    public ResponseEntity<APIResponse> updateMyCardRecommend(
-        @AuthenticationPrincipal MemberPrincipal memberPrincipal,
-        @PathVariable Boolean recommendOn
-    ) {
-        String memberId = memberPrincipal.memberId();
-        log.info("call updateMyRecommend : {}", memberId);
-
-        Boolean result = profileService.updateRecommend(memberId, recommendOn);
-
-        return ResponseEntity.ok(APIResponse.success(result));
-    }
-
-
     @PostMapping
     public ResponseEntity<APIResponse> getMemberProfile(
         @AuthenticationPrincipal MemberPrincipal memberPrincipal,
@@ -239,8 +225,8 @@ public class ProfileController {
             memberPrincipal.memberId(), memberPrincipal.gender(), cardOption);
 
         List<SimpleMemberCardResponse> result = recommendMember.stream()
-                                                               .map(SimpleMemberCardResponse::from)
-                                                               .toList();
+            .map(SimpleMemberCardResponse::from)
+            .toList();
 
         return ResponseEntity.ok(APIResponse.success(result));
     }
@@ -254,4 +240,5 @@ public class ProfileController {
             settingRequest.recommendOn());
         return ResponseEntity.ok(APIResponse.success());
     }
+    
 }
