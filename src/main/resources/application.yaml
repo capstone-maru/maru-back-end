@@ -41,3 +41,12 @@ univcert:
 server:
   tomcat:
     keep-alive-timeout: 300000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+    prometheus:
+      enabled: true
